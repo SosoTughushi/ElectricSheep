@@ -1,0 +1,216 @@
+# Adding New Tools to Electric Sheep Toolset
+
+This ruleset documents the workflow for adding new tools to the Electric Sheep toolset. Follow these steps to ensure tools are properly discovered and exposed via MCP.
+
+## Required Steps (Minimum)
+
+### 1. Create Tool Directory Structure
+```
+tools/{category}/{tool-name}/
+├── MANIFEST.json       # Required: Tool metadata
+├── README.md          # Optional but recommended
+└── scripts/           # Your implementation files
+    └── your-script.ps1
+```
+
+### 2. Create MANIFEST.json
+
+Create a `MANIFEST.json` file in your tool directory with at minimum:
+
+```json
+{
+  "id": "your-tool-id",
+  "name": "Your Tool Name",
+  "description": "What your tool does",
+  "category": "system|ai|dev|misc",
+  "version": "1.0.0",
+  "entry_points": {
+    "primary": "scripts/your-script.ps1",
+    "alternatives": []
+  },
+  "parameters": [
+    {
+      "name": "ParamName",
+      "type": "string",
+      "required": false,
+      "description": "Parameter description"
+    }
+  ]
+}
+```
+
+**Key fields:**
+- `id`: Unique identifier (kebab-case, e.g., "my-new-tool")
+- `category`: One of: `system`, `ai`, `dev`, `misc`
+- `entry_points.primary`: Path to main script (relative to tool directory)
+- `entry_points.alternatives`: Array of alternative script paths (optional)
+- `parameters`: Array of parameter definitions (optional)
+
+### 3. Register Tool in Registry
+
+Add your tool to `.toolset/registry.json`:
+
+```json
+{
+  "id": "your-tool-id",
+  "name": "Your Tool Name",
+  "category": "system",
+  "path": "tools/system/your-tool-id",
+  "status": "active",
+  "version": "1.0.0"
+}
+```
+
+Also add to the appropriate category in `categories` section.
+
+## What Happens Automatically
+
+Once you complete the required steps:
+
+✅ **MCP Server** automatically discovers your tool
+✅ **Operations** are auto-generated from entry points:
+   - Primary script → `{tool-id}:{script-name}`
+   - Alternative scripts → `{tool-id}:{script-name}` for each
+✅ **Parameters** are exposed as MCP tool parameters
+✅ **Tool becomes available** via MCP without code changes
+
+## Optional: Custom Operation Codes
+
+If you want nicer operation codes (e.g., `my-tool:launch` instead of `my-tool:my-launcher-script`), you can add custom mappings in `mcp/server/tool_registry.py`:
+
+```python
+# In get_operations() method, add after automatic generation:
+elif tool_id == 'your-tool-id':
+    operations.extend([
+        {
+            'code': 'your-tool:launch',
+            'name': 'Launch Your Tool',
+            'description': 'Custom description',
+            'tool_id': tool_id,
+            'entry_point': 'scripts/launch.ps1',
+            'parameters': tool_info.get('parameters', [])
+        }
+    ])
+```
+
+**Note:** This is optional - automatic generation works fine for most cases.
+
+## Example: Adding a New System Tool
+
+### Step 1: Create Directory
+```powershell
+mkdir tools\system\my-new-tool\scripts
+```
+
+### Step 2: Create MANIFEST.json
+```json
+{
+  "id": "my-new-tool",
+  "name": "My New Tool",
+  "description": "Does something useful",
+  "category": "system",
+  "version": "1.0.0",
+  "platforms": ["windows"],
+  "entry_points": {
+    "primary": "scripts/main.ps1",
+    "alternatives": ["scripts/helper.ps1"]
+  },
+  "parameters": [
+    {
+      "name": "InputPath",
+      "type": "string",
+      "required": true,
+      "description": "Path to input file"
+    }
+  ]
+}
+```
+
+### Step 3: Add to Registry
+Edit `.toolset/registry.json` and add:
+```json
+{
+  "id": "my-new-tool",
+  "name": "My New Tool",
+  "category": "system",
+  "path": "tools/system/my-new-tool",
+  "status": "active",
+  "version": "1.0.0"
+}
+```
+
+### Step 4: Verify
+```powershell
+# Test tool discovery
+python mcp/test_registry.py
+
+# Should show your tool and operations:
+# - my-new-tool:main
+# - my-new-tool:helper
+```
+
+### Step 5: Restart MCP Server
+If MCP server is running, restart it to pick up the new tool.
+
+## Verification Checklist
+
+After adding a tool, verify:
+
+- [ ] Tool appears in `python mcp/test_registry.py` output
+- [ ] Operations are generated correctly
+- [ ] MANIFEST.json is valid JSON
+- [ ] Entry point scripts exist at specified paths
+- [ ] Tool is listed in `.toolset/registry.json`
+- [ ] MCP server can discover the tool (restart server if needed)
+
+## Parameter Types
+
+Supported parameter types in MANIFEST.json:
+- `string` - Text values
+- `integer` or `int` - Whole numbers
+- `number` or `float` - Decimal numbers
+- `boolean` or `bool` - True/false
+- `array[int]` - Array of integers
+- `array[string]` - Array of strings
+
+## Best Practices
+
+1. **Use descriptive IDs**: `my-tool` not `mt` or `tool1`
+2. **Follow naming conventions**: kebab-case for IDs, PascalCase for parameters
+3. **Document parameters**: Always include descriptions
+4. **Set defaults**: Use `default` field for optional parameters
+5. **Test scripts**: Ensure scripts work before adding to manifest
+6. **Version tracking**: Update version when making changes
+
+## Troubleshooting
+
+**Tool not appearing in MCP:**
+- Check `.toolset/registry.json` syntax
+- Verify MANIFEST.json exists and is valid JSON
+- Ensure entry point paths are correct (relative to tool directory)
+- Restart MCP server
+
+**Operations not generated:**
+- Check `entry_points.primary` exists
+- Verify script file exists at specified path
+- Check script path uses forward slashes (even on Windows)
+
+**Parameters not working:**
+- Ensure parameter names match PowerShell parameter names
+- Check parameter types are valid
+- Verify `required` flag is set correctly
+
+## Summary
+
+**Required (no code changes):**
+1. Create tool directory with MANIFEST.json
+2. Add tool to `.toolset/registry.json`
+3. Restart MCP server
+
+**Optional (for better UX):**
+- Add custom operation code mappings in `tool_registry.py`
+- Create detailed README.md
+- Add examples to MANIFEST.json
+
+The MCP server automatically discovers and exposes all tools - no server code changes needed!
+

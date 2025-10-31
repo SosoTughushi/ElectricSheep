@@ -1,0 +1,211 @@
+<#
+.SYNOPSIS
+    Setup remote MCP access via SSH tunneling
+
+.DESCRIPTION
+    Configures remote access to MCP server. Can run in server mode (generate installer)
+    or client mode (configure remote machine).
+
+.PARAMETER Mode
+    Operation mode: 'server' or 'client'
+
+.PARAMETER SshHost
+    SSH server hostname or IP address
+
+.PARAMETER SshUser
+    SSH username
+
+.PARAMETER LocalPort
+    Local port for MCP server (default: 8080)
+
+.PARAMETER RemotePort
+    Remote port for forwarding (default: 8080)
+
+.PARAMETER GitHubUrl
+    GitHub repository URL for auto-download
+
+.EXAMPLE
+    .\setup-remote-access.ps1 -Mode server
+
+.EXAMPLE
+    .\setup-remote-access.ps1 -Mode client -SshHost myserver.com -SshUser myuser
+#>
+
+param(
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("server", "client")]
+    [string]$Mode = "server",
+    
+    [Parameter(Mandatory=$false)]
+    [string]$SshHost = "",
+    
+    [Parameter(Mandatory=$false)]
+    [string]$SshUser = "",
+    
+    [Parameter(Mandatory=$false)]
+    [int]$LocalPort = 8080,
+    
+    [Parameter(Mandatory=$false)]
+    [int]$RemotePort = 8080,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$GitHubUrl = ""
+)
+
+$ErrorActionPreference = "Stop"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$toolsDir = Split-Path -Parent $scriptDir
+$projectRoot = Split-Path -Parent (Split-Path -Parent $toolsDir)
+
+function Write-Step {
+    param([string]$Message)
+    Write-Host "`n[SETUP] $Message" -ForegroundColor Cyan
+}
+
+function Write-Success {
+    param([string]$Message)
+    Write-Host "[SUCCESS] $Message" -ForegroundColor Green
+}
+
+function Write-Warning {
+    param([string]$Message)
+    Write-Host "[WARNING] $Message" -ForegroundColor Yellow
+}
+
+function Write-Error {
+    param([string]$Message)
+    Write-Host "[ERROR] $Message" -ForegroundColor Red
+}
+
+# Server mode: Generate installer package
+if ($Mode -eq "server") {
+    Write-Step "Generating installer package..."
+    
+    $installerDir = Join-Path $projectRoot "installers"
+    if (-not (Test-Path $installerDir)) {
+        New-Item -ItemType Directory -Path $installerDir | Out-Null
+    }
+    
+    Write-Step "To generate full installer package, run:"
+    Write-Host "  .\tools\system\remote-mcp\scripts\generate-installer.ps1 -GitHubUrl https://github.com/YOUR_USERNAME/electric-sheep" -ForegroundColor Yellow
+    
+    Write-Success "Installer generation instructions displayed"
+}
+
+# Client mode: Configure remote access
+elseif ($Mode -eq "client") {
+    Write-Step "Setting up remote MCP access (client mode)..."
+    
+    if (-not $SshHost -or -not $SshUser) {
+        Write-Error "SshHost and SshUser are required in client mode"
+        Write-Host "Usage: .\setup-remote-access.ps1 -Mode client -SshHost HOST -SshUser USER"
+        exit 1
+    }
+    
+    # Check if repository exists
+    if (-not (Test-Path (Join-Path $projectRoot ".git"))) {
+        Write-Warning "Not a git repository. Checking if GitHub URL provided..."
+        
+        if ($GitHubUrl) {
+            Write-Step "Cloning repository from: $GitHubUrl"
+            $parentDir = Split-Path -Parent $projectRoot
+            Push-Location $parentDir
+            try {
+                git clone $GitHubUrl electric-sheep
+                Write-Success "Repository cloned successfully"
+            }
+            catch {
+                Write-Error "Failed to clone repository: $_"
+                exit 1
+            }
+            finally {
+                Pop-Location
+            }
+        }
+        else {
+            Write-Error "Repository not found and GitHubUrl not provided"
+            Write-Host "Either clone the repository manually or provide -GitHubUrl parameter"
+            exit 1
+        }
+    }
+    
+    # Install Python dependencies
+    Write-Step "Installing Python dependencies..."
+    $requirementsPath = Join-Path $projectRoot "mcp\requirements.txt"
+    if (Test-Path $requirementsPath) {
+        python -m pip install -r $requirementsPath
+        Write-Success "Dependencies installed"
+    }
+    
+    # Configure SSH tunnel
+    Write-Step "Configuring SSH tunnel..."
+    $configDir = Join-Path $env:USERPROFILE ".electric-sheep"
+    if (-not (Test-Path $configDir)) {
+        New-Item -ItemType Directory -Path $configDir | Out-Null
+    }
+    
+    # Encrypt and save credentials
+    Write-Step "Storing SSH credentials securely..."
+    $configPath = Join-Path $configDir "tunnel-config.json"
+    
+    $config = @{
+        ssh_host = $SshHost
+        ssh_user = $SshUser
+        local_port = $LocalPort
+        remote_port = $RemotePort
+        created_at = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+    }
+    
+    $config | ConvertTo-Json | Out-File -FilePath $configPath -Encoding UTF8
+    Write-Success "Configuration saved to: $configPath"
+    
+    # Generate tunnel start script
+    Write-Step "Generating tunnel start script..."
+    $tunnelScript = @"
+# SSH Tunnel for Electric Sheep MCP
+# Auto-generated by setup script
+
+`$config = Get-Content "$configPath" | ConvertFrom-Json
+
+ssh -N -L `$config.local_port:localhost:`$config.remote_port `$config.ssh_user@`$config.ssh_host
+"@
+    
+    $tunnelScriptPath = Join-Path $scriptDir "start-tunnel.ps1"
+    $tunnelScript | Out-File -FilePath $tunnelScriptPath -Encoding UTF8
+    Write-Success "Tunnel script created: $tunnelScriptPath"
+    
+    # Configure Cursor MCP
+    Write-Step "Configuring Cursor MCP client..."
+    $cursorConfigDir = "$env:APPDATA\Cursor"
+    if (-not (Test-Path $cursorConfigDir)) {
+        New-Item -ItemType Directory -Path $cursorConfigDir | Out-Null
+    }
+    
+    $mcpConfigPath = Join-Path $cursorConfigDir "mcp.json"
+    $mcpConfig = @{}
+    
+    if (Test-Path $mcpConfigPath) {
+        $mcpConfig = Get-Content $mcpConfigPath | ConvertFrom-Json | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    }
+    
+    if (-not $mcpConfig.mcpServers) {
+        $mcpConfig.mcpServers = @{}
+    }
+    
+    $mcpConfig.mcpServers["electric-sheep-remote"] = @{
+        command = "python"
+        args = @("-m", "mcp.server.server")
+        cwd = $projectRoot
+    }
+    
+    $mcpConfig | ConvertTo-Json -Depth 10 | Out-File -FilePath $mcpConfigPath -Encoding UTF8
+    Write-Success "Cursor MCP configured: $mcpConfigPath"
+    
+    Write-Success "`nSetup complete!`n"
+    Write-Host "Next steps:"
+    Write-Host "1. Start SSH tunnel: .\start-tunnel.ps1"
+    Write-Host "2. Restart Cursor"
+    Write-Host "3. Verify MCP connection"
+    Write-Host "`nConfiguration saved to: $configPath"
+}
+

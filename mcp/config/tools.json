@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "description": "MCP tools exposure configuration",
+  "expose_all": true,
+  "categories": {
+    "system": true,
+    "ai": true,
+    "dev": false,
+    "misc": false
+  },
+  "authentication": {
+    "enabled": false,
+    "type": "none"
+  },
+  "rate_limiting": {
+    "enabled": false
+  }
+}
+

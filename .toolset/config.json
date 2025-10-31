@@ -1,0 +1,30 @@
+{
+  "toolset": {
+    "name": "Electric Sheep Toolset",
+    "version": "1.0.0",
+    "description": "AI-friendly toolset for system management and AI/ML operations",
+    "author": "Soso"
+  },
+  "defaults": {
+    "platform": "windows",
+    "shell": "powershell",
+    "python_version": "3.11"
+  },
+  "paths": {
+    "tools": "tools",
+    "docs": "docs",
+    "mcp": "mcp",
+    "logs": "logs"
+  },
+  "mcp": {
+    "enabled": false,
+    "preparation_complete": false,
+    "server_port": 8000
+  },
+  "ai": {
+    "auto_discover": true,
+    "require_manifests": true,
+    "context_file": ".toolset/ai-context.md"
+  }
+}
+

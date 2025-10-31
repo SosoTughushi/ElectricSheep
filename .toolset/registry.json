@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2024-01-01",
+  "tools": [
+    {
+      "id": "bambu-lab-affinity",
+      "name": "Bambu Lab CPU Affinity Manager",
+      "category": "system",
+      "path": "tools/system/bambu-lab",
+      "status": "active",
+      "version": "1.0.0"
+    },
+    {
+      "id": "cpu-affinity-check",
+      "name": "CPU Affinity Checker",
+      "category": "system",
+      "path": "tools/system/cpu-affinity",
+      "status": "active",
+      "version": "1.0.0"
+    },
+    {
+      "id": "remote-mcp",
+      "name": "Remote MCP Access Manager",
+      "category": "system",
+      "path": "tools/system/remote-mcp",
+      "status": "active",
+      "version": "1.0.0"
+    },
+    {
+      "id": "musubi-tuner",
+      "name": "Musubi Tuner - LoRA Training Toolkit",
+      "category": "ai",
+      "path": "tools/ai/musubi-tuner",
+      "actual_path": "ai-tools/musubi-tuner",
+      "status": "active",
+      "version": "1.0.0",
+      "note": "Large external project, referenced from ai-tools/"
+    }
+  ],
+  "categories": {
+    "system": {
+      "description": "System-level tools for OS management, process control, and hardware configuration",
+      "tools": ["bambu-lab-affinity", "cpu-affinity-check", "remote-mcp"]
+    },
+    "ai": {
+      "description": "AI and machine learning tools for model training, inference, and manipulation",
+      "tools": ["musubi-tuner"]
+    },
+    "dev": {
+      "description": "Development tools and utilities",
+      "tools": []
+    },
+    "misc": {
+      "description": "Miscellaneous utilities",
+      "tools": []
+    }
+  }
+}
+

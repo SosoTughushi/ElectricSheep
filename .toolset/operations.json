@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2024-01-01",
+  "operations": [
+    {
+      "code": "bambu-lab:launch",
+      "name": "Launch Bambu Lab",
+      "description": "Launch Bambu Lab with automatic CPU affinity fix to prevent crashes",
+      "category": "system",
+      "tool": "bambu-lab-affinity",
+      "tool_path": "tools/system/bambu-lab",
+      "entry_point": "scripts/bambulab-launcher.ps1",
+      "parameters": {
+        "BambuLabPath": {
+          "type": "string",
+          "required": false,
+          "source": "local_config",
+          "description": "Path to Bambu Studio executable"
+        },
+        "AffinityCores": {
+          "type": "array[int]",
+          "required": false,
+          "default": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "description": "CPU cores to use"
+        }
+      },
+      "privacy": "no_sensitive_data",
+      "tags": ["bambu-lab", "crash-fix", "cpu-affinity"]
+    },
+    {
+      "code": "bambu-lab:set-affinity",
+      "name": "Set Bambu Lab Affinity",
+      "description": "Set CPU affinity for already running Bambu Lab process",
+      "category": "system",
+      "tool": "bambu-lab-affinity",
+      "tool_path": "tools/system/bambu-lab",
+      "entry_point": "scripts/set-bambulab-affinity.ps1",
+      "parameters": {
+        "AffinityCores": {
+          "type": "array[int]",
+          "required": false,
+          "default": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "description": "CPU cores to use"
+        },
+        "WaitForProcess": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Wait for process to start"
+        }
+      },
+      "privacy": "no_sensitive_data",
+      "tags": ["bambu-lab", "cpu-affinity", "process-management"]
+    },
+    {
+      "code": "bambu-lab:find-installation",
+      "name": "Find Bambu Studio Installation",
+      "description": "Search for Bambu Studio installation in common locations",
+      "category": "system",
+      "tool": "bambu-lab-affinity",
+      "tool_path": "tools/system/bambu-lab",
+      "entry_point": "scripts/find-bambustudio.ps1",
+      "parameters": {},
+      "privacy": "no_sensitive_data",
+      "tags": ["bambu-lab", "discovery"]
+    },
+    {
+      "code": "cpu-affinity:check",
+      "name": "Check CPU Affinity",
+      "description": "Check and display CPU affinity settings for running processes",
+      "category": "system",
+      "tool": "cpu-affinity-check",
+      "tool_path": "tools/system/cpu-affinity",
+      "entry_point": "scripts/check-affinity.ps1",
+      "parameters": {
+        "ProcessName": {
+          "type": "string",
+          "required": false,
+          "default": "bambu-studio",
+          "description": "Process name to check"
+        }
+      },
+      "privacy": "no_sensitive_data",
+      "tags": ["cpu-affinity", "debugging"]
+    },
+    {
+      "code": "musubi-tuner:activate-env",
+      "name": "Activate Musubi Tuner Environment",
+      "description": "Activate the virtual environment for Musubi Tuner",
+      "category": "ai",
+      "tool": "musubi-tuner",
+      "tool_path": "tools/ai/musubi-tuner",
+      "entry_point": "scripts/activate.ps1",
+      "parameters": {},
+      "privacy": "paths_in_local_config",
+      "tags": ["musubi-tuner", "environment"]
+    },
+    {
+      "code": "musubi-tuner:wan:cache-latents",
+      "name": "Cache Wan Latents",
+      "description": "Cache VAE latents for Wan 2.1/2.2 training preparation",
+      "category": "ai",
+      "tool": "musubi-tuner",
+      "tool_path": "tools/ai/musubi-tuner",
+      "entry_point": "scripts/wan-cache-latents.ps1",
+      "parameters": {
+        "DatasetConfig": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to dataset TOML configuration"
+        },
+        "VaePath": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to VAE model"
+        },
+        "T5Path": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to T5 text encoder model"
+        },
+        "ClipPath": {
+          "type": "string",
+          "required": false,
+          "source": "local_config_or_param",
+          "description": "Path to CLIP model (Wan 2.1 only)"
+        },
+        "I2V": {
+          "type": "boolean",
+          "required": false,
+          "description": "Use I2V mode"
+        }
+      },
+      "privacy": "paths_in_local_config",
+      "tags": ["musubi-tuner", "wan", "preprocessing", "training"]
+    },
+    {
+      "code": "musubi-tuner:wan:cache-text-encoder",
+      "name": "Cache Wan Text Encoder",
+      "description": "Cache text encoder outputs for faster training",
+      "category": "ai",
+      "tool": "musubi-tuner",
+      "tool_path": "tools/ai/musubi-tuner",
+      "entry_point": "scripts/wan-cache-text-encoder.ps1",
+      "parameters": {
+        "DatasetConfig": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to dataset TOML configuration"
+        },
+        "T5Path": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to T5 text encoder model"
+        },
+        "BatchSize": {
+          "type": "integer",
+          "required": false,
+          "default": 16,
+          "description": "Batch size for caching"
+        }
+      },
+      "privacy": "paths_in_local_config",
+      "tags": ["musubi-tuner", "wan", "preprocessing", "training"]
+    },
+    {
+      "code": "musubi-tuner:wan:train",
+      "name": "Train Wan LoRA",
+      "description": "Train LoRA model using Wan 2.1/2.2 architecture",
+      "category": "ai",
+      "tool": "musubi-tuner",
+      "tool_path": "tools/ai/musubi-tuner",
+      "entry_point": "scripts/wan-train.ps1",
+      "parameters": {
+        "Task": {
+          "type": "string",
+          "required": true,
+          "description": "Task type (t2v-14B, i2v-14B, t2v-A14B, i2v-A14B)"
+        },
+        "DitPath": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to DiT model"
+        },
+        "DatasetConfig": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to dataset TOML configuration"
+        },
+        "OutputDir": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Output directory for trained model"
+        },
+        "OutputName": {
+          "type": "string",
+          "required": true,
+          "description": "Output model name"
+        }
+      },
+      "privacy": "paths_in_local_config",
+      "tags": ["musubi-tuner", "wan", "training", "lora"]
+    },
+    {
+      "code": "musubi-tuner:wan:generate",
+      "name": "Generate Video with Wan",
+      "description": "Generate video using trained or base Wan model",
+      "category": "ai",
+      "tool": "musubi-tuner",
+      "tool_path": "tools/ai/musubi-tuner",
+      "entry_point": "scripts/wan-generate.ps1",
+      "parameters": {
+        "Task": {
+          "type": "string",
+          "required": true,
+          "description": "Task type (t2v-14B, i2v-14B, t2v-A14B, i2v-A14B)"
+        },
+        "Prompt": {
+          "type": "string",
+          "required": true,
+          "description": "Generation prompt"
+        },
+        "DitPath": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to DiT model"
+        },
+        "VaePath": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to VAE model"
+        },
+        "T5Path": {
+          "type": "string",
+          "required": true,
+          "source": "local_config_or_param",
+          "description": "Path to T5 text encoder model"
+        },
+        "SavePath": {
+          "type": "string",
+          "required": true,
+          "description": "Output video path"
+        }
+      },
+      "privacy": "paths_in_local_config",
+      "tags": ["musubi-tuner", "wan", "inference", "video-generation"]
+    }
+  ],
+  "categories": {
+    "system": {
+      "description": "System-level operations for OS management and hardware configuration",
+      "operation_codes": ["bambu-lab:launch", "bambu-lab:set-affinity", "bambu-lab:find-installation", "cpu-affinity:check"]
+    },
+    "ai": {
+      "description": "AI and machine learning operations for model training and inference",
+      "operation_codes": ["musubi-tuner:activate-env", "musubi-tuner:wan:cache-latents", "musubi-tuner:wan:cache-text-encoder", "musubi-tuner:wan:train", "musubi-tuner:wan:generate"]
+    }
+  },
+  "query_examples": {
+    "list_all": "Query operations.json or use discover_operations.py",
+    "by_category": "Filter by category field",
+    "by_code": "Search for specific operation code",
+    "by_tool": "Filter by tool field"
+  }
+}
+

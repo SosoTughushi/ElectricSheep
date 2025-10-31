@@ -1,0 +1,37 @@
+# Bambu Lab Crash Fix
+
+## Problem Description
+Bambu Lab application crashes when clicking if all CPU cores are enabled. Requires manual CPU affinity adjustment via Task Manager.
+
+## Root Causes
+1. **NVIDIA Threaded Optimization**: NVIDIA driver's threaded optimization feature may conflict with Bambu Lab
+2. **High Core Count**: Applications may not handle 28 logical processors well
+3. **GPU Driver Conflicts**: Multiple GPUs (NVIDIA + Intel integrated) may cause issues
+
+## Solutions
+
+### Solution 1: Disable NVIDIA Threaded Optimization (Recommended)
+- Open NVIDIA Control Panel
+- Navigate to: 3D Settings > Manage 3D Settings > Program Settings
+- Add Bambu Studio/Bambu Lab to program list
+- Set "Threaded Optimization" to "Off"
+- Apply and restart application
+
+### Solution 2: Automate CPU Affinity Setting
+- Use PowerShell script to automatically set CPU affinity on launch
+- Limit to specific subset of cores (e.g., cores 0-15, excluding hyperthreaded cores)
+- Script should be run before or during application launch
+
+### Solution 3: Update Drivers
+- Ensure NVIDIA drivers are up to date
+- Check Bambu Lab application for updates
+
+## Implementation Priority
+1. Try Solution 1 first (NVIDIA settings)
+2. If that doesn't work, implement Solution 2 (automated affinity)
+3. Verify drivers are current
+
+## References
+- Bambu Lab forum discussions on crashes
+- NVIDIA driver optimization settings
+

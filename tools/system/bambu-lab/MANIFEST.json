@@ -1,0 +1,79 @@
+{
+  "id": "bambu-lab-affinity",
+  "name": "Bambu Lab CPU Affinity Manager",
+  "description": "Automates CPU affinity settings for Bambu Lab/Studio to prevent crashes when using all CPU cores. Includes launcher, affinity setter, and process finder utilities.",
+  "category": "system",
+  "version": "1.0.0",
+  "author": "Soso",
+  "tags": ["bambu-lab", "cpu-affinity", "windows", "process-management", "crash-fix"],
+  "platforms": ["windows"],
+  "dependencies": {
+    "runtime": ["powershell"],
+    "external": [],
+    "permissions": ["admin"]
+  },
+  "entry_points": {
+    "primary": "scripts/bambulab-launcher.ps1",
+    "alternatives": [
+      "scripts/set-bambulab-affinity.ps1",
+      "scripts/find-bambustudio.ps1"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "BambuLabPath",
+      "type": "string",
+      "required": false,
+      "default": "C:\\Program Files\\BambuStudio\\BambuStudio.exe",
+      "description": "Path to Bambu Studio executable"
+    },
+    {
+      "name": "AffinityCores",
+      "type": "array[int]",
+      "required": false,
+      "default": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "description": "CPU cores to use (default: first 16 cores)"
+    },
+    {
+      "name": "WaitForProcess",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Wait for process to start before setting affinity"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Launch Bambu Lab with auto-fix",
+      "command": ".\tools\system\bambu-lab\scripts\bambulab-launcher.ps1"
+    },
+    {
+      "description": "Set affinity for already running process",
+      "command": ".\tools\system\bambu-lab\scripts\set-bambulab-affinity.ps1 -WaitForProcess"
+    },
+    {
+      "description": "Find Bambu Studio installation",
+      "command": ".\tools\system\bambu-lab\scripts\find-bambustudio.ps1"
+    }
+  ],
+  "ai_friendly": {
+    "context": "Fixes Bambu Lab crashes caused by using all CPU cores. The application crashes when clicking if all 28 logical processors are enabled. Solution involves limiting CPU affinity to a subset of cores (typically first 16).",
+    "common_use_cases": [
+      "Launch Bambu Lab without crashes",
+      "Fix running Bambu Lab process",
+      "Discover Bambu Studio installation path"
+    ],
+    "related_tools": ["cpu-affinity-check"],
+    "related_issues": [
+      "NVIDIA Threaded Optimization conflict",
+      "High core count compatibility",
+      "Multiple GPU setup conflicts"
+    ]
+  },
+  "documentation": {
+    "readme": "README.md",
+    "guides": ["docs/bambu-lab-fix-guide.md"],
+    "rules": ["../../rules/bambu-lab-fix.cursorrules"]
+  }
+}
+

@@ -1,0 +1,106 @@
+{
+  "id": "remote-mcp",
+  "name": "Remote MCP Access Manager",
+  "description": "Easy setup for remote MCP server access via SSH tunneling. Includes installer, credential management, and AI-friendly setup instructions.",
+  "category": "system",
+  "version": "1.0.0",
+  "author": "Soso",
+  "tags": ["mcp", "remote-access", "ssh", "tunneling", "deployment", "security"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python", "powershell"],
+    "external": ["cryptography"],
+    "optional": ["ssh", "autossh"]
+  },
+  "entry_points": {
+    "primary": "scripts/setup-remote-access.ps1",
+    "alternatives": [
+      "scripts/generate-installer.ps1",
+      "scripts/start-tunnel.ps1",
+      "scripts/stop-tunnel.ps1",
+      "scripts/configure-client.ps1"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "Mode",
+      "type": "string",
+      "required": false,
+      "default": "server",
+      "description": "Mode: 'server' (host) or 'client' (remote)",
+      "enum": ["server", "client"]
+    },
+    {
+      "name": "GitHubUrl",
+      "type": "string",
+      "required": false,
+      "description": "GitHub repository URL for auto-download"
+    },
+    {
+      "name": "SshHost",
+      "type": "string",
+      "required": false,
+      "description": "SSH server hostname/IP"
+    },
+    {
+      "name": "SshUser",
+      "type": "string",
+      "required": false,
+      "description": "SSH username"
+    },
+    {
+      "name": "LocalPort",
+      "type": "integer",
+      "required": false,
+      "default": 8080,
+      "description": "Local port for MCP server"
+    },
+    {
+      "name": "RemotePort",
+      "type": "integer",
+      "required": false,
+      "default": 8080,
+      "description": "Remote port forwarding"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Setup as server (host machine)",
+      "command": ".\scripts\setup-remote-access.ps1 -Mode server"
+    },
+    {
+      "description": "Setup as client (work laptop)",
+      "command": ".\scripts\setup-remote-access.ps1 -Mode client -SshHost my-server.com -SshUser myuser"
+    },
+    {
+      "description": "Generate installer package",
+      "command": ".\scripts\generate-installer.ps1 -GitHubUrl https://github.com/user/electric-sheep"
+    }
+  ],
+  "ai_friendly": {
+    "context": "Provides secure remote access to MCP server via SSH tunneling. Includes automated setup, credential encryption, and installer generation.",
+    "common_use_cases": [
+      "Access MCP server from remote Cursor instance",
+      "Share MCP access securely",
+      "Deploy MCP server to remote machine",
+      "Set up SSH tunnel automatically"
+    ],
+    "workflow": [
+      "Server: Generate installer package",
+      "Client: Run installer with SSH credentials",
+      "Installer: Downloads repo, configures SSH tunnel, stores credentials securely",
+      "Client: Connects via SSH tunnel to access MCP server"
+    ],
+    "security_features": [
+      "Encrypted credential storage",
+      "SSH key-based authentication",
+      "Automatic credential cleanup after setup",
+      "Secure configuration management"
+    ]
+  },
+  "documentation": {
+    "readme": "README.md",
+    "setup_guide": "SETUP.md"
+  }
+}
+

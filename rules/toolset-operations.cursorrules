@@ -1,0 +1,109 @@
+# Electric Sheep Toolset Operations
+
+This file defines all available operations in the toolset. Operations are identified by code names and can be queried by AI agents.
+
+## Query Operations
+
+To discover available operations, agents can:
+1. Query `.toolset/operations.json` for structured operation data
+2. Use the discovery script: `python .toolset/discover_operations.py`
+3. Check this ruleset file for descriptions
+
+## Operation Categories
+
+### System Operations
+
+#### `bambu-lab:launch`
+**Code Name**: `bambu-lab:launch`
+**Description**: Launch Bambu Lab with automatic CPU affinity fix
+**Tool**: `tools/system/bambu-lab`
+**Parameters**: Optional path, optional core list
+**Privacy**: No sensitive data
+
+#### `bambu-lab:set-affinity`
+**Code Name**: `bambu-lab:set-affinity`
+**Description**: Set CPU affinity for running Bambu Lab process
+**Tool**: `tools/system/bambu-lab`
+**Parameters**: Optional core list, wait flag
+**Privacy**: No sensitive data
+
+#### `bambu-lab:find-installation`
+**Code Name**: `bambu-lab:find-installation`
+**Description**: Find Bambu Studio installation path
+**Tool**: `tools/system/bambu-lab`
+**Parameters**: None
+**Privacy**: No sensitive data (searches common locations)
+
+#### `cpu-affinity:check`
+**Code Name**: `cpu-affinity:check`
+**Description**: Check CPU affinity for processes
+**Tool**: `tools/system/cpu-affinity`
+**Parameters**: Optional process name/ID
+**Privacy**: No sensitive data
+
+### AI Operations
+
+#### `musubi-tuner:activate-env`
+**Code Name**: `musubi-tuner:activate-env`
+**Description**: Activate Musubi Tuner virtual environment
+**Tool**: `tools/ai/musubi-tuner`
+**Parameters**: None (uses local config)
+**Privacy**: Path stored in local config (not in repo)
+
+#### `musubi-tuner:wan:cache-latents`
+**Code Name**: `musubi-tuner:wan:cache-latents`
+**Description**: Cache VAE latents for Wan 2.1/2.2 training
+**Tool**: `tools/ai/musubi-tuner`
+**Parameters**: Dataset config, VAE path, T5 path, optional CLIP path
+**Privacy**: Paths stored in local config
+
+#### `musubi-tuner:wan:cache-text-encoder`
+**Code Name**: `musubi-tuner:wan:cache-text-encoder`
+**Description**: Cache text encoder outputs for training
+**Tool**: `tools/ai/musubi-tuner`
+**Parameters**: Dataset config, T5 path, batch size
+**Privacy**: Paths stored in local config
+
+#### `musubi-tuner:wan:train`
+**Code Name**: `musubi-tuner:wan:train`
+**Description**: Train Wan LoRA model
+**Tool**: `tools/ai/musubi-tuner`
+**Parameters**: Task type, DiT path, dataset config, output settings
+**Privacy**: Paths stored in local config
+
+#### `musubi-tuner:wan:generate`
+**Code Name**: `musubi-tuner:wan:generate`
+**Description**: Generate video with Wan model
+**Tool**: `tools/ai/musubi-tuner`
+**Parameters**: Task, prompt, model paths, output settings
+**Privacy**: Paths stored in local config
+
+## Operation Discovery
+
+Agents can query operations using:
+- **Code names**: Short identifiers like `bambu-lab:launch`
+- **Descriptions**: Natural language descriptions
+- **Categories**: Group by category (system, ai)
+- **Tools**: Operations grouped by tool
+
+## Privacy Guidelines
+
+- **Never commit**: API keys, personal paths, user-specific data
+- **Always commit**: Operation code names, descriptions, tool structure
+- **Local config**: User-specific paths stored in `.local/config.json` (gitignored)
+- **Public registry**: `.toolset/operations.json` contains only public information
+
+## Example Queries
+
+**"What are my operations?"**
+→ Returns all operations with code names and descriptions
+
+**"What operations are available for Bambu Lab?"**
+→ Returns `bambu-lab:*` operations
+
+**"What AI operations do I have?"**
+→ Returns all `musubi-tuner:*` operations
+
+**"How do I launch Bambu Lab?"**
+→ Returns `bambu-lab:launch` operation details
+

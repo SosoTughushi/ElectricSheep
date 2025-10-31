@@ -1,0 +1,22 @@
+# System Information
+
+## Hardware Configuration
+- **CPU**: Intel Core i7-14700K
+  - Physical Cores: 20
+  - Logical Processors: 28
+- **GPU**: NVIDIA GeForce RTX 3090
+  - Driver Version: 32.0.15.8157
+- **Integrated Graphics**: Intel UHD Graphics 770
+  - Driver Version: 32.0.101.7040
+
+## Operating System
+- **OS**: Microsoft Windows 11 Pro
+- **Version**: 10.0.26100 Build 26100
+- **Architecture**: x64-based PC
+- **BIOS**: American Megatrends International, LLC. A.A0 (10/27/2023)
+
+## Notes
+- System has multiple GPUs (discrete NVIDIA + integrated Intel)
+- High core count CPU may cause issues with applications that don't handle many cores well
+- RTX 3090 is a high-end GPU that may trigger driver-level optimizations
+

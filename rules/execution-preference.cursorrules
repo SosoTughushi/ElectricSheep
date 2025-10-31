@@ -1,0 +1,16 @@
+# Execution Preference Rules
+
+## Policy
+- Prefer running commands directly to collect output and verify behavior, rather than asking the user to run them.
+- Use non-interactive flags and run in the background for long-running tasks.
+- Capture logs to the `logs/` directory whenever possible.
+
+## Implementation
+- Use PowerShell with `-ExecutionPolicy Bypass` for local scripts.
+- For persistent processes, redirect all streams using `*>` to log files.
+- When admin rights are required, detect failure and inform the user clearly.
+
+## Notes
+- System: Windows 11 Pro, user path conventions may include spaces.
+- Always quote paths with spaces.
+

@@ -1,0 +1,54 @@
+{
+  "id": "cpu-affinity-check",
+  "name": "CPU Affinity Checker",
+  "description": "Utility to check and display CPU affinity settings for running processes. Useful for debugging process affinity issues.",
+  "category": "system",
+  "version": "1.0.0",
+  "author": "Soso",
+  "tags": ["cpu-affinity", "windows", "process-management", "debugging"],
+  "platforms": ["windows"],
+  "dependencies": {
+    "runtime": ["powershell"],
+    "external": [],
+    "permissions": []
+  },
+  "entry_points": {
+    "primary": "scripts/check-affinity.ps1",
+    "alternatives": ["scripts/set-affinity-direct.ps1"]
+  },
+  "parameters": [
+    {
+      "name": "ProcessName",
+      "type": "string",
+      "required": false,
+      "default": "bambu-studio",
+      "description": "Name of process to check (without .exe)"
+    },
+    {
+      "name": "ProcessId",
+      "type": "integer",
+      "required": false,
+      "description": "Specific process ID to check"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Check affinity for Bambu Studio",
+      "command": ".\scripts\check-affinity.ps1"
+    },
+    {
+      "description": "Check affinity for specific process ID",
+      "command": ".\scripts\check-affinity.ps1 -ProcessId 2920"
+    }
+  ],
+  "ai_friendly": {
+    "context": "Utility tool for inspecting CPU affinity settings. Useful for debugging affinity-related issues and verifying affinity changes.",
+    "common_use_cases": [
+      "Verify CPU affinity settings",
+      "Debug affinity issues",
+      "Inspect process core assignments"
+    ],
+    "related_tools": ["bambu-lab-affinity"]
+  }
+}
+

@@ -1,0 +1,12 @@
+{
+  "name": "electric-sheep",
+  "version": "1.0.0",
+  "description": "MCP Server for Electric Sheep Toolset",
+  "command": "python",
+  "args": [
+    "-m",
+    "mcp.server.server"
+  ],
+  "env": {}
+}
+

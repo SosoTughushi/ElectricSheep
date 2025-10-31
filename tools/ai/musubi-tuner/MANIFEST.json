@@ -1,0 +1,92 @@
+{
+  "id": "musubi-tuner",
+  "name": "Musubi Tuner - LoRA Training Toolkit",
+  "description": "Comprehensive toolkit for training LoRA (Low-Rank Adaptation) models with HunyuanVideo, Wan2.1/2.2, FramePack, FLUX.1 Kontext, and Qwen-Image architectures. Includes training, inference, and utility scripts.",
+  "category": "ai",
+  "version": "1.0.0",
+  "author": "Original authors + Soso",
+  "tags": ["ai", "ml", "lora", "training", "hunyuan", "wan", "flux", "qwen", "framepack", "stable-diffusion"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python", "pytorch"],
+    "external": ["accelerate", "transformers", "diffusers"],
+    "hardware": ["gpu", "cuda"]
+  },
+  "entry_points": {
+    "primary": "README.md",
+    "alternatives": [
+      "scripts/activate.ps1",
+      "scripts/wan-cache-latents.ps1",
+      "scripts/wan-cache-text-encoder.ps1",
+      "scripts/wan-train.ps1",
+      "scripts/wan-generate.ps1",
+      "Training scripts (configured via .local/config.json)",
+      "Inference scripts (configured via .local/config.json)"
+    ]
+  },
+  "parameters": [],
+  "examples": [
+    {
+      "description": "Activate virtual environment",
+      "command": ".\tools\ai\musubi-tuner\scripts\activate.ps1"
+    },
+    {
+      "description": "Cache latents for Wan 2.1/2.2",
+      "command": ".\tools\ai\musubi-tuner\scripts\wan-cache-latents.ps1 -DatasetConfig \"path/to/dataset.toml\" -VaePath \"path/to/vae.safetensors\" -T5Path \"path/to/t5.pth\""
+    },
+    {
+      "description": "Cache text encoder outputs",
+      "command": ".\tools\ai\musubi-tuner\scripts\wan-cache-text-encoder.ps1 -DatasetConfig \"path/to/dataset.toml\" -T5Path \"path/to/t5.pth\" -BatchSize 16"
+    },
+    {
+      "description": "Train Wan LoRA",
+      "command": ".\tools\ai\musubi-tuner\scripts\wan-train.ps1 -Task \"t2v-14B\" -DitPath \"path/to/dit.safetensors\" -DatasetConfig \"path/to/dataset.toml\" -OutputDir \"path/to/output\" -OutputName \"my-lora\""
+    },
+    {
+      "description": "Generate video with Wan",
+      "command": ".\tools\ai\musubi-tuner\scripts\wan-generate.ps1 -Task \"t2v-14B\" -Prompt \"your prompt\" -DitPath \"path/to/dit.safetensors\" -VaePath \"path/to/vae.safetensors\" -T5Path \"path/to/t5.pth\" -SavePath \"path/to/output.mp4\""
+    }
+  ],
+  "ai_friendly": {
+    "context": "Unofficial repository for training LoRA models with various video and image generation architectures. Provides end-to-end workflows for training, inference, and model manipulation.",
+    "common_use_cases": [
+      "Train LoRA models for video generation",
+      "Train LoRA models for image generation",
+      "Generate videos/images with trained models",
+      "Merge and convert LoRA weights",
+      "Cache latents and text encoder outputs for faster training"
+    ],
+    "related_tools": [],
+    "supported_architectures": [
+      "HunyuanVideo",
+      "Wan2.1/2.2",
+      "FramePack",
+      "FLUX.1 Kontext",
+      "Qwen-Image"
+    ],
+    "workflow_stages": [
+      "Dataset preparation",
+      "Latent caching",
+      "Text encoder caching",
+      "Model training",
+      "Inference",
+      "Post-processing (merging, conversion)"
+    ]
+  },
+  "documentation": {
+    "readme": "tools/ai/musubi-tuner/README.md",
+    "scripts_readme": "tools/ai/musubi-tuner/scripts/README.md",
+    "main_docs": "Configured via .local/config.json",
+    "wan_docs": "Configured via .local/config.json",
+    "dataset_config": "Configured via .local/config.json",
+    "advanced_config": "Configured via .local/config.json",
+    "contributing": "Configured via .local/config.json"
+  },
+  "location": {
+    "actual_path": "Configured via .local/config.json (paths.musubi_tuner.installation_path)",
+    "venv_path": "Configured via .local/config.json (paths.musubi_tuner.venv_path)",
+    "scripts_path": "tools/ai/musubi-tuner/scripts/",
+    "note": "Installation path configured via .local/config.json. Wrapper scripts in tools/ai/musubi-tuner/scripts/"
+  }
+}
+

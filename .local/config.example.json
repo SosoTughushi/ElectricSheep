@@ -1,0 +1,42 @@
+{
+  "$comment": "This is a template. Copy to .local/config.json and fill in your actual paths.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "paths": {
+    "musubi_tuner": {
+      "installation_path": "E:/Stable Diffusion/musubi-tuner",
+      "venv_path": "E:/Stable Diffusion/musubi-tuner/venv",
+      "python_exe": "E:/Stable Diffusion/musubi-tuner/venv/Scripts/python.exe",
+      "accelerate_exe": "E:/Stable Diffusion/musubi-tuner/venv/Scripts/accelerate.exe"
+    },
+    "bambu_lab": {
+      "installation_path": "C:/Program Files/BambuStudio/BambuStudio.exe"
+    }
+  },
+  "models": {
+    "wan": {
+      "vae": "E:/path/to/wan_2.1_vae.safetensors",
+      "t5": "E:/path/to/models_t5_umt5-xxl-enc-bf16.pth",
+      "clip": "E:/path/to/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth",
+      "dit_2_1_t2v": "E:/path/to/wan2.1_t2v_14B_bf16.safetensors",
+      "dit_2_1_i2v": "E:/path/to/wan2.1_i2v_480p_14B_bf16.safetensors",
+      "dit_2_2_t2v_low": "E:/path/to/wan2.2_t2v_low_noise_fp16.safetensors",
+      "dit_2_2_t2v_high": "E:/path/to/wan2.2_t2v_high_noise_fp16.safetensors",
+      "dit_2_2_i2v_low": "E:/path/to/wan2.2_i2v_low_noise_fp16.safetensors",
+      "dit_2_2_i2v_high": "E:/path/to/wan2.2_i2v_high_noise_fp16.safetensors"
+    }
+  },
+  "datasets": {
+    "default_config": "E:/path/to/dataset.toml",
+    "default_output": "E:/path/to/output"
+  },
+  "api_keys": {
+    "$comment": "Never commit API keys. Store here if needed.",
+    "example_service": ""
+  },
+  "user_preferences": {
+    "default_affinity_cores": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "default_batch_size": 16
+  }
+}
+
