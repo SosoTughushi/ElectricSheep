@@ -7,6 +7,8 @@
 
 const fs = require('fs/promises');
 const path = require('path');
+const { marked } = require('marked');
+const hljs = require('highlight.js');
 
 // Parse markdown article and extract sections with complexity levels
 function parseArticle(markdown) {
@@ -66,7 +68,7 @@ function parseArticle(markdown) {
         // Check for complexity markers
         if (line.includes('<!-- simple:start -->')) {
             if (currentComplexity && currentContent.length > 0 && currentSection) {
-                currentSection.content[currentComplexity] = currentContent.join(' ').trim();
+                currentSection.content[currentComplexity] = currentContent.join('\n').trim();
             }
             currentComplexity = 'simple';
             currentContent = [];
@@ -76,7 +78,7 @@ function parseArticle(markdown) {
         
         if (line.includes('<!-- medium:start -->')) {
             if (currentComplexity && currentContent.length > 0 && currentSection) {
-                currentSection.content[currentComplexity] = currentContent.join(' ').trim();
+                currentSection.content[currentComplexity] = currentContent.join('\n').trim();
             }
             currentComplexity = 'medium';
             currentContent = [];
@@ -86,7 +88,7 @@ function parseArticle(markdown) {
         
         if (line.includes('<!-- advanced:start -->')) {
             if (currentComplexity && currentContent.length > 0 && currentSection) {
-                currentSection.content[currentComplexity] = currentContent.join(' ').trim();
+                currentSection.content[currentComplexity] = currentContent.join('\n').trim();
             }
             currentComplexity = 'advanced';
             currentContent = [];
@@ -96,7 +98,7 @@ function parseArticle(markdown) {
         
         if (line.includes('<!--') && line.includes(':end -->')) {
             if (currentComplexity && currentContent.length > 0 && currentSection) {
-                currentSection.content[currentComplexity] = currentContent.join(' ').trim();
+                currentSection.content[currentComplexity] = currentContent.join('\n').trim();
             }
             currentComplexity = null;
             currentContent = [];
@@ -109,11 +111,11 @@ function parseArticle(markdown) {
             // Skip markdown bold markers if they're just labels
             let cleanedLine = line.replace(/^\*\*Simple:\*\*\s*/, '')
                                   .replace(/^\*\*Medium:\*\*\s*/, '')
-                                  .replace(/^\*\*Advanced:\*\*\s*/, '')
-                                  .trim();
+                                  .replace(/^\*\*Advanced:\*\*\s*/, '');
             
-            // Skip empty lines and comment markers
-            if (cleanedLine && !cleanedLine.startsWith('<!--')) {
+            // Skip empty lines and comment markers, but preserve structure
+            if (!cleanedLine.startsWith('<!--')) {
+                // Preserve line breaks - don't trim, keep original formatting
                 currentContent.push(cleanedLine);
             }
         }
@@ -122,13 +124,28 @@ function parseArticle(markdown) {
     // Save last section
     if (currentSection) {
         if (currentComplexity && currentContent.length > 0) {
-            currentSection.content[currentComplexity] = currentContent.join(' ').trim();
+            // Join with newlines to preserve markdown structure (code blocks, lists, etc.)
+            currentSection.content[currentComplexity] = currentContent.join('\n').trim();
         }
         sections.push(currentSection);
     }
     
     return { title, frontmatter, sections };
 }
+
+// Configure marked for code highlighting
+marked.setOptions({
+    highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return hljs.highlight(code, { language: lang }).value;
+            } catch (err) {}
+        }
+        return hljs.highlightAuto(code).value;
+    },
+    breaks: true,
+    gfm: true
+});
 
 // Generate HTML viewer
 function generateHTMLViewer(articleData) {
@@ -140,6 +157,7 @@ function generateHTMLViewer(articleData) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <style>
         * {
             margin: 0;
@@ -284,6 +302,106 @@ function generateHTMLViewer(articleData) {
             font-style: italic;
         }
         
+        /* Markdown styling */
+        .section-content h1, .section-content h2, .section-content h3, 
+        .section-content h4, .section-content h5, .section-content h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .section-content h2 {
+            font-size: 1.5em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.3em;
+        }
+        
+        .section-content h3 {
+            font-size: 1.3em;
+        }
+        
+        .section-content ul, .section-content ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+        
+        .section-content li {
+            margin: 0.5em 0;
+        }
+        
+        .section-content code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+        
+        .section-content pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 1em;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1em 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section-content pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .section-content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 1em;
+            margin: 1em 0;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .section-content a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .section-content a:hover {
+            border-bottom-color: #667eea;
+        }
+        
+        .section-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+        }
+        
+        .section-content th, .section-content td {
+            border: 1px solid #ddd;
+            padding: 0.5em;
+            text-align: left;
+        }
+        
+        .section-content th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .section-content strong {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .section-content em {
+            font-style: italic;
+        }
+        
         .global-controls {
             position: sticky;
             top: 20px;
@@ -356,25 +474,39 @@ function generateHTMLViewer(articleData) {
                 </div>
             </div>
             
-            ${sections.map((section, index) => `
+            ${sections.map((section, index) => {
+                // Render markdown for each difficulty level
+                const renderMarkdown = (content) => {
+                    if (!content || !content.trim()) return '';
+                    try {
+                        return marked.parse(content);
+                    } catch (e) {
+                        return content.replace(/\n/g, '<br>');
+                    }
+                };
+                
+                const defaultContent = section.content.medium || section.content.simple || section.content.advanced || '';
+                const defaultDifficulty = section.content.medium ? 'medium' : (section.content.simple ? 'simple' : 'advanced');
+                
+                return `
                 <div class="section" id="section-${index}">
                     <h2 class="section-title">${section.title}</h2>
                     <div class="difficulty-selector">
-                        <button class="difficulty-btn ${index === 0 ? 'active' : ''}" 
+                        <button class="difficulty-btn ${defaultDifficulty === 'simple' ? 'active' : ''}" 
                                 onclick="setDifficulty(${index}, 'simple')"
                                 data-section="${index}" 
                                 data-difficulty="simple">
                             Simple
                             <span class="difficulty-label simple">Beginner</span>
                         </button>
-                        <button class="difficulty-btn ${index === 0 ? '' : 'active'}" 
+                        <button class="difficulty-btn ${defaultDifficulty === 'medium' ? 'active' : ''}" 
                                 onclick="setDifficulty(${index}, 'medium')"
                                 data-section="${index}" 
                                 data-difficulty="medium">
                             Medium
                             <span class="difficulty-label medium">Intermediate</span>
                         </button>
-                        <button class="difficulty-btn" 
+                        <button class="difficulty-btn ${defaultDifficulty === 'advanced' ? 'active' : ''}" 
                                 onclick="setDifficulty(${index}, 'advanced')"
                                 data-section="${index}" 
                                 data-difficulty="advanced">
@@ -383,15 +515,25 @@ function generateHTMLViewer(articleData) {
                         </button>
                     </div>
                     <div class="section-content" id="content-${index}">
-                        ${section.content.medium || section.content.simple || section.content.advanced || 'No content available'}
+                        ${renderMarkdown(defaultContent)}
                     </div>
                 </div>
-            `).join('')}
+            `;
+            }).join('')}
         </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <script>
         const articleData = ${JSON.stringify(sections, null, 2)};
+        
+        // Configure marked for client-side rendering
+        if (typeof marked !== 'undefined') {
+            marked.setOptions({
+                breaks: true,
+                gfm: true
+            });
+        }
         
         // Set default difficulty for each section (medium for first, simple for others)
         const defaultDifficulties = articleData.map((_, index) => index === 0 ? 'medium' : 'simple');
@@ -401,14 +543,43 @@ function generateHTMLViewer(articleData) {
             setDifficulty(index, defaultDifficulties[index]);
         });
         
+        // Pre-render markdown for all sections and difficulties
+        const renderedContent = {};
+        articleData.forEach((section, sectionIndex) => {
+            renderedContent[sectionIndex] = {};
+            ['simple', 'medium', 'advanced'].forEach(diff => {
+                const content = section.content[diff] || '';
+                if (content && content.trim()) {
+                    try {
+                        // Use marked library loaded via CDN
+                        if (typeof marked !== 'undefined') {
+                            renderedContent[sectionIndex][diff] = marked.parse(content);
+                        } else {
+                            // Fallback: basic markdown rendering
+                            const backtick = String.fromCharCode(96);
+                            const codeRegex = new RegExp(backtick + '([^' + backtick + ']+)' + backtick, 'g');
+                            renderedContent[sectionIndex][diff] = content
+                                .replace(/\n/g, '<br>')
+                                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                                .replace(codeRegex, '<code>$1</code>')
+                                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+                        }
+                    } catch (e) {
+                        renderedContent[sectionIndex][diff] = content.replace(/\n/g, '<br>');
+                    }
+                } else {
+                    renderedContent[sectionIndex][diff] = '<p class="empty">Content not available for this difficulty level.</p>';
+                }
+            });
+        });
+        
         function setDifficulty(sectionIndex, difficulty) {
-            const section = articleData[sectionIndex];
             const contentDiv = document.getElementById('content-' + sectionIndex);
             const buttons = document.querySelectorAll(\`[data-section="\${sectionIndex}"]\`);
             
-            // Update content
-            const content = section.content[difficulty] || 'Content not available for this difficulty level.';
-            contentDiv.innerHTML = '<p>' + content + '</p>';
+            // Update content from pre-rendered markdown
+            contentDiv.innerHTML = renderedContent[sectionIndex][difficulty] || 
+                '<p class="empty">Content not available for this difficulty level.</p>';
             
             // Update button states
             buttons.forEach(btn => {

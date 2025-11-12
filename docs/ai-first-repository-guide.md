@@ -120,7 +120,7 @@ generated: 2025-11-12 11:49:30
 
 ### Tool Registry System
 
-A centralized `.toolset/registry.json` serves as the single source of truth for tool discovery. Each tool entry includes:
+A centralized [`.toolset/registry.json`](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) serves as the single source of truth for tool discovery. Each tool entry includes:
 - **Tool ID**: Unique identifier following naming conventions
 - **Category**: Domain classification (system, ai, dev, misc)
 - **Path**: Filesystem location relative to repository root
@@ -128,6 +128,8 @@ A centralized `.toolset/registry.json` serves as the single source of truth for 
 - **Version**: Semantic versioning for tool evolution tracking
 
 This registry enables AI agents to programmatically discover available tools without filesystem traversal, reducing computational overhead and ensuring consistency.
+
+**Example**: See the [actual registry](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) for real-world tool entries.
 
 ### Operation Code System
 
@@ -188,13 +190,18 @@ This schema enables AI agents to:
 - Validate parameter usage
 - Discover available operations
 
+**Real Examples**:
+- [Bambu Lab MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/system/bambu-lab/MANIFEST.json) - Complete system tool example
+- [Musubi Tuner MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/ai/musubi-tuner/MANIFEST.json) - AI tool example
+- [Remote MCP MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/system/remote-mcp/MANIFEST.json) - Complex tool with multiple operations
+
 ### Hierarchical Rule System
 
 Rules follow a precedence hierarchy enabling conflict resolution:
 
 1. **System Rules** (highest precedence): Core operational constraints, policy cards
-2. **Project Rules**: Repository-wide conventions (`development-workflow.cursorrules`)
-3. **Domain Rules**: Category-specific patterns (`mcp-tool-integration.cursorrules`)
+2. **Project Rules**: Repository-wide conventions ([`development-workflow.cursorrules`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/development-workflow.cursorrules))
+3. **Domain Rules**: Category-specific patterns ([`mcp-tool-integration.cursorrules`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/mcp-tool-integration.cursorrules))
 4. **Tool Rules**: Tool-specific guidelines (in tool directories)
 
 When conflicts occur, higher precedence rules override lower precedence. This enables:
@@ -202,6 +209,8 @@ When conflicts occur, higher precedence rules override lower precedence. This en
 - **Domain flexibility**: Category-specific optimizations
 - **Tool customization**: Per-tool exceptions when needed
 - **Conflict resolution**: Clear precedence prevents ambiguity
+
+**See Also**: [Rules Directory README](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/README.md) for complete ruleset index
 
 <!-- advanced:end -->
 
@@ -759,13 +768,13 @@ Before committing:
 ### Hierarchical Documentation System
 
 **Level 1: Entry Points**
-- `AGENTS.md` - AI agent onboarding (primary entry)
-- `README.md` - Human-facing documentation
-- `QUICKSTART.md` - Quick start guide
+- [`AGENTS.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/AGENTS.md) - AI agent onboarding (primary entry)
+- [`README.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/README.md) - Human-facing documentation
+- [`QUICKSTART.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/QUICKSTART.md) - Quick start guide
 
 **Level 2: Rules and Conventions**
-- `rules/README.md` - Rules directory index
-- `rules/development-workflow.cursorrules` - Core workflow rules
+- [`rules/README.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/README.md) - Rules directory index
+- [`rules/development-workflow.cursorrules`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/development-workflow.cursorrules) - Core workflow rules
 - Domain-specific rulesets for specialized patterns
 
 **Level 3: Guides and Architecture**
@@ -774,9 +783,9 @@ Before committing:
 - Tool-specific README files
 
 **Level 4: Metadata**
-- `MANIFEST.json` - Tool metadata
-- `.toolset/registry.json` - Tool registry
-- `.toolset/operations.json` - Operation definitions
+- `MANIFEST.json` - Tool metadata (see [Bambu Lab example](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/system/bambu-lab/MANIFEST.json))
+- [`.toolset/registry.json`](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) - Tool registry
+- [`.toolset/operations.json`](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/operations.json) - Operation definitions
 
 ### Naming Conventions
 
@@ -820,6 +829,8 @@ $registry = Get-Content .toolset/registry.json | ConvertFrom-Json
 $tools = $registry.tools | Where-Object { $_.category -eq "ai" }
 ```
 
+See the [actual registry](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) for implementation.
+
 **2. Manifest-Based Understanding**
 ```powershell
 # Understand tool without reading source
@@ -828,12 +839,16 @@ $capabilities = $manifest.description
 $parameters = $manifest.parameters
 ```
 
+Example: [Musubi Tuner MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/ai/musubi-tuner/MANIFEST.json)
+
 **3. Operation-Based Execution**
 ```powershell
 # Execute by operation code
 python .toolset/discover_operations.py --code tool:operation
 # Get entry point and parameters
 ```
+
+See [operations discovery guide](https://github.com/SosoTughushi/ElectricSheep/blob/master/docs/guides/operations-discovery.md) for details.
 
 ### Documentation Patterns
 
