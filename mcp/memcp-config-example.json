@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "electric-sheep": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp.server.server"
+      ],
+      "cwd": "YOUR_WORKSPACE_ROOT"
+    },
+    "MemCP": {
+      "transport": "sse",
+      "url": "http://localhost:8000/sse"
+    }
+  }
+}
+

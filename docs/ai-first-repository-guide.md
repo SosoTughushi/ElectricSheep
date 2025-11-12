@@ -100,48 +100,103 @@ This structure enables AI agents to discover and understand tools programmatical
 ## Working with Cursor
 
 <!-- simple:start -->
-**Simple:** Cursor is an AI-powered code editor. To use it well, write clear comments in your code and organize files logically. Cursor's AI can then better understand what you're trying to do.
+**Simple:** This repository uses an **AI-first approach** where AI agents handle most tasks automatically. You don't need to write perfect comments or organize files perfectly - the AI agents handle that for you!
 
-Here are some tips:
-- Use descriptive variable and function names
-- Add comments explaining why you're doing something, not just what
-- Keep related files together in folders
-- Write a clear README explaining your project
+**How It Works:**
+- **AI generates documentation** - You don't need to write README files or comments; agents create them
+- **AI organizes code** - Agents follow standardized patterns and maintain structure
+- **AI verifies its own work** - Through structured output and exit codes, agents self-correct
+- **You focus on what matters** - Describe what you want, and agents handle the implementation details
 
-Cursor reads your code and helps you write more. The better organized your code is, the better Cursor can help!
+**Example:** When you say "Add a tool to monitor GPU temperature", the AI agent will:
+1. Create the tool following standard structure
+2. Write the documentation automatically
+3. Update the registry
+4. Test it and verify it works
+5. Report success
+
+You don't need to write any code, documentation, or organize files - the agent handles everything!
+
+**Effective Conversations:**
+- ✅ "Add a tool to monitor GPU temperature" - Agent handles everything
+- ✅ "Fix the script error with brackets in filenames" - Agent self-corrects and updates docs
+- ✅ "How does the Bambu Lab tool work?" - Agent discovers and explains automatically
+- ❌ "Please write comments explaining this code" - Not needed, agent generates docs automatically
+
+**Remember:** In an AI-first repository, you describe goals and let AI agents do the work. You don't need to write perfect code or documentation - agents handle that!
 
 <!-- simple:end -->
 
 <!-- medium:start -->
-**Medium:** Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor's rules system (`.cursorrules` files) to guide AI behavior and establish project-specific conventions.
+**Medium:** This repository implements an **AI-first architecture** where AI agents operate autonomously through textual feedback loops. Cursor's AI models work best when agents can discover tools programmatically, execute operations automatically, and self-correct based on structured output.
 
-**Key Optimization Strategies:**
+**AI-First Principles:**
 
-1. **Structured Rules**: Create `.cursorrules` files to define project conventions. Place them in:
-   - Project root for global rules
-   - Tool directories for tool-specific rules
+1. **Autonomous Operation**: AI agents run commands directly, capture output, analyze results, and self-correct without asking you to run commands manually.
 
-2. **Self-Documenting Code**: Write code that explains itself:
-   - Use meaningful names (`calculateTotal()` not `calc()`)
-   - Add docstrings/comments for complex logic
-   - Follow consistent formatting
+2. **Textual Feedback Loop**: The core workflow: Edit Code → Execute → Capture Output → Parse → Analyze → Self-Correct → Verify → Repeat. This enables agents to verify and fix their own work.
 
-3. **Pattern Consistency**: Use the same patterns throughout:
-   - Consistent file organization
-   - Standardized naming conventions
-   - Uniform code structure
+3. **Structured Metadata**: Tools include `MANIFEST.json` files with standardized metadata. AI agents can discover and understand tools without reading source code.
 
-4. **Documentation**: Keep docs close to code:
-   - README files in each tool directory
-   - Inline comments for complex sections
-   - Examples showing common usage
+4. **Programmatic Discovery**: Use `.toolset/registry.json` for tool discovery and operation codes (`tool:action`) for execution. This enables AI agents to find and use tools autonomously.
 
-Cursor's AI learns from your codebase structure and patterns, so consistency helps it provide better suggestions.
+5. **Self-Verification**: Agents verify their own work through:
+   - Structured output: `STATUS: SUCCESS`, `ERROR_TYPE: FileNotFound`
+   - Exit codes: 0 = success, non-zero = failure
+   - Output parsing and analysis
+
+**Effective Agent Conversations:**
+
+**Example 1**: "Add a GPU monitoring tool"
+- Agent checks registry → creates tool structure → generates MANIFEST.json → writes README.md → updates registry → tests → reports success
+- **You don't write any code or docs** - agent handles everything
+
+**Example 2**: "Fix the script error with special characters"
+- Agent runs script → captures error → analyzes → fixes → re-runs → updates troubleshooting docs → reports fix
+- **Agent self-corrects and documents automatically**
+
+**Example 3**: "How does tool X work?"
+- Agent queries registry → reads MANIFEST.json → reads README.md → explains capabilities
+- **Agent discovers information autonomously**
+
+**Key Point**: In an AI-first repository, you describe goals and let agents handle implementation. Agents generate documentation, organize code, and verify their own work through structured feedback loops.
 
 <!-- medium:end -->
 
 <!-- advanced:start -->
-**Advanced:** Cursor integrates language models directly into the development workflow, enabling autonomous code generation and modification. Optimize Cursor effectiveness through: (1) structured rulesets in `.cursorrules` files with clear precedence hierarchies, (2) self-documenting code patterns that expose intent to AI models, (3) standardized tool interfaces enabling AI-driven tool discovery and execution, and (4) textual feedback loops where AI can verify its own work through command execution and output analysis. Configure Cursor rules following the project's rule precedence system (system > project > domain > tool).
+**Advanced:** This repository implements an **AI-first architecture** optimized for autonomous AI agent operation. The core principle is the **textual feedback loop**: agents edit code → execute → capture output → parse → analyze → self-correct → verify → repeat. This enables fully autonomous operation where agents generate documentation, organize code, and verify their own work without human intervention.
+
+**Architectural Patterns:**
+
+1. **Textual Feedback Loop**: Agents verify their own work through structured output parsing, exit code validation, and iterative self-correction. Never ask users to run commands - agents execute directly and capture all output.
+
+2. **Programmatic Discovery**: Tools registered in `.toolset/registry.json` with standardized `MANIFEST.json` files enable AI agents to discover and understand tools without reading source code. Operation codes (`tool:action`) enable version-independent execution.
+
+3. **Autonomous Documentation**: Agents generate documentation automatically in the same iteration as code changes. Users don't write README files or comments - agents create them following standardized patterns.
+
+4. **Self-Verification Mechanisms**: Agents validate their own work through:
+   - Structured output: `STATUS: SUCCESS`, `ERROR_TYPE: FileNotFound`, `ERROR_SUGGESTION: ...`
+   - Exit codes: 0 = success, non-zero = failure
+   - Output pattern matching against expected behavior
+   - Dependency verification before execution
+
+5. **Hierarchical Rule System**: Rules follow precedence (system > project > domain > tool) enabling conflict resolution. Cursor rules configured following this hierarchy guide agent behavior consistently.
+
+**Effective Agent Conversations:**
+
+**Example 1**: "Add a GPU monitoring tool"
+- Agent: Checks `.toolset/registry.json` → Creates `tools/system/gpu-monitor/` → Generates `MANIFEST.json` → Writes `README.md` → Updates registry → Executes tests → Reports `STATUS: SUCCESS`, `TOOL_ID: gpu-monitor`
+- **User writes zero code or documentation** - agent handles everything autonomously
+
+**Example 2**: "Fix script error with brackets in filenames"
+- Agent: Executes script → Captures `ERROR_TYPE: FileNotFound`, `ERROR_FILE: file[1].txt` → Analyzes PowerShell cmdlet issue → Fixes using `.NET` methods → Re-executes → Updates `README.md` troubleshooting → Updates ruleset → Reports `STATUS: FIXED`
+- **Agent self-corrects and documents automatically**
+
+**Example 3**: "How does the Bambu Lab tool work?"
+- Agent: Queries `.toolset/registry.json` → Finds `bambu-lab-affinity` → Reads `MANIFEST.json` → Reads `README.md` → Explains capabilities and operation code
+- **Agent discovers information autonomously using standardized structure**
+
+**Key Principle**: In an AI-first repository, users describe goals and agents handle implementation. Agents generate documentation, organize code following standardized patterns, and verify their own work through textual feedback loops. Users don't need to write perfect comments or organize files perfectly - agents handle that autonomously.
 
 <!-- advanced:end -->
 
