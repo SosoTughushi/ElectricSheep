@@ -1,3 +1,10 @@
+---
+priority: domain
+applies_to: when working with Bambu Lab issues
+conflicts_with: none
+examples: see Examples section below
+---
+
 # Bambu Lab Crash Fix
 
 ## Problem Description
@@ -30,6 +37,124 @@ Bambu Lab application crashes when clicking if all CPU cores are enabled. Requir
 1. Try Solution 1 first (NVIDIA settings)
 2. If that doesn't work, implement Solution 2 (automated affinity)
 3. Verify drivers are current
+
+## Examples
+
+### Example 1: Applying Solution 1 - Good Pattern
+
+**Scenario**: Disabling NVIDIA Threaded Optimization.
+
+**Good:**
+```powershell
+# Check if NVIDIA Control Panel is available
+$nvidiaPath = "C:\Program Files\NVIDIA Corporation\Control Panel Client\nvcplapi.dll"
+if (Test-Path $nvidiaPath) {
+    Write-Output "NVIDIA_CONTROL_PANEL: Available"
+    Write-Output "ACTION_REQUIRED: Manual configuration needed"
+    Write-Output "STEPS:"
+    Write-Output "  1. Open NVIDIA Control Panel"
+    Write-Output "  2. Navigate to: 3D Settings > Manage 3D Settings > Program Settings"
+    Write-Output "  3. Add Bambu Studio to program list"
+    Write-Output "  4. Set 'Threaded Optimization' to 'Off'"
+    Write-Output "  5. Apply and restart Bambu Studio"
+} else {
+    Write-Output "NVIDIA_CONTROL_PANEL: Not found"
+    Write-Output "SUGGESTION: Try Solution 2 (automated CPU affinity)"
+}
+```
+
+**Bad:**
+```powershell
+# Don't check if NVIDIA Control Panel exists
+# Don't provide clear instructions
+# Assume user knows how to configure
+```
+
+### Example 2: Applying Solution 2 - Good Pattern
+
+**Scenario**: Automating CPU affinity setting.
+
+**Good:**
+```powershell
+# Find Bambu Studio process
+$processName = "BambuStudio"
+$process = Get-Process -Name $processName -ErrorAction SilentlyContinue
+
+if (-not $process) {
+    Write-Output "PROCESS: Not running"
+    Write-Output "ACTION: Launch Bambu Studio first, then run this script"
+    exit 1
+}
+
+# Set CPU affinity to physical cores only (0-19, excluding hyperthreaded)
+$physicalCores = 0..19
+$affinityMask = 0
+foreach ($core in $physicalCores) {
+    $affinityMask = $affinityMask -bor [Math]::Pow(2, $core)
+}
+
+try {
+    $process.ProcessorAffinity = [IntPtr]$affinityMask
+    Write-Output "STATUS: SUCCESS"
+    Write-Output "CPU_AFFINITY: Set to physical cores only (0-19)"
+    Write-Output "LOGICAL_PROCESSORS: 20 (excluded hyperthreaded cores)"
+} catch {
+    Write-Error "ERROR_TYPE: PermissionDenied"
+    Write-Error "ERROR_SUGGESTION: Run script as administrator"
+    exit 1
+}
+```
+
+**Bad:**
+```powershell
+# Don't check if process exists
+# Use all cores without limiting
+# No error handling
+$process = Get-Process BambuStudio
+$process.ProcessorAffinity = 0xFFFFFFF  # All cores - might cause crash
+```
+
+### Example 3: Troubleshooting Flow - Good Pattern
+
+**Scenario**: Bambu Lab still crashing after applying solutions.
+
+**Good:**
+```powershell
+# Step 1: Check if Solution 1 applied
+Write-Output "CHECKING: NVIDIA Threaded Optimization"
+# (Manual check - can't automate)
+
+# Step 2: Check if Solution 2 applied
+$process = Get-Process -Name "BambuStudio" -ErrorAction SilentlyContinue
+if ($process) {
+    $affinity = $process.ProcessorAffinity
+    $coreCount = ([Convert]::ToString($affinity.ToInt64(), 2)).ToCharArray() | Where-Object { $_ -eq '1' } | Measure-Object | Select-Object -ExpandProperty Count
+    Write-Output "CPU_AFFINITY_CORES: $coreCount"
+    if ($coreCount -gt 20) {
+        Write-Output "ISSUE: Using hyperthreaded cores"
+        Write-Output "ACTION: Re-apply Solution 2"
+    }
+}
+
+# Step 3: Check drivers
+$nvidiaDriver = (Get-WmiObject Win32_PnPSignedDriver | Where-Object { $_.DeviceName -like "*NVIDIA*" } | Select-Object -First 1).DriverVersion
+Write-Output "NVIDIA_DRIVER: $nvidiaDriver"
+Write-Output "SUGGESTION: Update drivers if outdated"
+
+# Step 4: Escalate if needed
+if ($stillCrashing) {
+    Write-Output "ACTION_REQUIRED: Manual investigation needed"
+    Write-Output "SUGGESTION: Check Bambu Lab logs and forum"
+}
+```
+
+**Bad:**
+```powershell
+# Don't check solutions
+# Don't verify fixes
+# Don't provide troubleshooting steps
+# Just report error without context
+```
 
 ## References
 - Bambu Lab forum discussions on crashes

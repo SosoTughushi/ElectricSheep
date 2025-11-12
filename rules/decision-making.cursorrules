@@ -1,0 +1,325 @@
+---
+priority: project
+applies_to: all development work, especially ambiguous situations
+conflicts_with: none
+examples: see Examples section below
+---
+
+# Decision-Making Framework
+
+**IMPORTANT**: This ruleset provides structured guidance for handling ambiguous situations, conflicting requirements, and decisions about when to proceed autonomously vs escalate to the user.
+
+## Core Principles
+
+1. **Prefer autonomy** - Proceed when safe and reversible
+2. **Escalate when risky** - Ask user for irreversible or high-risk operations
+3. **Document decisions** - Explain reasoning for future agents
+4. **Check rules first** - Consult relevant rulesets before deciding
+
+## Decision Framework
+
+### Step 1: Assess Situation
+
+Ask these questions:
+
+1. **Is there a relevant ruleset?** → Check `rules/README.md` quick reference
+2. **Is the operation reversible?** → Can changes be undone?
+3. **Is the operation high-risk?** → Could cause significant damage?
+4. **Is the requirement clear?** → Single interpretation or ambiguous?
+5. **Do I have sufficient context?** → Enough information to proceed safely?
+
+### Step 2: Classify Decision Type
+
+**Type A: Clear Rule Exists**
+- Relevant ruleset covers this situation
+- **Action**: Follow rule, proceed autonomously
+
+**Type B: Reversible Operation**
+- Changes can be undone (code edits, file creation, etc.)
+- **Action**: Proceed autonomously, document what was done
+
+**Type C: Irreversible Operation**
+- Changes cannot be undone (deletion, destructive operations)
+- **Action**: Escalate to user, explain why
+
+**Type D: Ambiguous Requirement**
+- Multiple valid interpretations possible
+- **Action**: Proceed with most conservative interpretation, document assumption
+
+**Type E: High-Risk Operation**
+- Could cause significant damage (system changes, data loss)
+- **Action**: Escalate to user, explain risks
+
+### Step 3: Apply Decision Logic
+
+```
+Is there a clear rule?
+├─ YES → Follow rule, proceed autonomously
+└─ NO → Continue
+
+Is operation reversible?
+├─ YES → Proceed autonomously, document
+└─ NO → Continue
+
+Is operation high-risk?
+├─ YES → Escalate to user
+└─ NO → Continue
+
+Is requirement ambiguous?
+├─ YES → Use conservative interpretation, document assumption
+└─ NO → Proceed autonomously
+```
+
+## When to Ask User
+
+### Always Ask When:
+
+1. **Irreversible operations**
+   - Deleting files/directories
+   - Modifying system settings
+   - Committing to version control (if unsure)
+   - Overwriting important data
+
+2. **Permission required**
+   - Administrator/elevated privileges needed
+   - Access to restricted resources
+   - Network/API access requiring credentials
+
+3. **Ambiguous requirements**
+   - Multiple valid interpretations
+   - User intent unclear
+   - Conflicting requirements
+
+4. **High-risk operations**
+   - System-level changes
+   - Data migration
+   - Production deployments
+   - Breaking changes
+
+5. **After failed attempts**
+   - 3+ failed self-correction attempts
+   - Error patterns unclear
+   - No known solution
+
+### Never Ask When:
+
+1. **Reversible operations**
+   - Code edits (can be reverted)
+   - File creation (can be deleted)
+   - Documentation updates (can be modified)
+
+2. **Clear rules exist**
+   - Relevant ruleset covers situation
+   - Standard pattern applies
+
+3. **Low-risk operations**
+   - Reading files
+   - Querying operations
+   - Listing directories
+   - Non-destructive queries
+
+4. **Safe fallbacks available**
+   - Alternative approach exists
+   - Can recover from failure
+
+## Handling Conflicting Requirements
+
+### Conflict Resolution Process
+
+1. **Identify conflict** - What are the conflicting requirements?
+2. **Check precedence** - See `rules/README.md` for rule precedence
+3. **Apply precedence** - Higher precedence wins
+4. **Document resolution** - Explain why one requirement was chosen
+5. **Verify with user** - If high-risk, confirm resolution
+
+### Conflict Types
+
+**Type 1: Rule Conflicts**
+- Multiple rules give different guidance
+- **Resolution**: Apply rule precedence (System > Project > Domain > Tool)
+
+**Type 2: User vs Rule Conflicts**
+- User instruction conflicts with rule
+- **Resolution**: User instruction wins, but document why rule was overridden
+
+**Type 3: Ambiguous Requirements**
+- Requirement has multiple interpretations
+- **Resolution**: Use most conservative interpretation, document assumption
+
+## Examples
+
+### Example 1: Reversible Operation - Proceed Autonomously
+
+**Scenario**: User asks to "add error handling to script"
+
+**Decision**: Proceed autonomously
+- **Reason**: Code edit is reversible
+- **Risk**: Low (can revert changes)
+- **Action**: Add error handling, document changes
+
+**Implementation**:
+```powershell
+# Add error handling
+try {
+    # Existing code
+} catch {
+    Write-Error "ERROR_TYPE: $($_.Exception.GetType().Name)"
+    Write-Error "ERROR_DETAILS: $($_.Exception.Message)"
+    exit 1
+}
+# Document: Added error handling per user request
+```
+
+### Example 2: Irreversible Operation - Escalate
+
+**Scenario**: User asks to "delete old log files"
+
+**Decision**: Escalate to user
+- **Reason**: Deletion is irreversible
+- **Risk**: Medium (data loss possible)
+- **Action**: Ask for confirmation, show what will be deleted
+
+**Implementation**:
+```powershell
+# Find old log files
+$oldLogs = Get-ChildItem logs/ -Filter "*.log" | Where-Object {
+    $_.LastWriteTime -lt (Get-Date).AddDays(-30)
+}
+
+if ($oldLogs.Count -gt 0) {
+    Write-Output "Found $($oldLogs.Count) old log files:"
+    $oldLogs | ForEach-Object { Write-Output "  - $($_.FullName)" }
+    Write-Output ""
+    Write-Output "ACTION_REQUIRED: Please confirm deletion of these files"
+    Write-Output "COMMAND: Remove-Item -Path `$oldLogs -Force"
+    # Don't proceed - wait for user confirmation
+} else {
+    Write-Output "STATUS: No old log files found"
+}
+```
+
+### Example 3: Ambiguous Requirement - Use Conservative Interpretation
+
+**Scenario**: User asks to "update the config"
+
+**Decision**: Proceed with conservative interpretation
+- **Reason**: Ambiguous - which config? what update?
+- **Risk**: Low (can check what exists first)
+- **Action**: Check existing configs, update most relevant one, document assumption
+
+**Implementation**:
+```powershell
+# Check for config files
+$configFiles = @(
+    ".local/config.json",
+    ".toolset/config.json",
+    "config.json"
+)
+
+$foundConfig = $configFiles | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+if ($foundConfig) {
+    Write-Output "ASSUMPTION: Updating $foundConfig (most relevant config found)"
+    # Update config with safe defaults
+    # Document what was updated
+} else {
+    Write-Output "ACTION_REQUIRED: No config file found. Which config should be updated?"
+    # Escalate - need clarification
+}
+```
+
+### Example 4: Rule Conflict - Apply Precedence
+
+**Scenario**: Tool rule says "commit config.json", but privacy rule says "never commit API keys"
+
+**Decision**: Apply precedence (privacy rule wins)
+- **Reason**: Privacy rule has higher precedence (Project level)
+- **Risk**: High (privacy violation)
+- **Action**: Don't commit config.json, use `.local/config.json` instead
+
+**Implementation**:
+```powershell
+# Check if config.json contains sensitive data
+$config = Get-Content config.json | ConvertFrom-Json
+if ($config.apiKey -or $config.password) {
+    Write-Warning "CONFLICT_RESOLUTION: Privacy rule takes precedence"
+    Write-Warning "ACTION: Using .local/config.json instead (gitignored)"
+    # Use .local/config.json, don't commit
+} else {
+    # Safe to commit - no sensitive data
+    git add config.json
+}
+```
+
+### Example 5: High-Risk Operation - Escalate
+
+**Scenario**: User asks to "update system registry"
+
+**Decision**: Escalate to user
+- **Reason**: System-level change, high risk
+- **Risk**: High (could break system)
+- **Action**: Explain risks, ask for explicit confirmation
+
+**Implementation**:
+```powershell
+# Check if registry operation is safe
+$registryPath = "HKLM:\Software\..."
+$operation = "Set registry value"
+
+Write-Output "RISK_ASSESSMENT: High - System registry modification"
+Write-Output "OPERATION: $operation"
+Write-Output "PATH: $registryPath"
+Write-Output "IMPACT: System-wide change, requires admin privileges"
+Write-Output ""
+Write-Output "ACTION_REQUIRED: Please confirm this operation"
+Write-Output "CONFIRMATION: Type 'yes' to proceed"
+# Don't proceed - wait for explicit confirmation
+```
+
+## Escalation Format
+
+When escalating to user, use structured format:
+
+```powershell
+Write-Output "DECISION: Escalating to user"
+Write-Output "REASON: [Why escalation needed]"
+Write-Output "RISK_LEVEL: [Low|Medium|High]"
+Write-Output "OPERATION: [What would be done]"
+Write-Output "IMPACT: [What would be affected]"
+Write-Output "ACTION_REQUIRED: [What user needs to do]"
+```
+
+## Documentation Requirements
+
+When making decisions autonomously, document:
+
+1. **Decision made** - What was decided
+2. **Reasoning** - Why this decision
+3. **Assumptions** - What was assumed
+4. **Alternatives considered** - Other options evaluated
+5. **Risks** - Potential issues
+
+**Example Documentation**:
+```markdown
+## Decision: Added error handling to script
+
+**Reasoning**: User requested error handling, operation is reversible (code edit)
+
+**Assumptions**: 
+- Standard error handling pattern applies
+- Exit code 1 indicates failure
+
+**Alternatives considered**:
+- Logging only (rejected - need exit codes)
+- Try-catch with retry (rejected - not needed for this case)
+
+**Risks**: Low - can revert if needed
+```
+
+## References
+
+- **Error Handling**: `rules/error-handling.cursorrules` - Error recovery patterns
+- **Rule Precedence**: `rules/README.md` - Hierarchical precedence system
+- **Development Workflow**: `rules/development-workflow.cursorrules` - Documentation requirements
+- **Privacy Compliance**: `rules/privacy-compliance.cursorrules` - Privacy considerations
+

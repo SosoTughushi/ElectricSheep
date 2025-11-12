@@ -1,0 +1,49 @@
+{
+  "id": "ai-diagram-generator",
+  "name": "AI Diagram Generator",
+  "description": "Modular tool for generating Mermaid diagrams from user descriptions. User-driven diagram creation for articles.",
+  "category": "ai",
+  "version": "0.1.0",
+  "author": "Soso",
+  "tags": ["ai", "diagram", "mermaid", "visualization"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python"],
+    "external": ["mermaid"],
+    "related_tools": ["ai-article-writer"]
+  },
+  "entry_points": {
+    "primary": "scripts/generate-diagram.ps1"
+  },
+  "parameters": [
+    {
+      "name": "Description",
+      "type": "string",
+      "required": true,
+      "description": "Description of the diagram to generate"
+    },
+    {
+      "name": "DiagramType",
+      "type": "string",
+      "required": false,
+      "default": "flowchart",
+      "description": "Type of diagram: flowchart, sequence, class, state"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Generate flowchart diagram",
+      "command": ".\tools\ai\ai-diagram-generator\scripts\generate-diagram.ps1 -Description \"User login process\""
+    }
+  ],
+  "ai_friendly": {
+    "context": "Generates Mermaid diagrams from descriptions. User-driven tool for creating visualizations in articles.",
+    "common_use_cases": [
+      "Create flowcharts",
+      "Generate sequence diagrams",
+      "Create class diagrams",
+      "Generate state diagrams"
+    ]
+  }
+}
+

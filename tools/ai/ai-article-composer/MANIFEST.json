@@ -1,0 +1,59 @@
+{
+  "id": "ai-article-composer",
+  "name": "AI Article Composer",
+  "description": "Orchestrator tool that combines text sections, diagrams, and complexity settings into final article. Final composition step.",
+  "category": "ai",
+  "version": "0.1.0",
+  "author": "Soso",
+  "tags": ["ai", "article", "composition", "markdown"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python"],
+    "external": ["markdown", "jinja2"],
+    "related_tools": ["ai-article-writer", "ai-text-generator", "ai-diagram-generator", "ai-complexity-adapter"]
+  },
+  "entry_points": {
+    "primary": "scripts/compose-article.ps1"
+  },
+  "parameters": [
+    {
+      "name": "TextSections",
+      "type": "array",
+      "required": true,
+      "description": "Array of text sections to include"
+    },
+    {
+      "name": "Diagrams",
+      "type": "array",
+      "required": false,
+      "description": "Array of diagrams to embed"
+    },
+    {
+      "name": "ComplexitySettings",
+      "type": "object",
+      "required": false,
+      "description": "Complexity adaptation settings"
+    },
+    {
+      "name": "OutputPath",
+      "type": "string",
+      "required": true,
+      "description": "Path to save final article"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Compose final article",
+      "command": ".\tools\ai\ai-article-composer\scripts\compose-article.ps1 -TextSections @(...) -OutputPath \"./output/article.md\""
+    }
+  ],
+  "ai_friendly": {
+    "context": "Final composition step. Combines generated text sections, diagrams, and complexity settings into complete article.",
+    "common_use_cases": [
+      "Combine article components",
+      "Apply formatting and structure",
+      "Generate final Markdown output"
+    ]
+  }
+}
+

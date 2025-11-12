@@ -1,16 +1,171 @@
+---
+priority: project
+applies_to: all command execution and script running
+conflicts_with: none
+examples: see Examples section below
+---
+
 # Execution Preference Rules
 
+## Textual Feedback Loop
+
+**Core Principle**: This repository uses a textual feedback loop methodology. When AI edits code, it should:
+1. **Run the code immediately** (don't ask user to run it)
+2. **Capture all output** (stdout, stderr, exit codes)
+3. **Analyze the output** (check for errors, verify expected behavior)
+4. **Self-correct** (fix issues based on output analysis)
+5. **Repeat** until successful
+
+This enables AI agents to work autonomously and verify their own changes.
+
 ## Policy
-- Prefer running commands directly to collect output and verify behavior, rather than asking the user to run them.
+- **Always run commands directly** - Prefer running commands to collect output and verify behavior, rather than asking the user to run them.
+- **Capture all output** - Use logs to the `logs/` directory whenever possible for analysis.
+- **Analyze before proceeding** - Check exit codes, parse error messages, verify expected behavior.
+- **Self-correct on errors** - Fix issues immediately based on output analysis, then re-run.
 - Use non-interactive flags and run in the background for long-running tasks.
-- Capture logs to the `logs/` directory whenever possible.
 
 ## Implementation
 - Use PowerShell with `-ExecutionPolicy Bypass` for local scripts.
 - For persistent processes, redirect all streams using `*>` to log files.
 - When admin rights are required, detect failure and inform the user clearly.
+- **Parse output programmatically** - Design scripts to produce parseable output (structured text, exit codes).
+
+## Output Design for AI Parsing
+
+**Good practices:**
+- Use structured output: `STATUS: SUCCESS`, `ERROR_TYPE: FileNotFound`
+- Always set exit codes: `exit 0` (success) or `exit 1` (failure)
+- Include actionable error messages with context
+- Log to files for later analysis
+
+**Bad practices:**
+- Color-only feedback (hard to parse)
+- Unclear success/failure indicators
+- Output only to console without logging
+
+## Examples
+
+### Example 1: Running a Script - Good Pattern
+
+**Scenario**: Need to run a PowerShell script and capture output.
+
+**Good:**
+```powershell
+# Run script directly, capture all output
+$logFile = "logs/script-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+powershell.exe -ExecutionPolicy Bypass -File ".\tools\system\tool\scripts\main.ps1" -Param "value" *> $logFile 2>&1
+$exitCode = $LASTEXITCODE
+
+# Analyze output
+$output = Get-Content $logFile -Raw
+if ($exitCode -ne 0) {
+    # Parse structured error messages
+    if ($output -match "ERROR_TYPE: (\w+)") {
+        $errorType = $Matches[1]
+        # Handle error based on type
+    }
+    # Self-correct and re-run
+} else {
+    Write-Output "STATUS: SUCCESS"
+}
+```
+
+**Bad:**
+```powershell
+# Ask user to run script
+Write-Output "Please run: .\tools\system\tool\scripts\main.ps1 -Param value"
+# No output capture
+# No error analysis
+# No self-correction
+```
+
+### Example 2: Handling Paths with Spaces - Good Pattern
+
+**Scenario**: Need to work with file paths that contain spaces.
+
+**Good:**
+```powershell
+# Always quote paths
+$path = "E:\My Projects\electric-sheep\tools\script.ps1"
+powershell.exe -ExecutionPolicy Bypass -File "`"$path`"" *> logs/output.log 2>&1
+
+# Or use single quotes for literal paths
+$path = 'E:\My Projects\electric-sheep\tools\script.ps1'
+```
+
+**Bad:**
+```powershell
+# Unquoted path with spaces - will fail
+$path = E:\My Projects\electric-sheep\tools\script.ps1
+powershell.exe -File $path
+# Error: "My" is not recognized as a command
+```
+
+### Example 3: Structured Output - Good Pattern
+
+**Scenario**: Script needs to produce parseable output for AI analysis.
+
+**Good:**
+```powershell
+# Structured, parseable output
+Write-Output "STATUS: SUCCESS"
+Write-Output "FILES_PROCESSED: 42"
+Write-Output "ERRORS: 0"
+Write-Output "DURATION: 5.3 seconds"
+exit 0
+
+# On error:
+Write-Error "ERROR_TYPE: FileNotFound"
+Write-Error "ERROR_FILE: C:\path\to\file.txt"
+Write-Error "ERROR_SUGGESTION: Check if file exists"
+exit 1
+```
+
+**Bad:**
+```powershell
+# Unstructured output - hard to parse
+Write-Host "Everything looks good!" -ForegroundColor Green
+Write-Host "Processed some files"
+# No exit code
+# No structured error messages
+# AI can't programmatically determine success/failure
+```
+
+### Example 4: Long-Running Task - Good Pattern
+
+**Scenario**: Need to run a long-running operation in background.
+
+**Good:**
+```powershell
+# Run in background, capture output
+$logFile = "logs/long-task-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+Start-Process powershell.exe -ArgumentList @(
+    "-ExecutionPolicy", "Bypass",
+    "-File", ".\long-task.ps1",
+    "-Param", "value"
+) -RedirectStandardOutput $logFile -RedirectStandardError $logFile -NoNewWindow
+
+# Check status later
+if (Test-Path $logFile) {
+    $output = Get-Content $logFile -Raw
+    if ($output -match "STATUS: SUCCESS") {
+        Write-Output "Task completed successfully"
+    }
+}
+```
+
+**Bad:**
+```powershell
+# Run synchronously - blocks execution
+.\long-task.ps1
+# No output capture
+# Can't check status
+# Blocks other operations
+```
 
 ## Notes
 - System: Windows 11 Pro, user path conventions may include spaces.
 - Always quote paths with spaces.
+- See `docs/guides/ai-agent-workflow.md` for comprehensive workflow guide.
 

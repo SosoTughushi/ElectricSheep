@@ -1,3 +1,10 @@
+---
+priority: domain
+applies_to: when working with operations
+conflicts_with: none
+examples: see Examples section below
+---
+
 # Electric Sheep Toolset Operations
 
 This file defines all available operations in the toolset. Operations are identified by code names and can be queried by AI agents.
@@ -167,4 +174,91 @@ When creating scripts or config files:
 
 **"How do I launch Bambu Lab?"**
 → Returns `bambu-lab:launch` operation details
+
+## Examples
+
+### Example 1: Querying Operations - Good Pattern
+
+**Scenario**: Agent needs to find available operations.
+
+**Good:**
+```powershell
+# Query all operations
+python .toolset/discover_operations.py
+
+# Query by category
+python .toolset/discover_operations.py --category system
+
+# Query specific operation
+python .toolset/discover_operations.py --code bambu-lab:launch
+
+# Load operations.json programmatically
+$operations = Get-Content .toolset/operations.json | ConvertFrom-Json
+$systemOps = $operations.operations | Where-Object { $_.category -eq "system" }
+```
+
+**Bad:**
+```powershell
+# Hardcode operation codes
+# Don't query registry
+# Assume operations exist without checking
+$operation = "bambu-lab:launch"  # Might not exist
+```
+
+### Example 2: Using Operations - Good Pattern
+
+**Scenario**: Agent needs to execute an operation.
+
+**Good:**
+```powershell
+# Step 1: Query operation details
+$operation = python .toolset/discover_operations.py --code musubi-tuner:wan:train | ConvertFrom-Json
+
+# Step 2: Check parameters
+$requiredParams = $operation.parameters | Where-Object { $_.required -eq $true }
+
+# Step 3: Execute with proper parameters
+$toolPath = $operation.tool_path
+$scriptPath = Join-Path $toolPath $operation.entry_point
+powershell.exe -ExecutionPolicy Bypass -File $scriptPath -Param1 "value1" -Param2 "value2"
+```
+
+**Bad:**
+```powershell
+# Execute without checking operation exists
+# Don't validate parameters
+# Hardcode script paths
+.\tools\ai\musubi-tuner\scripts\wan-train.ps1  # Path might be wrong
+```
+
+### Example 3: Handling Local Variables - Good Pattern
+
+**Scenario**: Operation needs user-specific paths.
+
+**Good:**
+```powershell
+# Load from local config
+$configPath = ".local/config.json"
+if (Test-Path $configPath) {
+    $config = Get-Content $configPath | ConvertFrom-Json
+    $modelPath = $config.modelPath
+} else {
+    # Use placeholder in documentation
+    Write-Error "ERROR_TYPE: ConfigNotFound"
+    Write-Error "ERROR_SUGGESTION: Set modelPath in .local/config.json"
+    exit 1
+}
+
+# Use config value
+$operation = "musubi-tuner:wan:train"
+# Pass $modelPath as parameter
+```
+
+**Bad:**
+```powershell
+# Hardcode user path
+$modelPath = "E:\Users\John\Models\..."  # NEVER DO THIS
+# Commit user-specific paths
+# Don't use config system
+```
 

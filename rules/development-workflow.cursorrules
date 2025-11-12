@@ -1,0 +1,263 @@
+---
+priority: project
+applies_to: every message/iteration during development
+conflicts_with: none
+examples: see Examples section below
+---
+
+# Development Workflow Rules
+
+**IMPORTANT**: These rules apply to EVERY message/iteration during development. Follow them consistently.
+
+## During Development
+
+### 1. Document as You Go
+- **Update relevant READMEs/docs** when making changes
+- **Update tool documentation** if behavior changes
+- **Add examples** when adding new functionality
+- **Update troubleshooting sections** when fixing bugs
+
+### 2. Update Manifests
+- **If tool behavior changes**: Update `MANIFEST.json` with new parameters, entry points, or descriptions
+- **If parameters change**: Update parameter definitions in manifest
+- **If examples change**: Update examples section in manifest
+
+### 3. Update Registry
+- **If adding new tools**: Add to `.toolset/registry.json`
+- **If modifying tools**: Update tool entry in registry
+- **If tool status changes**: Update status field (active, deprecated, etc.)
+
+## When You Get Stuck
+
+### While Investigating
+- **Focus on resolution**: Work on understanding and fixing the issue
+- **Do NOT update rulesets yet**: Wait until issue is resolved
+- **Document findings temporarily**: Keep notes for later documentation
+
+### After Resolution
+- **Update rulesets immediately**: Document the solution in relevant ruleset file
+- **Update README**: Add solution to tool's README.md troubleshooting section
+- **Update operations**: If solution changes operation behavior, update `.toolset/operations.json`
+- **Create/update ruleset**: If issue is recurring or domain-specific, create/update ruleset file
+
+## When Resolving Issues
+
+### After Fixing a Bug
+1. **Update problem documentation**: If ruleset describes the problem, update with solution
+2. **Update README**: Add solution to tool's README.md
+3. **Update operations**: If solution changes operation behavior, update operations.json
+4. **Create/update ruleset**: If issue is recurring, create/update ruleset file
+
+### After Discovering a Workaround
+1. **Document the workaround**: Add to relevant README or ruleset
+2. **Explain why it's needed**: Context helps future agents
+3. **Update examples**: If workaround affects usage, update examples
+
+### After Changing Tool Behavior
+1. **Update MANIFEST.json**: Reflect new behavior, parameters, or entry points
+2. **Update README.md**: Document new behavior and usage
+3. **Update operations.json**: If operations changed
+4. **Update registry.json**: If tool metadata changed
+
+## Iterative Documentation Updates
+
+**Core Principle**: Documentation should be updated in the same iteration as code changes.
+
+**When to update**:
+- ✅ After resolving a blocking issue
+- ✅ After discovering a workaround
+- ✅ After changing tool behavior
+- ✅ After adding new functionality
+- ✅ After fixing a bug that others might encounter
+- ✅ After modifying parameters or entry points
+
+**What to update** (in order of priority):
+1. **Tool README.md** - Usage, examples, troubleshooting
+2. **Relevant ruleset file** - If domain-specific (e.g., `bambu-lab-fix.cursorrules`)
+3. **MANIFEST.json** - If parameters/behavior changed
+4. **.toolset/operations.json** - If operation changed
+5. **.toolset/registry.json** - If tool metadata changed
+
+## Example Workflow
+
+**Scenario**: Developing a feature, encounter issue, resolve it
+
+**Iteration 1 - Encounter Issue**:
+- Problem: "Script fails with special characters in filenames"
+- Action: Investigate root cause
+- Documentation: None yet (issue not resolved)
+
+**Iteration 2 - Resolve Issue**:
+- Solution: Use .NET methods instead of PowerShell cmdlets
+- Fix code: Update script to use `[System.IO.File]::ReadAllText()`
+- **Update documentation** (same iteration):
+  - ✅ Add to tool README.md troubleshooting section
+  - ✅ Update relevant ruleset with note about special characters
+  - ✅ Update MANIFEST.json if parameters changed
+- Commit: Code + documentation changes together
+
+## File Update Checklist
+
+When making changes, check if these need updates:
+
+- [ ] Tool `README.md` - Usage, examples, troubleshooting
+- [ ] Tool `MANIFEST.json` - Parameters, entry points, behavior
+- [ ] `.toolset/registry.json` - Tool registration
+- [ ] `.toolset/operations.json` - Operation definitions
+- [ ] Relevant `rules/*.cursorrules` - Domain-specific rules
+- [ ] Main `README.md` - If adding major features
+
+## Best Practices
+
+1. **Update together**: Code and documentation changes in same commit/iteration
+2. **Be specific**: Document not just what changed, but why
+3. **Add examples**: Show how to use new/changed functionality
+4. **Update all relevant files**: Don't forget manifests, registries, and rulesets
+5. **Think about future agents**: Will they understand this change?
+
+## Examples
+
+### Example 1: Adding a Feature - Good Documentation Flow
+
+**Scenario**: Adding a new parameter to an existing tool.
+
+**Good:**
+```powershell
+# Step 1: Update code
+param(
+    [string]$ExistingParam,
+    [string]$NewParam  # New parameter added
+)
+
+# Step 2: Update MANIFEST.json (same iteration)
+{
+  "parameters": [
+    {
+      "name": "ExistingParam",
+      "type": "string",
+      "description": "Existing parameter"
+    },
+    {
+      "name": "NewParam",
+      "type": "string",
+      "description": "New parameter for feature X"
+    }
+  ]
+}
+
+# Step 3: Update README.md (same iteration)
+## Parameters
+- `ExistingParam` - Existing parameter
+- `NewParam` - New parameter for feature X (new in v1.1.0)
+
+# Step 4: Commit together
+git add script.ps1 MANIFEST.json README.md
+git commit -m "Add NewParam feature with documentation"
+```
+
+**Bad:**
+```powershell
+# Only update code, forget documentation
+param(
+    [string]$NewParam  # Added but not documented
+)
+# MANIFEST.json not updated
+# README.md not updated
+# Future agents won't know about this parameter
+```
+
+### Example 2: Fixing a Bug - Complete Documentation
+
+**Scenario**: Fixing a bug with special characters in filenames.
+
+**Good:**
+```powershell
+# Step 1: Fix code
+# Before: Get-Content $filePath  # Fails on files with brackets
+# After:
+[System.IO.File]::ReadAllText($filePath)  # Works with special characters
+
+# Step 2: Update README.md troubleshooting (same iteration)
+## Troubleshooting
+### Files with Special Characters
+If you encounter errors with files containing brackets `[` or `]`, ensure you're using .NET methods:
+```powershell
+# Good
+[System.IO.File]::ReadAllText($filePath)
+
+# Bad
+Get-Content $filePath  # Fails on files with brackets
+```
+
+# Step 3: Update relevant ruleset (same iteration)
+# In toolset-operations.cursorrules, add note about special characters
+
+# Step 4: Commit together
+git add script.ps1 README.md rules/toolset-operations.cursorrules
+git commit -m "Fix special character handling, update docs"
+```
+
+**Bad:**
+```powershell
+# Fix code but don't document
+[System.IO.File]::ReadAllText($filePath)
+# No README update
+# No ruleset update
+# Same bug will be encountered again
+```
+
+### Example 3: Adding a Tool - Complete Registration
+
+**Scenario**: Adding a new tool to the toolset.
+
+**Good:**
+```powershell
+# Step 1: Create tool structure
+mkdir tools/system/new-tool/scripts
+
+# Step 2: Create MANIFEST.json
+{
+  "id": "new-tool",
+  "name": "New Tool",
+  "description": "Does something useful",
+  "category": "system",
+  "version": "1.0.0",
+  "entry_points": {
+    "primary": "scripts/main.ps1"
+  }
+}
+
+# Step 3: Create README.md with examples
+
+# Step 4: Update .toolset/registry.json (same iteration)
+{
+  "id": "new-tool",
+  "name": "New Tool",
+  "category": "system",
+  "path": "tools/system/new-tool",
+  "status": "active",
+  "version": "1.0.0"
+}
+
+# Step 5: Commit together
+git add tools/system/new-tool/ .toolset/registry.json
+git commit -m "Add new-tool with complete registration"
+```
+
+**Bad:**
+```powershell
+# Create tool but forget registry
+mkdir tools/system/new-tool/scripts
+# Create MANIFEST.json
+# Create README.md
+# Forget .toolset/registry.json
+# Tool won't be discovered by other agents
+```
+
+## Quick Reference
+
+**Adding a new tool?** → See `rules/mcp-tool-integration.cursorrules`
+**Modifying existing tool?** → Update README.md, MANIFEST.json, registry.json
+**Fixing a bug?** → Update README.md troubleshooting, relevant ruleset
+**Changing behavior?** → Update MANIFEST.json, README.md, operations.json
+

@@ -1,3 +1,10 @@
+---
+priority: domain
+applies_to: when adding or modifying tools
+conflicts_with: none
+examples: see Examples section below
+---
+
 # Adding New Tools to Electric Sheep Toolset
 
 This ruleset documents the workflow for adding new tools to the Electric Sheep toolset. Follow these steps to ensure tools are properly discovered and exposed via MCP.
@@ -213,4 +220,155 @@ Supported parameter types in MANIFEST.json:
 - Add examples to MANIFEST.json
 
 The MCP server automatically discovers and exposes all tools - no server code changes needed!
+
+## Examples
+
+### Example 1: Adding a Simple Tool - Good Pattern
+
+**Scenario**: Adding a new system monitoring tool.
+
+**Good:**
+```powershell
+# Step 1: Create directory structure
+mkdir tools\system\system-monitor\scripts
+
+# Step 2: Create MANIFEST.json
+{
+  "id": "system-monitor",
+  "name": "System Monitor",
+  "description": "Monitor system resources",
+  "category": "system",
+  "version": "1.0.0",
+  "entry_points": {
+    "primary": "scripts/monitor.ps1"
+  },
+  "parameters": [
+    {
+      "name": "Interval",
+      "type": "integer",
+      "required": false,
+      "default": 5,
+      "description": "Monitoring interval in seconds"
+    }
+  ]
+}
+
+# Step 3: Create script (scripts/monitor.ps1)
+param([int]$Interval = 5)
+# Implementation here
+
+# Step 4: Update .toolset/registry.json
+{
+  "id": "system-monitor",
+  "name": "System Monitor",
+  "category": "system",
+  "path": "tools/system/system-monitor",
+  "status": "active",
+  "version": "1.0.0"
+}
+
+# Step 5: Verify
+python mcp/test_registry.py
+# Should show: system-monitor:monitor operation
+```
+
+**Bad:**
+```powershell
+# Create tool but forget MANIFEST.json
+mkdir tools\system\system-monitor\scripts
+# Create script
+# Forget MANIFEST.json
+# Forget registry.json
+# Tool won't be discovered
+```
+
+### Example 2: Adding Tool with Multiple Entry Points - Good Pattern
+
+**Scenario**: Adding a tool with multiple scripts (primary + alternatives).
+
+**Good:**
+```powershell
+# MANIFEST.json
+{
+  "id": "file-manager",
+  "name": "File Manager",
+  "description": "File management operations",
+  "category": "system",
+  "version": "1.0.0",
+  "entry_points": {
+    "primary": "scripts/copy.ps1",
+    "alternatives": [
+      "scripts/move.ps1",
+      "scripts/delete.ps1"
+    ]
+  }
+}
+
+# Results in operations:
+# - file-manager:copy (primary)
+# - file-manager:move (alternative)
+# - file-manager:delete (alternative)
+```
+
+**Bad:**
+```powershell
+# Only define primary, forget alternatives
+{
+  "entry_points": {
+    "primary": "scripts/copy.ps1"
+    // Missing alternatives - other scripts not exposed
+  }
+}
+```
+
+### Example 3: Parameter Definition - Good Pattern
+
+**Scenario**: Defining parameters for a tool.
+
+**Good:**
+```json
+{
+  "parameters": [
+    {
+      "name": "SourcePath",
+      "type": "string",
+      "required": true,
+      "description": "Source file or directory path"
+    },
+    {
+      "name": "TargetPath",
+      "type": "string",
+      "required": true,
+      "description": "Target file or directory path"
+    },
+    {
+      "name": "Recursive",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Process directories recursively"
+    },
+    {
+      "name": "BatchSize",
+      "type": "integer",
+      "required": false,
+      "default": 100,
+      "description": "Number of files to process per batch"
+    }
+  ]
+}
+```
+
+**Bad:**
+```json
+{
+  "parameters": [
+    {
+      "name": "path",
+      // Missing type, required, description
+      // Unclear what parameter does
+    }
+  ]
+}
+```
 

@@ -1,0 +1,48 @@
+{
+  "id": "ai-text-generator",
+  "name": "AI Text Generator",
+  "description": "Modular tool for generating article text sections from prompts. Used by AI Article Writer to create content sections.",
+  "category": "ai",
+  "version": "0.1.0",
+  "author": "Soso",
+  "tags": ["ai", "text-generation", "content", "writing"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python"],
+    "external": ["markdown"],
+    "related_tools": ["ai-article-writer"]
+  },
+  "entry_points": {
+    "primary": "scripts/generate-text.ps1"
+  },
+  "parameters": [
+    {
+      "name": "Prompt",
+      "type": "string",
+      "required": true,
+      "description": "Text generation prompt"
+    },
+    {
+      "name": "SectionType",
+      "type": "string",
+      "required": false,
+      "default": "paragraph",
+      "description": "Type of section: paragraph, heading, list, code"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Generate text section",
+      "command": ".\tools\ai\ai-text-generator\scripts\generate-text.ps1 -Prompt \"Explain Python virtual environments\""
+    }
+  ],
+  "ai_friendly": {
+    "context": "Generates text sections for articles. Called by ai-article-writer to create content.",
+    "common_use_cases": [
+      "Generate article paragraphs",
+      "Create section headings",
+      "Generate lists and code blocks"
+    ]
+  }
+}
+

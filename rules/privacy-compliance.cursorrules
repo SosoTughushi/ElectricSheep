@@ -1,0 +1,295 @@
+---
+priority: project
+applies_to: all development work, especially data handling
+conflicts_with: none
+examples: see Examples section below
+---
+
+# Privacy and Compliance Rules
+
+**IMPORTANT**: These rules enforce privacy-by-design principles and define what can/cannot be committed to the repository. Privacy violations can have serious consequences.
+
+## Core Principles
+
+1. **Privacy by design** - Privacy considerations from the start
+2. **Minimal data collection** - Only collect what's necessary
+3. **Local storage** - User-specific data stays local
+4. **Never commit secrets** - API keys, passwords, tokens never in repo
+5. **Explicit separation** - Clear distinction between public and private data
+
+## What Can Be Committed
+
+### Safe to Commit (Public)
+
+✅ **Operation codes** - Short identifiers like `bambu-lab:launch`
+✅ **Tool structure** - Directory structure, file organization
+✅ **Manifests** - `MANIFEST.json` files (with placeholders for paths)
+✅ **Documentation** - README files, guides, examples
+✅ **Code** - Scripts, implementation files
+✅ **Config templates** - `.example` files with placeholders
+✅ **Registry entries** - Tool metadata in `.toolset/registry.json`
+✅ **Operation definitions** - Public operation schemas
+
+### Never Commit (Private)
+
+❌ **API keys** - Any API keys, tokens, secrets
+❌ **Passwords** - User passwords, credentials
+❌ **User-specific paths** - Actual user file paths (e.g., `E:\Users\John\...`)
+❌ **Personal data** - Names, emails, personal information
+❌ **Local configuration** - `.local/config.json` (gitignored)
+❌ **Credentials** - Authentication tokens, certificates
+❌ **Sensitive data** - Any data that could identify users or systems
+
+## Data Handling Requirements
+
+### Pattern 1: Use Local Config System
+
+**Good:**
+```powershell
+# Load from local config (gitignored)
+$configPath = ".local/config.json"
+if (Test-Path $configPath) {
+    $config = Get-Content $configPath | ConvertFrom-Json
+    $apiKey = $config.apiKey
+} else {
+    Write-Error "ERROR_TYPE: ConfigNotFound"
+    Write-Error "ERROR_SUGGESTION: Copy .local/config.example.json to .local/config.json"
+    exit 1
+}
+```
+
+**Bad:**
+```powershell
+# Hardcoded API key - NEVER DO THIS
+$apiKey = "sk-1234567890abcdef"
+```
+
+### Pattern 2: Use Placeholders in Templates
+
+**Good:**
+```json
+// .local/config.example.json (committed)
+{
+  "apiKey": "YOUR_API_KEY_HERE",
+  "modelPath": "C:/path/to/model",
+  "outputPath": "C:/path/to/output"
+}
+```
+
+**Bad:**
+```json
+// .local/config.json (gitignored, but example shows real data)
+{
+  "apiKey": "sk-real-key-12345",
+  "modelPath": "E:\\Users\\John\\Models\\..."
+}
+```
+
+### Pattern 3: Validate Before Committing
+
+**Good:**
+```powershell
+# Before committing, check for secrets
+$filesToCommit = git diff --cached --name-only
+foreach ($file in $filesToCommit) {
+    $content = Get-Content $file -Raw
+    if ($content -match "(api[_-]?key|password|secret|token)\s*[:=]\s*['\`"]?[a-zA-Z0-9]{10,}") {
+        Write-Error "ERROR_TYPE: PotentialSecretDetected"
+        Write-Error "ERROR_FILE: $file"
+        Write-Error "ERROR_SUGGESTION: Remove secrets before committing"
+        exit 1
+    }
+}
+```
+
+**Bad:**
+```powershell
+# No validation - secrets could be committed
+git add .
+git commit -m "Update config"
+```
+
+## Local vs Public Data Separation
+
+### Local Data (`.local/` directory)
+
+**Purpose**: User-specific configuration and data
+**Location**: `.local/` directory (gitignored)
+**Examples**:
+- `.local/config.json` - User configuration
+- `.local/cache/` - Local cache files
+- `.local/logs/` - User-specific logs
+
+**Rules**:
+- Never commit `.local/` directory contents
+- Use `.local/config.example.json` as template (committed)
+- Document required fields in example file
+
+### Public Data (Repository root)
+
+**Purpose**: Shared configuration and structure
+**Location**: Repository root and subdirectories
+**Examples**:
+- `MANIFEST.json` - Tool metadata (with placeholders)
+- `.toolset/registry.json` - Tool registry
+- `README.md` - Documentation
+
+**Rules**:
+- Use placeholders for user-specific values
+- Document what needs to be configured locally
+- Provide example/template files
+
+## Examples
+
+### Example 1: Config File with Secrets
+
+**Scenario**: Script needs API key for external service.
+
+**Good:**
+```powershell
+# .local/config.example.json (committed)
+{
+  "serviceApiKey": "YOUR_API_KEY_HERE",
+  "serviceUrl": "https://api.example.com"
+}
+
+# Script loads from local config
+$configPath = ".local/config.json"
+if (-not (Test-Path $configPath)) {
+    Write-Error "ERROR_TYPE: ConfigNotFound"
+    Write-Error "ERROR_SUGGESTION: Copy .local/config.example.json to .local/config.json and fill in values"
+    exit 1
+}
+$config = Get-Content $configPath | ConvertFrom-Json
+$apiKey = $config.serviceApiKey
+```
+
+**Bad:**
+```powershell
+# Hardcoded API key in script - NEVER DO THIS
+$apiKey = "sk-1234567890abcdef"
+```
+
+### Example 2: Path Handling
+
+**Scenario**: Script needs user-specific file paths.
+
+**Good:**
+```powershell
+# MANIFEST.json (committed) - uses placeholder
+{
+  "parameters": [
+    {
+      "name": "ModelPath",
+      "type": "string",
+      "description": "Path to model directory (e.g., C:/path/to/models)"
+    }
+  ]
+}
+
+# Script accepts path as parameter or loads from config
+param(
+    [string]$ModelPath = $null
+)
+
+if (-not $ModelPath) {
+    $config = Get-Content ".local/config.json" | ConvertFrom-Json
+    $ModelPath = $config.modelPath
+}
+```
+
+**Bad:**
+```powershell
+# Hardcoded user path - NEVER DO THIS
+$ModelPath = "E:\Users\John\Documents\Models"
+```
+
+### Example 3: Logging Sensitive Data
+
+**Scenario**: Script needs to log operations but shouldn't log secrets.
+
+**Good:**
+```powershell
+# Log operation without exposing secrets
+Write-Output "STATUS: API request initiated"
+Write-Output "ENDPOINT: $endpoint"
+# Don't log API key
+Write-Output "RESPONSE_CODE: $response.StatusCode"
+
+# If logging to file, redact secrets
+$logEntry = $response | ConvertTo-Json
+$logEntry = $logEntry -replace $apiKey, "[REDACTED]"
+Add-Content -Path "logs/api.log" -Value $logEntry
+```
+
+**Bad:**
+```powershell
+# Logging includes API key - PRIVACY VIOLATION
+Write-Output "API_KEY: $apiKey"
+Add-Content -Path "logs/api.log" -Value "API_KEY: $apiKey"
+```
+
+### Example 4: Environment Variables
+
+**Scenario**: Script needs credentials but shouldn't hardcode them.
+
+**Good:**
+```powershell
+# Load from environment variable
+$apiKey = $env:SERVICE_API_KEY
+if (-not $apiKey) {
+    Write-Error "ERROR_TYPE: ConfigNotFound"
+    Write-Error "ERROR_SUGGESTION: Set SERVICE_API_KEY environment variable"
+    exit 1
+}
+```
+
+**Bad:**
+```powershell
+# Hardcoded in script - NEVER DO THIS
+$apiKey = "sk-1234567890abcdef"
+```
+
+## Pre-Commit Validation
+
+Before committing, validate:
+
+1. **No secrets in code** - Check for API keys, passwords, tokens
+2. **No user paths** - Check for hardcoded user-specific paths
+3. **Config files use placeholders** - Example files don't contain real data
+4. **Local config is gitignored** - `.local/config.json` not tracked
+
+**Validation Script**:
+```powershell
+# Check for potential secrets
+$secretPatterns = @(
+    "(api[_-]?key|password|secret|token)\s*[:=]\s*['\`"]?[a-zA-Z0-9]{10,}",
+    "sk-[a-zA-Z0-9]{20,}",
+    "Bearer\s+[a-zA-Z0-9]{20,}"
+)
+
+$filesToCheck = Get-ChildItem -Recurse -File | Where-Object {
+    $_.FullName -notmatch "\.local|\.git|node_modules"
+}
+
+foreach ($file in $filesToCheck) {
+    $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
+    foreach ($pattern in $secretPatterns) {
+        if ($content -match $pattern) {
+            Write-Warning "Potential secret found in: $($file.FullName)"
+        }
+    }
+}
+```
+
+## Privacy Policy Reference
+
+See `rules/policy-cards/privacy-policy.md` for detailed privacy policy and runtime constraints.
+
+## References
+
+- **Policy Cards**: `rules/policy-cards/privacy-policy.md` - Privacy policy
+- **Development Workflow**: `rules/development-workflow.cursorrules` - Documentation requirements
+- **Decision Making**: `rules/decision-making.cursorrules` - When to escalate privacy concerns
+- **Tool Operations**: `rules/toolset-operations.cursorrules` - Privacy guidelines for operations
+

@@ -1,0 +1,93 @@
+{
+  "id": "ai-article-writer",
+  "name": "AI Article Writer",
+  "description": "Main orchestrator tool for generating complete articles with text sections, diagrams, and complexity adaptation. Coordinates between text generator, diagram generator, and complexity adapter tools.",
+  "category": "ai",
+  "version": "0.1.0",
+  "author": "Soso",
+  "tags": ["ai", "article", "writing", "content-generation", "markdown"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python", "powershell"],
+    "external": ["markdown", "pyyaml", "jinja2"],
+    "related_tools": ["ai-text-generator", "ai-diagram-generator", "ai-complexity-adapter", "ai-article-composer"]
+  },
+  "entry_points": {
+    "primary": "scripts/generate-article.ps1",
+    "alternatives": [
+      "scripts/setup-environment.ps1",
+      "scripts/activate.ps1"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "Topic",
+      "type": "string",
+      "required": true,
+      "description": "Main topic or subject for the article"
+    },
+    {
+      "name": "OutputPath",
+      "type": "string",
+      "required": false,
+      "default": "./output/article.md",
+      "description": "Path where the generated article will be saved"
+    },
+    {
+      "name": "ComplexityLevel",
+      "type": "string",
+      "required": false,
+      "default": "medium",
+      "description": "Target complexity level: simple, medium, advanced"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Generate a basic article",
+      "command": ".\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic \"Python Virtual Environments\""
+    },
+    {
+      "description": "Generate article with custom output path",
+      "command": ".\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic \"Docker Basics\" -OutputPath \"./docs/docker-guide.md\""
+    },
+    {
+      "description": "Setup environment (first time)",
+      "command": ".\tools\ai\ai-article-writer\scripts\setup-environment.ps1"
+    }
+  ],
+  "ai_friendly": {
+    "context": "Main entry point for article generation. Coordinates multiple specialized tools to create complete articles with text, diagrams, and adaptive complexity levels.",
+    "common_use_cases": [
+      "Generate complete articles from topics",
+      "Create technical documentation",
+      "Produce educational content with diagrams",
+      "Generate articles with complexity adaptation"
+    ],
+    "related_tools": [
+      "ai-text-generator",
+      "ai-diagram-generator",
+      "ai-complexity-adapter",
+      "ai-article-composer"
+    ],
+    "workflow_stages": [
+      "Environment setup",
+      "Topic analysis",
+      "Text generation",
+      "Diagram generation",
+      "Complexity adaptation",
+      "Article composition",
+      "Output generation"
+    ]
+  },
+  "documentation": {
+    "readme": "README.md",
+    "usage": "docs/USAGE.md",
+    "setup": "scripts/setup-environment.ps1"
+  },
+  "location": {
+    "venv_path": "tools/ai/ai-article-writer/.venv",
+    "scripts_path": "tools/ai/ai-article-writer/scripts/",
+    "requirements": "tools/ai/ai-article-writer/requirements.txt"
+  }
+}
+

@@ -36,6 +36,42 @@
       "status": "active",
       "version": "1.0.0",
       "note": "Large external project, referenced from ai-tools/"
+    },
+    {
+      "id": "ai-text-generator",
+      "name": "AI Text Generator",
+      "category": "ai",
+      "path": "tools/ai/ai-text-generator",
+      "status": "planning",
+      "version": "0.1.0",
+      "note": "Modular tool: Generate article text sections from prompts"
+    },
+    {
+      "id": "ai-diagram-generator",
+      "name": "AI Diagram Generator",
+      "category": "ai",
+      "path": "tools/ai/ai-diagram-generator",
+      "status": "planning",
+      "version": "0.1.0",
+      "note": "Modular tool: Generate diagrams (Mermaid) from user descriptions (user-driven)"
+    },
+    {
+      "id": "ai-complexity-adapter",
+      "name": "AI Complexity Adapter",
+      "category": "ai",
+      "path": "tools/ai/ai-complexity-adapter",
+      "status": "planning",
+      "version": "0.1.0",
+      "note": "Modular tool: Adjust paragraph complexity (3 levels) for hover UI"
+    },
+    {
+      "id": "ai-article-composer",
+      "name": "AI Article Composer",
+      "category": "ai",
+      "path": "tools/ai/ai-article-composer",
+      "status": "planning",
+      "version": "0.1.0",
+      "note": "Orchestrator tool: Combine text sections, diagrams, and complexity settings into final article"
     }
   ],
   "categories": {
@@ -45,7 +81,7 @@
     },
     "ai": {
       "description": "AI and machine learning tools for model training, inference, and manipulation",
-      "tools": ["musubi-tuner"]
+      "tools": ["musubi-tuner", "ai-text-generator", "ai-diagram-generator", "ai-complexity-adapter", "ai-article-composer"]
     },
     "dev": {
       "description": "Development tools and utilities",

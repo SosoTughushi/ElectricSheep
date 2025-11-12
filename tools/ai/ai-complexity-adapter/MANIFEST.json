@@ -1,0 +1,47 @@
+{
+  "id": "ai-complexity-adapter",
+  "name": "AI Complexity Adapter",
+  "description": "Modular tool for adjusting paragraph complexity (3 levels) for hover UI. Adapts content for simple, medium, and advanced audiences.",
+  "category": "ai",
+  "version": "0.1.0",
+  "author": "Soso",
+  "tags": ["ai", "complexity", "adaptation", "content"],
+  "platforms": ["windows", "linux"],
+  "dependencies": {
+    "runtime": ["python"],
+    "external": ["markdown"],
+    "related_tools": ["ai-article-writer"]
+  },
+  "entry_points": {
+    "primary": "scripts/adapt-complexity.ps1"
+  },
+  "parameters": [
+    {
+      "name": "Content",
+      "type": "string",
+      "required": true,
+      "description": "Content to adapt"
+    },
+    {
+      "name": "TargetLevel",
+      "type": "string",
+      "required": true,
+      "description": "Target complexity level: simple, medium, advanced"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Adapt content to simple level",
+      "command": ".\tools\ai\ai-complexity-adapter\scripts\adapt-complexity.ps1 -Content \"Complex text here\" -TargetLevel \"simple\""
+    }
+  ],
+  "ai_friendly": {
+    "context": "Adapts content complexity for different audiences. Creates three versions (simple, medium, advanced) for hover UI.",
+    "common_use_cases": [
+      "Simplify technical content",
+      "Increase complexity for advanced readers",
+      "Create multi-level content versions"
+    ]
+  }
+}
+

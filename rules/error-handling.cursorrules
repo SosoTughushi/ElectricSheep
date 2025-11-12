@@ -1,0 +1,317 @@
+---
+priority: project
+applies_to: all development work, especially when encountering errors
+conflicts_with: none
+examples: see Examples section below
+---
+
+# Error Handling and Recovery Rules
+
+**IMPORTANT**: These rules define how to handle errors during development. Follow structured error response patterns and use fallback mechanisms when appropriate.
+
+## Core Principles
+
+1. **Self-correct on errors** - Fix issues based on output analysis
+2. **Use structured error messages** - Enable programmatic parsing
+3. **Log everything** - Capture all output for analysis
+4. **Escalate when needed** - Know when to ask for help vs proceed autonomously
+
+## Error Response Patterns
+
+### Pattern 1: Structured Error Output
+
+When scripts encounter errors, they should produce structured, parseable output:
+
+**Good:**
+```powershell
+Write-Error "ERROR_TYPE: FileNotFound"
+Write-Error "ERROR_FILE: $filePath"
+Write-Error "ERROR_SUGGESTION: Check if file exists at specified path"
+exit 1
+```
+
+**Bad:**
+```powershell
+Write-Error "Something went wrong"
+# No exit code, unclear error type
+```
+
+### Pattern 2: Exit Codes
+
+Always set explicit exit codes:
+
+**Good:**
+```powershell
+if ($error) {
+    Write-Error "ERROR_TYPE: OperationFailed"
+    Write-Error "ERROR_DETAILS: $error"
+    exit 1
+}
+exit 0
+```
+
+**Bad:**
+```powershell
+# No exit code - unclear success/failure
+```
+
+### Pattern 3: Error Classification
+
+Classify errors by type for appropriate handling:
+
+- **`FileNotFound`** - File doesn't exist → Check path, create if needed
+- **`PermissionDenied`** - Access denied → Check permissions, request elevation
+- **`InvalidParameter`** - Parameter error → Validate input, show usage
+- **`NetworkError`** - Network issue → Retry with backoff, check connectivity
+- **`TimeoutError`** - Operation timed out → Increase timeout, check system load
+- **`UnknownError`** - Unexpected error → Log details, escalate if needed
+
+## Fallback Mechanisms
+
+### When to Use Fallbacks
+
+Use fallback mechanisms when:
+- Primary approach fails but alternative exists
+- Error is recoverable (not fatal)
+- Fallback is safe and doesn't compromise data integrity
+
+### Fallback Patterns
+
+**Pattern 1: Path Fallback**
+```powershell
+# Try primary path, fallback to alternative
+$primaryPath = "C:\Program Files\App"
+$fallbackPath = "$env:LOCALAPPDATA\App"
+
+if (Test-Path $primaryPath) {
+    $appPath = $primaryPath
+} elseif (Test-Path $fallbackPath) {
+    $appPath = $fallbackPath
+    Write-Warning "Using fallback path: $fallbackPath"
+} else {
+    Write-Error "ERROR_TYPE: FileNotFound"
+    Write-Error "ERROR_SUGGESTION: Install application or set path manually"
+    exit 1
+}
+```
+
+**Pattern 2: Retry with Backoff**
+```powershell
+$maxRetries = 3
+$retryDelay = 2
+$attempt = 0
+
+while ($attempt -lt $maxRetries) {
+    try {
+        # Operation that might fail
+        $result = Invoke-WebRequest -Uri $url
+        break
+    } catch {
+        $attempt++
+        if ($attempt -ge $maxRetries) {
+            Write-Error "ERROR_TYPE: NetworkError"
+            Write-Error "ERROR_ATTEMPTS: $attempt"
+            Write-Error "ERROR_SUGGESTION: Check network connectivity"
+            exit 1
+        }
+        Start-Sleep -Seconds ($retryDelay * $attempt)
+    }
+}
+```
+
+**Pattern 3: Default Value Fallback**
+```powershell
+# Try to get value, use default if missing
+$configValue = if (Test-Path $configFile) {
+    (Get-Content $configFile | ConvertFrom-Json).Value
+} else {
+    $defaultValue
+    Write-Warning "Using default value: $defaultValue"
+}
+```
+
+## Escalation Criteria
+
+### When to Escalate (Ask User)
+
+Escalate to user when:
+- **Irreversible operation** - Would delete data, break system, etc.
+- **Permission required** - Needs admin/elevated privileges
+- **Ambiguous requirement** - Multiple valid interpretations
+- **High-risk operation** - Could cause significant damage
+- **After 3 failed attempts** - Self-correction exhausted
+
+### When to Proceed Autonomously
+
+Proceed autonomously when:
+- **Reversible operation** - Can undo changes
+- **Clear error pattern** - Known solution exists
+- **Safe fallback available** - Alternative approach exists
+- **Low-risk operation** - Minimal potential damage
+
+## Error Recovery Workflow
+
+### Step 1: Capture Error
+
+```powershell
+# Capture all output
+.\script.ps1 *> logs/script-$(Get-Date -Format 'yyyyMMdd-HHmmss').log 2>&1
+$exitCode = $LASTEXITCODE
+```
+
+### Step 2: Analyze Error
+
+```powershell
+# Read log file
+$logContent = Get-Content logs/script-*.log -Raw
+
+# Parse structured error messages
+if ($logContent -match "ERROR_TYPE: (\w+)") {
+    $errorType = $Matches[1]
+    # Handle based on error type
+}
+```
+
+### Step 3: Apply Recovery
+
+```powershell
+switch ($errorType) {
+    "FileNotFound" {
+        # Check if file should exist, create if needed
+        if ($shouldExist) {
+            New-Item -Path $filePath -ItemType File -Force
+        }
+    }
+    "PermissionDenied" {
+        # Request elevation or use alternative method
+        # Document why elevation needed
+    }
+    "InvalidParameter" {
+        # Validate and correct parameters
+        # Show usage example
+    }
+    default {
+        # Log unknown error, escalate if needed
+        Write-Error "ERROR_TYPE: UnknownError"
+        Write-Error "ERROR_DETAILS: $logContent"
+    }
+}
+```
+
+### Step 4: Verify Fix
+
+```powershell
+# Re-run operation to verify fix
+.\script.ps1 *> logs/script-retry-$(Get-Date -Format 'yyyyMMdd-HHmmss').log 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Output "STATUS: SUCCESS"
+    Write-Output "RECOVERY: Applied successfully"
+} else {
+    # Escalate if recovery failed
+    Write-Error "ERROR_TYPE: RecoveryFailed"
+    Write-Error "ERROR_SUGGESTION: Manual intervention required"
+}
+```
+
+## Examples
+
+### Example 1: File Not Found with Fallback
+
+**Scenario**: Script needs config file, but it might not exist yet.
+
+**Good:**
+```powershell
+$configPath = ".local/config.json"
+if (-not (Test-Path $configPath)) {
+    Write-Warning "Config file not found, using defaults"
+    $config = @{
+        Path = "C:\Default\Path"
+    }
+} else {
+    $config = Get-Content $configPath | ConvertFrom-Json
+}
+# Continue with operation
+```
+
+**Bad:**
+```powershell
+$config = Get-Content ".local/config.json" | ConvertFrom-Json
+# Fails if file doesn't exist, no recovery
+```
+
+### Example 2: Network Error with Retry
+
+**Scenario**: Download operation might fail due to network issues.
+
+**Good:**
+```powershell
+$maxRetries = 3
+$attempt = 0
+while ($attempt -lt $maxRetries) {
+    try {
+        Invoke-WebRequest -Uri $url -OutFile $outputPath
+        Write-Output "STATUS: SUCCESS"
+        break
+    } catch {
+        $attempt++
+        if ($attempt -ge $maxRetries) {
+            Write-Error "ERROR_TYPE: NetworkError"
+            Write-Error "ERROR_ATTEMPTS: $attempt"
+            Write-Error "ERROR_SUGGESTION: Check network connectivity"
+            exit 1
+        }
+        Start-Sleep -Seconds ($attempt * 2)
+    }
+}
+```
+
+**Bad:**
+```powershell
+Invoke-WebRequest -Uri $url -OutFile $outputPath
+# Fails immediately on network error, no retry
+```
+
+### Example 3: Permission Error with Escalation
+
+**Scenario**: Operation requires admin privileges.
+
+**Good:**
+```powershell
+try {
+    # Try operation
+    Set-ItemProperty -Path $registryPath -Name $name -Value $value
+} catch {
+    if ($_.Exception.Message -match "access|permission") {
+        Write-Error "ERROR_TYPE: PermissionDenied"
+        Write-Error "ERROR_SUGGESTION: This operation requires administrator privileges"
+        Write-Error "ERROR_ACTION: Please run script as administrator"
+        # Don't proceed - requires user action
+        exit 1
+    }
+}
+```
+
+**Bad:**
+```powershell
+Set-ItemProperty -Path $registryPath -Name $name -Value $value
+# Fails silently or with unclear error
+```
+
+## Integration with Textual Feedback Loop
+
+Error handling integrates with the textual feedback loop:
+
+1. **Edit Code** → Add error handling
+2. **Run Code** → Capture output with error handling
+3. **Capture Output** → Parse structured error messages
+4. **Analyze Output** → Classify error type
+5. **Self-Correct** → Apply recovery pattern
+6. **Repeat** → Verify fix, iterate if needed
+
+## References
+
+- **Execution Preferences**: `rules/execution-preference.cursorrules` - How to run commands
+- **Decision Making**: `rules/decision-making.cursorrules` - When to escalate
+- **Development Workflow**: `rules/development-workflow.cursorrules` - Documentation updates
+- **Workflow Guide**: `docs/guides/ai-agent-workflow.md` - Complete workflow
+

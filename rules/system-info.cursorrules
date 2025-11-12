@@ -1,3 +1,10 @@
+---
+priority: domain
+applies_to: when system information is needed
+conflicts_with: none
+examples: see Examples section below
+---
+
 # System Information
 
 ## Hardware Configuration
@@ -19,4 +26,90 @@
 - System has multiple GPUs (discrete NVIDIA + integrated Intel)
 - High core count CPU may cause issues with applications that don't handle many cores well
 - RTX 3090 is a high-end GPU that may trigger driver-level optimizations
+
+## Examples
+
+### Example 1: Checking CPU Affinity - Good Pattern
+
+**Scenario**: Need to check CPU affinity for a process.
+
+**Good:**
+```powershell
+# Check CPU affinity for process
+$process = Get-Process -Name "BambuStudio" -ErrorAction SilentlyContinue
+if ($process) {
+    $affinity = $process.ProcessorAffinity
+    Write-Output "PROCESS: $($process.Name)"
+    Write-Output "CPU_AFFINITY: $affinity"
+    Write-Output "LOGICAL_PROCESSORS: 28"
+    Write-Output "AFFINITY_MASK: $($affinity.ToString('X'))"
+} else {
+    Write-Output "PROCESS: Not running"
+}
+```
+
+**Bad:**
+```powershell
+# Don't check if process exists
+# Don't provide structured output
+Get-Process BambuStudio | Select-Object ProcessorAffinity
+# Unclear output format
+```
+
+### Example 2: Handling High Core Count - Good Pattern
+
+**Scenario**: Application doesn't handle 28 logical processors well.
+
+**Good:**
+```powershell
+# Limit to physical cores only (exclude hyperthreaded)
+$physicalCores = 0..19  # 20 physical cores
+$affinityMask = 0
+foreach ($core in $physicalCores) {
+    $affinityMask = $affinityMask -bor [Math]::Pow(2, $core)
+}
+
+# Set affinity
+$process = Get-Process -Name "BambuStudio"
+$process.ProcessorAffinity = [IntPtr]$affinityMask
+Write-Output "STATUS: CPU affinity set to physical cores only"
+```
+
+**Bad:**
+```powershell
+# Use all cores without checking
+# Don't consider application limitations
+# No error handling
+```
+
+### Example 3: GPU Selection - Good Pattern
+
+**Scenario**: Need to select appropriate GPU for operation.
+
+**Good:**
+```powershell
+# Check available GPUs
+$gpus = Get-WmiObject Win32_VideoController | Select-Object Name, AdapterRAM
+
+Write-Output "AVAILABLE_GPUS:"
+foreach ($gpu in $gpus) {
+    Write-Output "  - $($gpu.Name)"
+    Write-Output "    RAM: $([Math]::Round($gpu.AdapterRAM / 1GB, 2)) GB"
+}
+
+# Select NVIDIA GPU for compute tasks
+$nvidiaGpu = $gpus | Where-Object { $_.Name -like "*NVIDIA*" }
+if ($nvidiaGpu) {
+    Write-Output "SELECTED_GPU: NVIDIA (for compute tasks)"
+} else {
+    Write-Output "SELECTED_GPU: Intel (fallback)"
+}
+```
+
+**Bad:**
+```powershell
+# Assume GPU exists
+# Don't check availability
+# Hardcode GPU selection
+```
 
