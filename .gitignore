@@ -42,5 +42,5 @@ logs/
 installers/
 
 # Nested git repository (external project)
-ai-tools/musubi-tuner/.git/
+ai-tools/musubi-tuner/
 
