@@ -11,6 +11,11 @@
     },
     "bambu_lab": {
       "installation_path": "C:/Program Files/BambuStudio/BambuStudio.exe"
+    },
+    "ollama": {
+      "installation_path": "$env:LOCALAPPDATA\\Programs\\Ollama",
+      "exe_path": "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama.exe",
+      "api_url": "http://localhost:11434"
     }
   },
   "models": {
@@ -24,6 +29,15 @@
       "dit_2_2_t2v_high": "E:/path/to/wan2.2_t2v_high_noise_fp16.safetensors",
       "dit_2_2_i2v_low": "E:/path/to/wan2.2_i2v_low_noise_fp16.safetensors",
       "dit_2_2_i2v_high": "E:/path/to/wan2.2_i2v_high_noise_fp16.safetensors"
+    },
+    "local_llm": {
+      "$comment": "Local LLM configuration for Ollama models",
+      "default_model": "nsfw-3b",
+      "ollama_api_url": "http://localhost:11434",
+      "cursor_api_key": "sk-ollama",
+      "cursor_base_url": "http://localhost:11434/v1",
+      "proxy_port": 8000,
+      "proxy_enabled": false
     }
   },
   "datasets": {
@@ -36,7 +50,13 @@
   },
   "user_preferences": {
     "default_affinity_cores": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    "default_batch_size": 16
+    "default_batch_size": 16,
+    "local_llm": {
+      "$comment": "Local LLM preferences",
+      "auto_start_ollama": false,
+      "preferred_model": "nsfw-3b",
+      "use_gpu": true
+    }
   }
 }
 

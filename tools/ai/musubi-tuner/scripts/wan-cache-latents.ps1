@@ -22,25 +22,17 @@ param(
 )
 
 # Load configuration
-$ScriptRoot = Split-Path -Parent $PSScriptRoot
-$RepoRoot = Split-Path -Parent (Split-Path -Parent $ScriptRoot)
-$ConfigScript = Join-Path $RepoRoot ".toolset\load_config.ps1"
-
-if (Test-Path $ConfigScript) {
-    . $ConfigScript
-    $config = Get-LocalConfig
-    
-    if ($config -and $config.paths.musubi_tuner) {
-        $MusubiTunerPath = $config.paths.musubi_tuner.installation_path
-        $PythonExe = $config.paths.musubi_tuner.python_exe
-    } else {
-        Write-Warning "Musubi Tuner path not found in config. Using default."
-        $MusubiTunerPath = "C:/path/to/musubi-tuner"
+$ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
+if (Test-Path $ConfigPath) {
+    $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    $MusubiTunerPath = $Config.paths.musubi_tuner.installation_path
+    $PythonExe = $Config.paths.musubi_tuner.python_exe
+    if (-not $PythonExe -or -not (Test-Path $PythonExe)) {
         $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\python.exe"
     }
 } else {
-    Write-Warning "Config loader not found. Using default path."
-    $MusubiTunerPath = "C:/path/to/musubi-tuner"
+    Write-Warning ".local/config.json not found. Using default paths."
+    $MusubiTunerPath = "E:\Stable Diffusion\musubi-tuner"
     $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\python.exe"
 }
 

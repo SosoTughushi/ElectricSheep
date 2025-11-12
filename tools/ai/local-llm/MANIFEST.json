@@ -1,0 +1,63 @@
+{
+  "id": "local-llm-setup",
+  "name": "Local LLM Setup for Cursor",
+  "description": "Tools to install and configure local NSFW-capable language models for use with Cursor IDE. Includes Ollama installation, model downloads, and Cursor configuration.",
+  "category": "ai",
+  "version": "1.0.0",
+  "author": "Soso",
+  "tags": ["llm", "ollama", "cursor", "local-model", "nsfw"],
+  "platforms": ["windows"],
+  "dependencies": {
+    "runtime": ["powershell"],
+    "external": ["ollama"],
+    "permissions": []
+  },
+  "entry_points": {
+    "primary": "scripts/install-ollama.ps1",
+    "alternatives": [
+      "scripts/setup-nsfw-model.ps1",
+      "scripts/configure-cursor.ps1",
+      "scripts/start-proxy-server.ps1"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "ModelName",
+      "type": "string",
+      "required": false,
+      "default": "nsfw-3b",
+      "description": "Name of the NSFW model to install (e.g., nsfw-3b, dolphin-2.2.1-mistral-7b)"
+    },
+    {
+      "name": "ProxyPort",
+      "type": "integer",
+      "required": false,
+      "default": 8000,
+      "description": "Port for the proxy server (default: 8000)"
+    }
+  ],
+  "examples": [
+    {
+      "description": "Install Ollama and setup NSFW model",
+      "command": ".\scripts\install-ollama.ps1"
+    },
+    {
+      "description": "Setup specific NSFW model",
+      "command": ".\scripts\setup-nsfw-model.ps1 -ModelName nsfw-3b"
+    },
+    {
+      "description": "Start proxy server for Cursor",
+      "command": ".\scripts\start-proxy-server.ps1 -ProxyPort 8000"
+    }
+  ],
+  "ai_friendly": {
+    "context": "Toolset for installing and configuring local language models that can handle NSFW content without filtering. Integrates with Cursor IDE through Ollama and proxy servers.",
+    "common_use_cases": [
+      "Install Ollama framework",
+      "Download and setup NSFW-capable models",
+      "Configure Cursor to use local models",
+      "Start proxy server for Cursor integration"
+    ],
+    "related_tools": []
+  }
+}

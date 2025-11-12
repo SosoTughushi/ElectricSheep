@@ -15,8 +15,21 @@ param(
     [switch]$Fp8T5
 )
 
-$MusubiTunerPath = "C:/path/to/musubi-tuner"
-$PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\python.exe"
+# Load configuration
+$ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
+if (Test-Path $ConfigPath) {
+    $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    $MusubiTunerPath = $Config.paths.musubi_tuner.installation_path
+    $PythonExe = $Config.paths.musubi_tuner.python_exe
+    if (-not $PythonExe -or -not (Test-Path $PythonExe)) {
+        $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\python.exe"
+    }
+} else {
+    Write-Warning ".local/config.json not found. Using default paths."
+    $MusubiTunerPath = "E:\Stable Diffusion\musubi-tuner"
+    $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\python.exe"
+}
+
 $ScriptPath = Join-Path $MusubiTunerPath "wan_cache_text_encoder_outputs.py"
 
 if (-not (Test-Path $PythonExe)) {

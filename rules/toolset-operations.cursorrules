@@ -50,6 +50,34 @@ To discover available operations, agents can:
 **Parameters**: None (uses local config)
 **Privacy**: Path stored in local config (not in repo)
 
+#### `musubi-tuner:wan:prepare-dataset`
+**Code Name**: `musubi-tuner:wan:prepare-dataset`
+**Description**: Prepare training dataset by copying images recursively from source (including subfolders), generating captions, and ensuring trigger words are included
+**Tool**: `tools/ai/musubi-tuner`
+**Parameters**: Source image directory, target directory, Qwen model path, trigger word
+**Privacy**: Paths stored in local config or provided as parameters
+**Scripts**: 
+  - `tools/ai/musubi-tuner/scripts/prepare-dani-dataset.ps1` (recursive, recommended)
+  - `tools/ai/musubi-tuner/scripts/prepare-angelina-dataset-new.ps1` (flat directory only)
+**Command Pattern**: When user says "prepare dataset for <path>":
+  1. Extract dataset name from path (last folder name, e.g., `dani` from `E:\Stable Diffusion\Inputs\df\lib\female\dani`)
+  2. Set target directory to `E:\Stable Diffusion\TrainingDataSet\<dataset_name>`
+  3. Use recursive search (include subfolders)
+  4. Extract trigger word from dataset name (lowercase, e.g., `dani`)
+  5. Run `prepare-dani-dataset.ps1` script with appropriate parameters
+**Default Behavior**:
+  - Source: Path provided by user
+  - Target: `E:\Stable Diffusion\TrainingDataSet\<dataset_name>`
+  - Trigger Word: Extracted from dataset name (lowercase)
+  - Qwen Model: `Qwen/Qwen2.5-VL-7B-Instruct` (default HuggingFace model)
+  - Recursive: Always enabled (searches subfolders)
+**Critical Implementation Note - Special Characters in Filenames**:
+  - When reading/writing caption files, MUST use `.NET` methods: `[System.IO.File]::ReadAllText()` and `[System.IO.File]::WriteAllText()`
+  - MUST use `Test-Path -LiteralPath` instead of `Test-Path` for files with special characters (brackets, spaces, etc.)
+  - PowerShell's `Get-Content` cmdlet fails silently on files with brackets like `[image] - 123.jpg`
+  - Always wrap file operations in try-catch blocks for error handling
+  - Example: Files named `[image] - 3858010.jpg` will have caption files `[image] - 3858010.txt` that require special handling
+
 #### `musubi-tuner:wan:cache-latents`
 **Code Name**: `musubi-tuner:wan:cache-latents`
 **Description**: Cache VAE latents for Wan 2.1/2.2 training
@@ -66,9 +94,26 @@ To discover available operations, agents can:
 
 #### `musubi-tuner:wan:train`
 **Code Name**: `musubi-tuner:wan:train`
-**Description**: Train Wan LoRA model
+**Description**: Train Wan LoRA model. Automatically checks for existing checkpoints and offers to resume if found.
 **Tool**: `tools/ai/musubi-tuner`
-**Parameters**: Task type, DiT path, dataset config, output settings
+**Script**: `tools/ai/musubi-tuner/scripts/wan-train.ps1`
+**Quick Start Guide**: `tools/ai/musubi-tuner/TRAINING_QUICK_START.md` - Complete automated workflow for AI agents
+**Parameters**: 
+  - Task type (determine from model filename: `i2v-A14B` for I2V models, `t2v-A14B` for T2V models)
+  - DiT path (check ComfyUI models directory or `.local/config.json`)
+  - Dataset config (create from template in `tools/ai/musubi-tuner/datasets/`)
+  - Output settings
+  - Optional: Resume checkpoint path
+**Key Workflow**:
+  1. **Find models**: Check `E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\diffusion_models\` for `wan2.2_*` files
+  2. **Check for checkpoints**: Look in output directory for `*epoch-*` directories
+  3. **Determine task**: From model filename (`i2v` → `i2v-A14B`, `t2v` → `t2v-A14B`)
+  4. **Determine mixed precision**: From model filename (`fp16` → `fp16`, `bf16` → `bf16`)
+  5. **Train or resume**: Use `-Resume` parameter if checkpoints found
+**Auto-Discovery**:
+  - Models: Search ComfyUI directory or check config.json
+  - Checkpoints: Scan output directory for `*epoch-*` patterns
+  - Dataset config: Use template from `tools/ai/musubi-tuner/datasets/dataset-wan22.example.toml`
 **Privacy**: Paths stored in local config
 
 #### `musubi-tuner:wan:generate`
@@ -92,6 +137,22 @@ Agents can query operations using:
 - **Always commit**: Operation code names, descriptions, tool structure
 - **Local config**: User-specific paths stored in `.local/config.json` (gitignored)
 - **Public registry**: `.toolset/operations.json` contains only public information
+
+## Local Variables and Paths
+
+**CRITICAL**: All local variables, paths, and user-specific data MUST remain local and NEVER be hardcoded in committed files.
+
+- **Use placeholders**: Examples should use `C:/path/to/` or `E:/path/to/` format
+- **Use config system**: Scripts should load paths from `.local/config.json` with fallback to defaults
+- **No hardcoded user paths**: Never hardcode actual user paths like `E:\Stable Diffusion\Inputs\df\lib\celeb\angelina`
+- **Template files**: Use `.example` suffix for templates (e.g., `config.example.json`)
+- **Local-only files**: Dataset configs, personal scripts, and user data should be gitignored or stored in `.local/`
+
+When creating scripts or config files:
+1. Use parameter variables instead of hardcoded paths
+2. Load from config with fallback to defaults
+3. Use example/template files for documentation
+4. Ensure user-specific paths are clearly marked as requiring local configuration
 
 ## Example Queries
 
