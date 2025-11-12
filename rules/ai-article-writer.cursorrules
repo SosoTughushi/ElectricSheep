@@ -9,6 +9,30 @@ examples: see Examples section below
 
 **IMPORTANT**: These rules apply to all article-writing tools in the `tools/ai/` directory.
 
+## Implementation Status
+
+**✅ COMPLETED (November 2024):**
+- Article generation with 3 difficulty levels (simple, medium, advanced)
+- Interactive HTML viewer with per-section difficulty switching
+- Markdown article generation with complexity annotations
+- GitHub Pages deployment setup
+- Node.js/JavaScript implementation
+- PowerShell scripts for Windows
+- Cross-platform Node.js scripts
+
+**📁 Key Files:**
+- `tools/ai/ai-article-writer/src/index.js` - Main article generator
+- `tools/ai/ai-article-writer/src/article-viewer.js` - HTML viewer generator
+- `docs/ai-first-repository-guide.html` - Example output (live on GitHub Pages)
+- `docs/ai-first-repository-guide.md` - Example markdown source
+
+**⏳ FUTURE ENHANCEMENTS:**
+- AI-powered content generation (currently uses template content)
+- Diagram generation integration (Mermaid)
+- MCP server integration
+- Advanced template system
+- Content caching and optimization
+
 ## Technology Stack
 
 ### Core Stack
@@ -171,6 +195,35 @@ When migrating from Python to Node.js:
 4. Update PowerShell scripts to call Node.js
 5. Remove `.venv` references
 6. Update documentation
+
+## Current Implementation Details
+
+### Article Generator (`src/index.js`)
+- Generates markdown articles with 3 complexity levels per section
+- Uses HTML comments to annotate complexity: `<!-- simple:start -->` ... `<!-- simple:end -->`
+- Creates YAML frontmatter with metadata
+- Currently uses template content (ready for AI integration)
+
+### HTML Viewer (`src/article-viewer.js`)
+- Parses markdown articles with complexity annotations
+- Generates interactive HTML with per-section difficulty buttons
+- Includes global controls to set all sections to one difficulty
+- Responsive design, GitHub Pages ready
+
+### GitHub Pages Setup
+- Includes `.nojekyll` file to prevent Jekyll processing
+- Includes `index.html` redirect
+- Fixed submodule issues (removed invalid submodule reference)
+- Deployed at: https://sosotughushi.github.io/ElectricSheep/ai-first-repository-guide.html
+
+## Next Steps for AI Agents
+
+When continuing work on this tool:
+1. **Read**: `tools/ai/ai-article-writer/README.md` for current status
+2. **Check**: `src/index.js` to see how articles are generated
+3. **Enhance**: Replace template content with AI-generated content (Cursor API integration)
+4. **Extend**: Add diagram generation using Mermaid.js
+5. **Integrate**: Add MCP server operations for remote access
 
 ## Related Rules
 - `development-workflow.cursorrules` - General development practices

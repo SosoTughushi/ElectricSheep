@@ -2,42 +2,61 @@
 
 ## Overview
 
-The AI Article Writer generates complete articles by coordinating multiple specialized tools.
+The AI Article Writer generates complete articles with three difficulty levels (simple, medium, advanced) and creates interactive HTML viewers.
 
 ## Workflow
 
-1. **Topic Input**: User provides article topic
-2. **Text Generation**: Generates article sections
-3. **Diagram Generation**: Creates relevant diagrams
-4. **Complexity Adaptation**: Adjusts content complexity
-5. **Composition**: Combines all elements
-6. **Output**: Saves final article
+1. **Topic Input**: User provides article topic ✅
+2. **Text Generation**: Generates article sections ✅ (Basic implementation)
+3. **Complexity Adaptation**: Creates 3 versions per section ✅
+4. **Markdown Output**: Saves article with complexity annotations ✅
+5. **HTML Viewer**: Generates interactive viewer with difficulty switching ✅
+6. **GitHub Pages**: Ready for deployment ✅
 
 ## Examples
 
-### Example 1: Basic Article
+### Example 1: Generate Markdown Article
 
+**PowerShell (Windows):**
 ```powershell
-.\scripts\generate-article.ps1 -Topic "Introduction to Docker"
+.\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic "Introduction to Docker"
 ```
 
-Output: `./output/article.md`
+**Node.js (All platforms):**
+```bash
+cd tools/ai/ai-article-writer
+node src/index.js --topic "Introduction to Docker" --output "../../../docs/docker-guide.md"
+```
 
-### Example 2: Custom Output Path
+Output: `docs/docker-guide.md` (or `./output/article.md` by default)
+
+### Example 2: Generate with Custom Output Path
 
 ```powershell
-.\scripts\generate-article.ps1 `
+.\tools\ai\ai-article-writer\scripts\generate-article.ps1 `
     -Topic "Python Best Practices" `
     -OutputPath "./docs/python-best-practices.md"
 ```
 
-### Example 3: Advanced Complexity
-
-```powershell
-.\scripts\generate-article.ps1 `
-    -Topic "Machine Learning Fundamentals" `
-    -ComplexityLevel "advanced"
+Or with Node.js:
+```bash
+node src/index.js --topic "Python Best Practices" --output "../../../docs/python-best-practices.md"
 ```
+
+### Example 3: Generate Interactive HTML Viewer
+
+After generating a markdown article, create an interactive HTML viewer:
+
+```bash
+cd tools/ai/ai-article-writer
+node src/article-viewer.js --markdown ../../../docs/article.md --output ../../../docs/article.html
+```
+
+This creates an HTML file with:
+- Per-section difficulty switching (Simple/Medium/Advanced)
+- Global controls to set all sections to one difficulty
+- Beautiful, responsive design
+- Ready for GitHub Pages deployment
 
 ## Parameters
 
@@ -47,16 +66,40 @@ Output: `./output/article.md`
 
 ## Output Format
 
+### Markdown Articles
 Articles are generated as Markdown files with:
-- Frontmatter (YAML)
-- Structured sections
-- Embedded diagrams (Mermaid)
-- Complexity-adapted content
+- Frontmatter (YAML) with title, complexity, and generation date
+- Structured sections with headers
+- Three complexity levels per section (annotated with HTML comments)
+- Format: `<!-- simple:start -->` ... `<!-- simple:end -->`
+
+### HTML Viewers
+Interactive HTML viewers include:
+- Per-section difficulty buttons
+- Global difficulty controls
+- Responsive design
+- GitHub Pages ready (includes `.nojekyll`)
+
+## Real Example
+
+**Generated Article:**
+- Markdown: `docs/ai-first-repository-guide.md`
+- HTML Viewer: `docs/ai-first-repository-guide.html`
+- Live: https://sosotughushi.github.io/ElectricSheep/ai-first-repository-guide.html
 
 ## Integration
 
 This tool integrates with:
-- Cursor AI for content generation
-- MCP server for remote access
-- Other Electric Sheep tools
+- ✅ Cursor AI for content generation (ready for AI integration)
+- ⏳ MCP server for remote access (planned)
+- ✅ GitHub Pages for hosting
+- ✅ Other Electric Sheep tools
+
+## Next Steps for AI Agents
+
+When working with this tool:
+1. **Read**: `rules/ai-article-writer.cursorrules` for development guidelines
+2. **Check**: `src/index.js` for article generation logic
+3. **Enhance**: Add AI-powered content generation (currently uses templates)
+4. **Extend**: Integrate diagram generation and MCP server
 

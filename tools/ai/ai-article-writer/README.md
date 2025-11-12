@@ -2,13 +2,35 @@
 
 Main orchestrator tool for generating complete articles with text sections, diagrams, and complexity adaptation.
 
+## Status: ✅ Implemented and Working
+
+**Current Implementation:**
+- ✅ Article generation with 3 difficulty levels (simple, medium, advanced)
+- ✅ Interactive HTML viewer with per-section difficulty switching
+- ✅ Markdown article generation
+- ✅ GitHub Pages hosting ready
+- ✅ Node.js/JavaScript implementation complete
+
+**What's Working:**
+- Article generation from topics
+- Three complexity levels per section
+- HTML viewer with interactive difficulty switching
+- PowerShell scripts for Windows
+- GitHub Pages deployment
+
+**Future Enhancements:**
+- AI-powered content generation (currently uses template content)
+- Diagram generation integration
+- MCP server integration
+- Advanced template system
+
 ## Overview
 
 The AI Article Writer coordinates multiple specialized tools to create complete articles:
-- **Text Generation**: Creates article sections from prompts
-- **Diagram Generation**: Generates Mermaid diagrams from descriptions
-- **Complexity Adaptation**: Adjusts content complexity for different audiences
-- **Article Composition**: Combines all elements into final article
+- **Text Generation**: Creates article sections from prompts ✅ (Basic implementation)
+- **Diagram Generation**: Generates Mermaid diagrams from descriptions ⏳ (Planned)
+- **Complexity Adaptation**: Adjusts content complexity for different audiences ✅ (Implemented)
+- **Article Composition**: Combines all elements into final article ✅ (Implemented)
 
 ## Quick Start
 
@@ -33,6 +55,22 @@ Generate a complete article:
 
 ```powershell
 .\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic "Setting Up AI-First Repository"
+```
+
+Or run Node.js directly (works on all platforms):
+
+```bash
+cd tools/ai/ai-article-writer
+node src/index.js --topic "Your Topic" --output "../../../docs/article.md"
+```
+
+### 3. Generate Interactive HTML Viewer
+
+Create an interactive HTML viewer from a markdown article:
+
+```bash
+cd tools/ai/ai-article-writer
+node src/article-viewer.js --markdown ../../../docs/article.md --output ../../../docs/article.html
 ```
 
 ## Requirements
@@ -109,9 +147,27 @@ If you see module errors, ensure dependencies are installed:
 npm install
 ```
 
+## Implementation Details
+
+### Source Files
+- `src/index.js` - Main article generator (generates markdown with 3 complexity levels)
+- `src/article-viewer.js` - HTML viewer generator (creates interactive HTML from markdown)
+
+### Generated Files
+- Markdown articles with complexity annotations
+- Interactive HTML viewers with difficulty switching
+- GitHub Pages ready (includes `.nojekyll` file)
+
+### Example Output
+See the generated article: `docs/ai-first-repository-guide.html`
+- Hosted on GitHub Pages: https://sosotughushi.github.io/ElectricSheep/ai-first-repository-guide.html
+- Source markdown: `docs/ai-first-repository-guide.md`
+
 ## Documentation
 
 - **Usage Guide**: `docs/USAGE.md`
 - **Manifest**: `MANIFEST.json`
 - **Registry**: `.toolset/registry.json`
+- **Rules**: `rules/ai-article-writer.cursorrules`
+- **Architecture**: `docs/architecture/ai-article-writer-technical-plan.md`
 

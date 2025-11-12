@@ -20,6 +20,7 @@ electric-sheep/
 │   │   ├── bambu-lab/     # Bambu Lab CPU affinity management
 │   │   └── cpu-affinity/  # CPU affinity utilities
 │   ├── ai/                # AI/ML tools
+│   │   ├── ai-article-writer/  # Article generation with 3 difficulty levels ✅
 │   │   └── musubi-tuner/  # LoRA training toolkit
 │   ├── dev/               # Development tools (future)
 │   └── misc/              # Miscellaneous utilities (future)
@@ -54,6 +55,14 @@ electric-sheep/
 ```
 
 ### AI Tools
+
+**AI Article Writer:**
+Generate articles with three difficulty levels and interactive HTML viewers:
+```powershell
+.\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic "Your Topic"
+```
+See `tools/ai/ai-article-writer/README.md` for full documentation.
+**Live Example**: https://sosotughushi.github.io/ElectricSheep/ai-first-repository-guide.html
 
 **Musubi Tuner (LoRA Training):**
 See `tools/ai/musubi-tuner/README.md` for full documentation.
