@@ -56,7 +56,7 @@ param(
     [string]$MixedPrecision = "bf16",  # Use "fp16" for fp16 models, "bf16" for bf16 models
     
     [Parameter(Mandatory=$false)]
-    [string]$Resume,  # Path to checkpoint directory to resume from (e.g., "output/angelina_jolie_wan22_low-epoch-5")
+    [string]$Resume,  # Path to checkpoint directory to resume from (e.g., "output/example_celebrity_wan22_low-epoch-5")
     
     [Parameter(Mandatory=$false)]
     [int]$DataLoaderWorkers = 2  # Number of data loader workers (increase for faster data loading, requires more CPU/RAM)
@@ -80,7 +80,7 @@ if (Test-Path $ConfigPath) {
     }
 } else {
     Write-Host "Warning: .local/config.json not found. Using default paths." -ForegroundColor Yellow
-    $MusubiTunerPath = "E:\Stable Diffusion\musubi-tuner"
+    $MusubiTunerPath = "E:/path/to/musubi-tuner"
     if ($UseAccelerate) {
         $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\accelerate.exe"
     } else {

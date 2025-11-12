@@ -32,7 +32,7 @@ if (Test-Path $ConfigPath) {
     }
 } else {
     Write-Warning ".local/config.json not found. Using default paths."
-    $MusubiTunerPath = "E:\Stable Diffusion\musubi-tuner"
+    $MusubiTunerPath = "E:/path/to/musubi-tuner"
     $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\python.exe"
 }
 

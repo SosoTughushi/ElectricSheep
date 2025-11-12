@@ -24,11 +24,11 @@ Write-Host "Searching for WAN 2.1 1.3B models..." -ForegroundColor Yellow
 
 # Search paths for models
 $SearchPaths = @(
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\diffusion_models",
-    "E:\Stable Diffusion\ComfyUI\models\diffusion_models",
-    "E:\Stable Diffusion\models\diffusion_models",
-    "E:\Stable Diffusion\models",
-    "E:\models"
+    "E:/path/to/ComfyUI/models/diffusion_models",
+    "E:/path/to/ComfyUI/models/diffusion_models",
+    "E:/path/to/models/diffusion_models",
+    "E:/path/to/models",
+    "E:/path/to/models"
 )
 
 # Find WAN 2.1 1.3B models
@@ -72,9 +72,9 @@ foreach ($Path in $SearchPaths) {
 # Search for VAE (WAN 2.1 or WAN 2.2 VAE works - they're compatible)
 # Also check common VAE directories
 $VaeSearchPaths = $SearchPaths + @(
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\vae",
-    "E:\Stable Diffusion\ComfyUI\models\vae",
-    "E:\Stable Diffusion\models\vae"
+    "E:/path/to/ComfyUI/models/vae",
+    "E:/path/to/ComfyUI/models/vae",
+    "E:/path/to/models/vae"
 )
 
 foreach ($Path in $VaeSearchPaths) {
@@ -106,11 +106,11 @@ foreach ($Path in $VaeSearchPaths) {
 
 # Search for T5 model
 $T5SearchPaths = @(
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models",
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\text_encoders",
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\clip",
-    "E:\Stable Diffusion\models",
-    "E:\models"
+    "E:/path/to/ComfyUI/models",
+    "E:/path/to/ComfyUI/models/text_encoders",
+    "E:/path/to/ComfyUI/models/clip",
+    "E:/path/to/models",
+    "E:/path/to/models"
 )
 
 foreach ($Path in $T5SearchPaths) {

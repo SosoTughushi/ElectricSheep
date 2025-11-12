@@ -1,4 +1,4 @@
-# Start Angelina Jolie WAN 2.2 Training with Logging
+# Start Example Celebrity Dataset WAN 2.2 Training with Logging
 # This script finds models, sets up logging, and starts training for both low and high noise LoRAs
 
 param(
@@ -9,31 +9,63 @@ param(
     [string]$DitHighNoise,  # Optional: Path to high noise DiT model (will search if not provided)
     
     [Parameter(Mandatory=$false)]
-    [string]$DatasetConfig = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\datasets\angelina-wan22.toml",
+    [string]$DatasetConfig = "",  # Dataset config path (loaded from config if not provided)
     
     [Parameter(Mandatory=$false)]
-    [string]$OutputDir = "E:\Stable Diffusion\TrainingDataSet\Angelina Jolie\output",
+    [string]$OutputDir = "",  # Output directory (loaded from config if not provided)
     
     [Parameter(Mandatory=$false)]
-    [string]$OutputName = "angelina_jolie_wan22",
+    [string]$OutputName = "example_celebrity_wan22",
     
     [Parameter(Mandatory=$false)]
-    [string]$LogDir = "E:\Soso\Projects\electric-sheep\logs",
+    [string]$LogDir = "",  # Log directory (loaded from config if not provided)
     
     [Parameter(Mandatory=$false)]
-    [string]$Task = "t2v-A14B",  # Will auto-detect from model filename if possible
-    
-    [Parameter(Mandatory=$false)]
-    [string]$MixedPrecision = "fp16"  # Will auto-detect from model filename if possible
+    [string]$Task = "t2v-A14B"  # Will auto-detect from model filename if possible
 )
+
+# Load training paths helper
+. "$PSScriptRoot\load-training-paths.ps1"
+
+# Load paths from config if not provided
+if ([string]::IsNullOrEmpty($DatasetConfig)) {
+    # Try to get dataset config path from config or use default location
+    $RepoRoot = Split-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) -Parent
+    $DatasetConfig = Join-Path $RepoRoot "tools\ai\musubi-tuner\datasets\example-celebrity-dataset-wan22.toml"
+}
+
+if ([string]::IsNullOrEmpty($OutputDir)) {
+    $OutputDir = Get-DatasetOutputDir -DatasetName "example-celebrity-dataset"
+}
+
+if ([string]::IsNullOrEmpty($LogDir)) {
+    # Try config first
+    $RepoRoot = Split-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) -Parent
+    if ($Config -and $Config.paths -and $Config.paths.logs) {
+        $LogDir = $Config.paths.logs
+    } else {
+        $LogDir = Join-Path $RepoRoot "logs"
+    }
+}
+
+# Load config for model paths
+$ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
+$Config = $null
+if (Test-Path $ConfigPath) {
+    try {
+        $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    } catch {
+        Write-Log "Error reading config.json: $_" "ERROR"
+    }
+}
 
 # Create log directory if it doesn't exist
 if (-not (Test-Path $LogDir)) {
     New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
 }
 
-$LogFile = Join-Path $LogDir "angelina-training-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
-$ErrorLogFile = Join-Path $LogDir "angelina-training-errors-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+$LogFile = Join-Path $LogDir "example-celebrity-training-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+$ErrorLogFile = Join-Path $LogDir "example-celebrity-training-errors-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 
 function Write-Log {
     param([string]$Message, [string]$Level = "INFO")
@@ -50,11 +82,11 @@ function Find-WanModels {
     Write-Log "Searching for WAN 2.2 models..."
     
     $SearchPaths = @(
-        "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\diffusion_models",
-        "E:\Stable Diffusion\ComfyUI\models\diffusion_models",
-        "E:\Stable Diffusion\models\diffusion_models",
-        "E:\Stable Diffusion\models",
-        "E:\models"
+        "E:/path/to/ComfyUI/models/diffusion_models",
+        "E:/path/to/ComfyUI/models/diffusion_models",
+        "E:/path/to/models/diffusion_models",
+        "E:/path/to/models",
+        "E:/path/to/models"
     )
     
     $LowModel = $null
@@ -106,7 +138,7 @@ function Find-WanModels {
 }
 
 # Start logging
-Write-Log "=== Starting Angelina Jolie WAN 2.2 Training ==="
+Write-Log "=== Starting Example Celebrity Dataset WAN 2.2 Training ==="
 Write-Log "Log file: $LogFile"
 Write-Log "Error log file: $ErrorLogFile"
 
@@ -184,7 +216,7 @@ if (Test-Path $ConfigPath) {
     }
 } else {
     Write-Log "Warning: .local/config.json not found. Using default paths." "WARN"
-    $MusubiTunerPath = "E:\Stable Diffusion\musubi-tuner"
+    $MusubiTunerPath = "E:/path/to/musubi-tuner"
     $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\accelerate.exe"
 }
 

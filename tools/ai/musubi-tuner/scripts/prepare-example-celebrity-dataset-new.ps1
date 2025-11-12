@@ -1,18 +1,18 @@
-# Prepare Angelina Dataset for WAN 2.2 Training
-# This script copies images from source, generates captions, and ensures trigger word "angelina" is included
+# Prepare Example Celebrity Dataset for WAN 2.2 Training
+# This script copies images from source, generates captions, and ensures trigger word is included
 
 param(
     [Parameter(Mandatory=$true)]
-    [string]$SourceImageDir,  # Path to source images (e.g., "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\output\people\celeb\angelina")
+    [string]$SourceImageDir,  # Path to source images (e.g., "E:/path/to/ComfyUI/output/people/celeb/example-celebrity")
     
     [Parameter(Mandatory=$true)]
     [string]$QwenModelPath,  # Path to Qwen2.5-VL model (e.g., "Qwen/Qwen2.5-VL-7B-Instruct" or local path)
     
     [Parameter(Mandatory=$false)]
-    [string]$TargetDir = "E:\Stable Diffusion\TrainingDataSet\angelina",  # Target directory for processed dataset
+    [string]$TargetDir = "",  # Target directory for processed dataset (loaded from config if not provided)
     
     [Parameter(Mandatory=$false)]
-    [string]$TriggerWord = "angelina",
+    [string]$TriggerWord = "example_celebrity",
     
     [Parameter(Mandatory=$false)]
     [switch]$SkipCaptioning = $false,
@@ -23,6 +23,9 @@ param(
     [Parameter(Mandatory=$false)]
     [switch]$SkipCopy = $false  # If images are already copied, skip copying
 )
+
+# Load training paths helper
+. "$PSScriptRoot\load-training-paths.ps1"
 
 # Get musubi-tuner path from config or use default
 $ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
@@ -35,6 +38,11 @@ if (Test-Path $ConfigPath) {
     Write-Host "Please create .local/config.json from .local/config.example.json" -ForegroundColor Red
     Write-Host "and configure musubi_tuner.installation_path and musubi_tuner.python_exe" -ForegroundColor Red
     exit 1
+}
+
+# Load target directory from config if not provided
+if ([string]::IsNullOrEmpty($TargetDir)) {
+    $TargetDir = Get-DatasetDir -DatasetName "example-celebrity-dataset"
 }
 
 if (-not (Test-Path $PythonExe)) {
@@ -57,7 +65,7 @@ if (Test-Path $CaptionScriptAlt) {
     exit 1
 }
 
-Write-Host "=== Preparing Angelina Dataset ===" -ForegroundColor Cyan
+Write-Host "=== Preparing Example Celebrity Dataset ===" -ForegroundColor Cyan
 Write-Host "Source Directory: $SourceImageDir" -ForegroundColor Yellow
 Write-Host "Target Directory: $TargetDir" -ForegroundColor Yellow
 Write-Host "Trigger Word: $TriggerWord" -ForegroundColor Yellow
@@ -189,7 +197,7 @@ Write-Host ""
 Write-Host "Dataset location: $TargetDir" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "1. Create a dataset config TOML file (see tools/ai/musubi-tuner/datasets/angelina-wan22.toml)" -ForegroundColor White
+Write-Host "1. Create a dataset config TOML file (see tools/ai/musubi-tuner/datasets/example-celebrity-dataset-wan22.toml)" -ForegroundColor White
 Write-Host "2. Cache latents using wan_cache_latents.py" -ForegroundColor White
 Write-Host "3. Cache text encoder outputs using wan_cache_text_encoder_outputs.py" -ForegroundColor White
 Write-Host "4. Train using wan_train_network.py with --dit_high_noise for high/low training" -ForegroundColor White

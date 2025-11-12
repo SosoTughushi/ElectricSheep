@@ -17,7 +17,7 @@ except ImportError:
     Qwen2_5_VLForConditionalGeneration = None
 from tqdm import tqdm
 
-def generate_caption(image_path: str, model, processor, device, trigger_word: str = "angelina jolie"):
+def generate_caption(image_path: str, model, processor, device, trigger_word: str = "example_celebrity"):
     """Generate a caption for a single image."""
     try:
         # Load and process image
@@ -83,7 +83,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate captions for images using Qwen2.5-VL")
     parser.add_argument("--image_dir", type=str, required=True, help="Directory containing images")
     parser.add_argument("--model_name", type=str, default="Qwen/Qwen2.5-VL-7B-Instruct", help="Model name or path")
-    parser.add_argument("--trigger_word", type=str, default="angelina jolie", help="Trigger word to include in captions")
+    parser.add_argument("--trigger_word", type=str, default="example_celebrity", help="Trigger word to include in captions")
     parser.add_argument("--max_new_tokens", type=int, default=256, help="Maximum tokens to generate")
     
     args = parser.parse_args()

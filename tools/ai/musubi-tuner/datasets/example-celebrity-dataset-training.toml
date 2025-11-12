@@ -1,0 +1,38 @@
+# Dataset Configuration for Example Celebrity Dataset WAN 2.2 Training
+# NOTE: Update paths from .local/config.json using paths.training_data.base_directory
+# Or set environment variable TRAINING_DATA_BASE_DIR
+# Training data location: E:/path/to/TrainingDataSet/example-celebrity-dataset
+
+[general]
+# Default resolution for all datasets
+resolution = [960, 544]
+
+# Caption file extension
+caption_extension = ".txt"
+
+# Batch size for training
+batch_size = 1
+
+# Enable aspect ratio bucketing (recommended for varied image sizes)
+enable_bucket = true
+
+# Don't upscale images - only resize to fit buckets
+bucket_no_upscale = false
+
+# Number of times to repeat the dataset (useful for balancing small datasets)
+num_repeats = 1
+
+# Dataset configuration
+# NOTE: Update these paths from .local/config.json
+[[datasets]]
+# Path to directory containing images (update from config.json)
+image_directory = "E:/path/to/TrainingDataSet/example-celebrity-dataset"
+
+# Cache directory for pre-processed latents (update from config.json)
+cache_directory = "E:/path/to/TrainingDataSet/example-celebrity-dataset/cache"
+
+# Optional: Override general settings per dataset
+# resolution = [960, 544]  # Override if needed
+# batch_size = 1           # Override if needed
+# num_repeats = 2          # Increase if you want more repetitions
+

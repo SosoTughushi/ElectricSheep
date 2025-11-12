@@ -1,5 +1,5 @@
-# Dataset Configuration for Angelina Jolie WAN 2.2 Training
-# Training data location: E:\Stable Diffusion\TrainingDataSet\Angeline Jolie
+# Dataset Configuration for Example Celebrity Dataset WAN 2.2 Training
+# This config is set up for high/low noise training with images
 
 [general]
 # Default resolution for all datasets
@@ -23,13 +23,22 @@ num_repeats = 1
 # Dataset configuration
 [[datasets]]
 # Path to directory containing images
-image_directory = "E:/Stable Diffusion/TrainingDataSet/Angeline Jolie"
+# NOTE: Replace with your actual image directory path
+image_directory = "C:/path/to/your/images/example-celebrity"
 
 # Cache directory for pre-processed latents (recommended to set explicitly)
-cache_directory = "E:/Stable Diffusion/TrainingDataSet/Angeline Jolie/cache"
+# NOTE: Replace with your actual cache directory path
+cache_directory = "C:/path/to/your/images/example-celebrity/cache"
 
 # Optional: Override general settings per dataset
 # resolution = [960, 544]  # Override if needed
 # batch_size = 1           # Override if needed
 # num_repeats = 2          # Increase if you want more repetitions
 
+# Note: For WAN 2.2 high/low training:
+# - Use --dit_high_noise flag during training to train both models
+# - Or train separately with --min_timestep and --max_timestep:
+#   - High noise: --min_timestep 875 --max_timestep 1000 (for T2V)
+#   - Low noise: --min_timestep 0 --max_timestep 875 (for T2V)
+#   - High noise: --min_timestep 900 --max_timestep 1000 (for I2V)
+#   - Low noise: --min_timestep 0 --max_timestep 900 (for I2V)

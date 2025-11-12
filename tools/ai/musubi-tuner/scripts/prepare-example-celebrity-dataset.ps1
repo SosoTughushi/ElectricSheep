@@ -1,15 +1,15 @@
-# Prepare Angelina Jolie Dataset for WAN 2.2 Training
-# This script generates captions and ensures trigger word "angelina jolie" is included
+# Prepare Example Celebrity Dataset for WAN 2.2 Training
+# This script generates captions and ensures trigger word is included
 
 param(
     [Parameter(Mandatory=$true)]
-    [string]$ImageDir,  # Path to directory containing images (e.g., "E:\Stable Diffusion\Inputs\df\lib\celeb\angelina")
+    [string]$ImageDir,  # Path to directory containing images (e.g., "E:\Stable Diffusion\Inputs\df\lib\celeb\example-celebrity")
     
     [Parameter(Mandatory=$true)]
     [string]$QwenModelPath,
     
     [Parameter(Mandatory=$false)]
-    [string]$TriggerWord = "angelina jolie",
+    [string]$TriggerWord = "example_celebrity",
     
     [Parameter(Mandatory=$false)]
     [switch]$SkipCaptioning = $false,
@@ -44,7 +44,7 @@ if (-not (Test-Path $CaptionScript)) {
     exit 1
 }
 
-Write-Host "=== Preparing Angelina Jolie Dataset ===" -ForegroundColor Cyan
+Write-Host "=== Preparing Example Celebrity Dataset ===" -ForegroundColor Cyan
 Write-Host "Image Directory: $ImageDir" -ForegroundColor Yellow
 Write-Host "Trigger Word: $TriggerWord" -ForegroundColor Yellow
 Write-Host ""

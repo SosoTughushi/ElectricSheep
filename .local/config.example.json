@@ -1,62 +1,37 @@
 {
-  "$comment": "This is a template. Copy to .local/config.json and fill in your actual paths.",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "version": "1.0.0",
   "paths": {
     "musubi_tuner": {
-      "installation_path": "E:/Stable Diffusion/musubi-tuner",
-      "venv_path": "E:/Stable Diffusion/musubi-tuner/venv",
-      "python_exe": "E:/Stable Diffusion/musubi-tuner/venv/Scripts/python.exe",
-      "accelerate_exe": "E:/Stable Diffusion/musubi-tuner/venv/Scripts/accelerate.exe"
+      "installation_path": "C:/path/to/musubi-tuner",
+      "python_exe": "C:/path/to/musubi-tuner/venv/Scripts/python.exe",
+      "venv_path": "C:/path/to/musubi-tuner/venv"
     },
-    "bambu_lab": {
-      "installation_path": "C:/Program Files/BambuStudio/BambuStudio.exe"
+    "training_data": {
+      "base_directory": "E:/path/to/TrainingDataSet",
+      "source_images_base": "E:/path/to/Inputs",
+      "datasets": {
+        "example-dataset": {
+          "source_dir": "E:/path/to/Inputs/df/lib/female/example-dataset"
+        },
+        "example-person-dataset": {
+          "source_dir": "E:/path/to/Inputs/df/lib/female/example-person-dataset"
+        },
+        "example-character-dataset": {
+          "source_dir": "E:/path/to/Inputs/df/lib/female/example-character-dataset"
+        },
+        "example-celebrity-dataset": {
+          "source_dir": "E:/path/to/Inputs/df/lib/celeb/example-celebrity-dataset"
+        }
+      }
     },
-    "ollama": {
-      "installation_path": "$env:LOCALAPPDATA\\Programs\\Ollama",
-      "exe_path": "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama.exe",
-      "api_url": "http://localhost:11434"
-    }
+    "logs": "C:/path/to/electric-sheep/logs"
   },
   "models": {
     "wan": {
-      "vae": "E:/path/to/wan_2.1_vae.safetensors",
-      "t5": "E:/path/to/models_t5_umt5-xxl-enc-bf16.pth",
-      "clip": "E:/path/to/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth",
-      "dit_2_1_t2v": "E:/path/to/wan2.1_t2v_14B_bf16.safetensors",
-      "dit_2_1_i2v": "E:/path/to/wan2.1_i2v_480p_14B_bf16.safetensors",
-      "dit_2_2_t2v_low": "E:/path/to/wan2.2_t2v_low_noise_fp16.safetensors",
-      "dit_2_2_t2v_high": "E:/path/to/wan2.2_t2v_high_noise_fp16.safetensors",
-      "dit_2_2_i2v_low": "E:/path/to/wan2.2_i2v_low_noise_fp16.safetensors",
-      "dit_2_2_i2v_high": "E:/path/to/wan2.2_i2v_high_noise_fp16.safetensors"
-    },
-    "local_llm": {
-      "$comment": "Local LLM configuration for Ollama models",
-      "default_model": "nsfw-3b",
-      "ollama_api_url": "http://localhost:11434",
-      "cursor_api_key": "sk-ollama",
-      "cursor_base_url": "http://localhost:11434/v1",
-      "proxy_port": 8000,
-      "proxy_enabled": false
-    }
-  },
-  "datasets": {
-    "default_config": "E:/path/to/dataset.toml",
-    "default_output": "E:/path/to/output"
-  },
-  "api_keys": {
-    "$comment": "Never commit API keys. Store here if needed.",
-    "example_service": ""
-  },
-  "user_preferences": {
-    "default_affinity_cores": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    "default_batch_size": 16,
-    "local_llm": {
-      "$comment": "Local LLM preferences",
-      "auto_start_ollama": false,
-      "preferred_model": "nsfw-3b",
-      "use_gpu": true
+      "dit_2_2_t2v_low": "E:/path/to/ComfyUI/models/diffusion_models/wan2.2_t2v_low_noise_14B_fp16.safetensors",
+      "dit_2_2_t2v_high": "E:/path/to/ComfyUI/models/diffusion_models/wan2.2_t2v_high_noise_14B_fp16.safetensors",
+      "dit_2_2_i2v_low": "E:/path/to/ComfyUI/models/diffusion_models/wan2.2_i2v_low_noise_14B_fp16.safetensors",
+      "dit_2_2_i2v_high": "E:/path/to/ComfyUI/models/diffusion_models/wan2.2_i2v_high_noise_14B_fp16.safetensors",
+      "vae_2_2": "E:/path/to/ComfyUI/models/vae/wan2.2_vae.safetensors"
     }
   }
 }
-

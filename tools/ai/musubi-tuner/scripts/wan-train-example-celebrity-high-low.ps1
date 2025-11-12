@@ -1,5 +1,5 @@
-# Train WAN 2.2 High and Low LoRA Models for Angelina Jolie
-# Usage: .\wan-train-angelina-high-low.ps1 -Task "t2v-A14B" -DitLowNoise "path/to/low_noise.safetensors" -DitHighNoise "path/to/high_noise.safetensors" -DatasetConfig "path/to/dataset.toml"
+# Train WAN 2.2 High and Low LoRA Models for Example Celebrity Dataset
+# Usage: .\wan-train-example-celebrity-high-low.ps1 -Task "t2v-A14B" -DitLowNoise "path/to/low_noise.safetensors" -DitHighNoise "path/to/high_noise.safetensors" -DatasetConfig "path/to/dataset.toml"
 
 param(
     [Parameter(Mandatory=$true)]
@@ -18,7 +18,7 @@ param(
     [string]$OutputDir,  # Path to output directory for LoRA files
     
     [Parameter(Mandatory=$true)]
-    [string]$OutputName = "angelina_jolie_wan22",  # Name for output LoRA file
+    [string]$OutputName = "example_celebrity_wan22",  # Name for output LoRA file
     
     [Parameter(Mandatory=$false)]
     [int]$NetworkDim = 32,
@@ -50,7 +50,7 @@ if (Test-Path $ConfigPath) {
     }
 } else {
     Write-Host "Warning: .local/config.json not found. Using default paths." -ForegroundColor Yellow
-    $MusubiTunerPath = "E:\Stable Diffusion\musubi-tuner"
+    $MusubiTunerPath = "E:/path/to/musubi-tuner"
     $PythonExe = Join-Path $MusubiTunerPath "venv\Scripts\accelerate.exe"
 }
 

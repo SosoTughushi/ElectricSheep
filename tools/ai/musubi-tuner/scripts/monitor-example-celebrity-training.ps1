@@ -1,19 +1,42 @@
-# Monitor Angelina Training Progress
+# Monitor Example Celebrity Dataset Training Progress
 # This script checks training status and logs progress
 
 param(
-    [string]$LogDir = "E:\Soso\Projects\electric-sheep\logs",
-    [string]$OutputDir = "E:\Stable Diffusion\TrainingDataSet\Angelina Jolie\output"
+    [string]$LogDir = "",  # Log directory (loaded from config if not provided)
+    [string]$OutputDir = ""  # Output directory (loaded from config if not provided)
 )
 
-Write-Host "=== Angelina Training Monitor ===" -ForegroundColor Cyan
+# Load training paths helper
+. "$PSScriptRoot\load-training-paths.ps1"
+
+# Load config
+$ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
+$Config = $null
+if (Test-Path $ConfigPath) {
+    try {
+        $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    } catch {
+        Write-Warning "Failed to load config.json: $_"
+    }
+}
+
+# Load paths from config if not provided
+$RepoRoot = Split-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) -Parent
+if ([string]::IsNullOrEmpty($LogDir)) {
+    $LogDir = if ($Config.paths.logs) { $Config.paths.logs } else { Join-Path $RepoRoot "logs" }
+}
+if ([string]::IsNullOrEmpty($OutputDir)) {
+    $OutputDir = Get-DatasetOutputDir -DatasetName "example-celebrity-dataset"
+}
+
+Write-Host "=== Example Celebrity Dataset Training Monitor ===" -ForegroundColor Cyan
 Write-Host ""
 
 # Check for running processes
 $TrainingProcs = Get-Process -Name python,accelerate -ErrorAction SilentlyContinue | Where-Object { 
     $_.MainWindowTitle -like "*wan*" -or 
     $_.CommandLine -like "*wan_train*" -or
-    $_.CommandLine -like "*angelina*"
+    $_.CommandLine -like "*example-celebrity*"
 }
 
 if ($TrainingProcs) {
@@ -55,7 +78,7 @@ if (Test-Path $OutputDir) {
 Write-Host ""
 
 # Check latest log files
-$LatestLog = Get-ChildItem "$LogDir\angelina-training*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+$LatestLog = Get-ChildItem "$LogDir\example-celebrity-training*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if ($LatestLog) {
     Write-Host "Latest log: $($LatestLog.Name)" -ForegroundColor Cyan
     Write-Host "Last modified: $($LatestLog.LastWriteTime)" -ForegroundColor Gray

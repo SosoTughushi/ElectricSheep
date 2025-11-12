@@ -5,16 +5,16 @@
 
 param(
     [Parameter(Mandatory=$false)]
-    [string]$SourceImageDir = "E:\Stable Diffusion\Inputs\df\lib\female\ana",  # Path to source images
+    [string]$SourceImageDir = "",  # Path to source images (loaded from config if not provided)
     
     [Parameter(Mandatory=$false)]
     [string]$QwenModelPath = "Qwen/Qwen2.5-VL-7B-Instruct",  # Path to Qwen2.5-VL model (default: HuggingFace model ID)
     
     [Parameter(Mandatory=$false)]
-    [string]$TargetDir = "E:\Stable Diffusion\TrainingDataSet\ana",  # Target directory for processed dataset
+    [string]$TargetDir = "",  # Target directory for processed dataset (loaded from config if not provided)
     
     [Parameter(Mandatory=$false)]
-    [string]$TriggerWord = "ana",
+    [string]$TriggerWord = "example_dataset",
     
     [Parameter(Mandatory=$false)]
     [switch]$SkipCaptioning = $false,
@@ -25,6 +25,9 @@ param(
     [Parameter(Mandatory=$false)]
     [switch]$SkipCopy = $false  # If images are already copied, skip copying
 )
+
+# Load training paths helper
+. "$PSScriptRoot\load-training-paths.ps1"
 
 # Get musubi-tuner path from config or use default
 $ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
@@ -37,6 +40,15 @@ if (Test-Path $ConfigPath) {
     Write-Host "Please create .local/config.json from .local/config.example.json" -ForegroundColor Red
     Write-Host "and configure musubi_tuner.installation_path and musubi_tuner.python_exe" -ForegroundColor Red
     exit 1
+}
+
+# Load paths from config if not provided
+if ([string]::IsNullOrEmpty($SourceImageDir)) {
+    $SourceImageDir = Get-SourceImagesDir -DatasetName "example-dataset" -SubPath "df/lib/female"
+}
+
+if ([string]::IsNullOrEmpty($TargetDir)) {
+    $TargetDir = Get-DatasetDir -DatasetName "example-dataset"
 }
 
 if (-not (Test-Path $PythonExe)) {
@@ -59,7 +71,7 @@ if (Test-Path $CaptionScriptAlt) {
     exit 1
 }
 
-Write-Host "=== Preparing Ana Dataset ===" -ForegroundColor Cyan
+Write-Host "=== Preparing Example Dataset ===" -ForegroundColor Cyan
 Write-Host "Source Directory: $SourceImageDir" -ForegroundColor Yellow
 Write-Host "Target Directory: $TargetDir" -ForegroundColor Yellow
 Write-Host "Trigger Word: $TriggerWord" -ForegroundColor Yellow
@@ -222,7 +234,7 @@ Write-Host ""
 Write-Host "Dataset location: $TargetDir" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "1. Create a dataset config TOML file (see tools/ai/musubi-tuner/datasets/ana-wan22.toml)" -ForegroundColor White
+Write-Host "1. Create a dataset config TOML file (see tools/ai/musubi-tuner/datasets/example-dataset-wan22.toml)" -ForegroundColor White
 Write-Host "2. Cache latents using wan_cache_latents.py" -ForegroundColor White
 Write-Host "3. Cache text encoder outputs using wan_cache_text_encoder_outputs.py" -ForegroundColor White
 Write-Host "4. Train using wan_train_network.py with --dit_high_noise for high/low training" -ForegroundColor White

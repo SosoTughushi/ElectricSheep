@@ -1,19 +1,35 @@
-# Launch Angelina Training with All Prerequisites
+# Launch Example Celebrity Dataset Training with All Prerequisites
 # This script ensures caching is done before training
 
 $ErrorActionPreference = "Continue"
 
-# Known model paths
-$LowModel = "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\diffusion_models\wan2.2_i2v_low_noise_14B_fp16.safetensors"
-$HighModel = "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\diffusion_models\wan2.2_i2v_high_noise_14B_fp16.safetensors"
-$VaeModel = "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\vae\wan2.2_vae.safetensors"
-$DatasetConfig = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\datasets\angelina-wan22.toml"
-$OutputDir = "E:\Stable Diffusion\TrainingDataSet\Angelina Jolie\output"
-$OutputName = "angelina_jolie_wan22"
-$CacheDir = "E:\Stable Diffusion\TrainingDataSet\Angelina Jolie\cache"
-$LogDir = "E:\Soso\Projects\electric-sheep\logs"
+# Load training paths helper
+. "$PSScriptRoot\load-training-paths.ps1"
 
-$LogFile = Join-Path $LogDir "angelina-final-launch-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+# Load config
+$ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
+$Config = $null
+if (Test-Path $ConfigPath) {
+    try {
+        $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    } catch {
+        Write-Warning "Failed to load config.json: $_"
+    }
+}
+
+# Load paths from config
+$LowModel = if ($Config.models.wan.dit_2_2_i2v_low) { $Config.models.wan.dit_2_2_i2v_low } else { "E:/path/to/ComfyUI/models/diffusion_models/wan2.2_i2v_low_noise_14B_fp16.safetensors" }
+$HighModel = if ($Config.models.wan.dit_2_2_i2v_high) { $Config.models.wan.dit_2_2_i2v_high } else { "E:/path/to/ComfyUI/models/diffusion_models/wan2.2_i2v_high_noise_14B_fp16.safetensors" }
+$VaeModel = if ($Config.models.wan.vae_2_2) { $Config.models.wan.vae_2_2 } else { "E:/path/to/ComfyUI/models/vae/wan2.2_vae.safetensors" }
+
+$RepoRoot = Split-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) -Parent
+$DatasetConfig = Join-Path $RepoRoot "tools\ai\musubi-tuner\datasets\example-celebrity-dataset-wan22.toml"
+$OutputDir = Get-DatasetOutputDir -DatasetName "example-celebrity-dataset"
+$OutputName = "example_celebrity_wan22"
+$CacheDir = Get-DatasetCacheDir -DatasetName "example-celebrity-dataset"
+$LogDir = if ($Config.paths.logs) { $Config.paths.logs } else { Join-Path $RepoRoot "logs" }
+
+$LogFile = Join-Path $LogDir "example-celebrity-final-launch-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 
 function Write-Log {
     param([string]$Message)
@@ -23,17 +39,17 @@ function Write-Log {
     Add-Content -Path $LogFile -Value $LogMessage
 }
 
-Write-Log "=== Angelina Training Launch ==="
+Write-Log "=== Example Celebrity Dataset Training Launch ==="
 
 # Find T5 model - search comprehensively
 Write-Log "Searching for T5 model..."
 $T5SearchPaths = @(
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models",
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\text_encoders",
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\clip",
-    "E:\Stable Diffusion\models",
-    "E:\models",
-    "E:\Stable Diffusion"
+    "E:/path/to/ComfyUI/models",
+    "E:/path/to/ComfyUI/models/text_encoders",
+    "E:/path/to/ComfyUI/models/clip",
+    "E:/path/to/models",
+    "E:/path/to/models",
+    "E:/path/to"
 )
 
 $T5Model = $null
@@ -108,7 +124,7 @@ if (-not $CacheExists) {
     
     # Cache latents
     Write-Log "Step 1: Caching latents (this may take a while)..."
-    $CacheLatentsScript = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\scripts\wan-cache-latents.ps1"
+    $CacheLatentsScript = "C:/path/to/electric-sheep/tools/ai/musubi-tuner/scripts/wan-cache-latents.ps1"
     
     & $CacheLatentsScript `
         -DatasetConfig $DatasetConfig `
@@ -125,7 +141,7 @@ if (-not $CacheExists) {
     
     # Cache text encoder outputs
     Write-Log "Step 2: Caching text encoder outputs..."
-    $CacheTextScript = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\scripts\wan-cache-text-encoder.ps1"
+    $CacheTextScript = "C:/path/to/electric-sheep/tools/ai/musubi-tuner/scripts/wan-cache-text-encoder.ps1"
     
     & $CacheTextScript `
         -DatasetConfig $DatasetConfig `
@@ -146,7 +162,7 @@ if (-not $CacheExists) {
 Write-Log "Step 3: Starting training..."
 Write-Log "This will run for up to 16 epochs. Check $OutputDir for checkpoints."
 
-$TrainScript = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\scripts\wan-train-angelina-high-low.ps1"
+$TrainScript = "C:/path/to/electric-sheep/tools/ai/musubi-tuner/scripts/wan-train-example-celebrity-high-low.ps1"
 
 & $TrainScript `
     -Task "i2v-A14B" `

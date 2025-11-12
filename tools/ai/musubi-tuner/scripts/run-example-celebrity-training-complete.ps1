@@ -1,12 +1,38 @@
-# Complete Angelina Jolie Training Workflow
+# Complete Example Celebrity Dataset Training Workflow
 # This script handles caching and training automatically
 
 param(
-    [string]$DatasetConfig = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\datasets\angelina-wan22.toml",
-    [string]$OutputDir = "E:\Stable Diffusion\TrainingDataSet\Angelina Jolie\output",
-    [string]$OutputName = "angelina_jolie_wan22",
-    [string]$LogDir = "E:\Soso\Projects\electric-sheep\logs"
+    [string]$DatasetConfig = "",  # Dataset config path (loaded from config if not provided)
+    [string]$OutputDir = "",  # Output directory (loaded from config if not provided)
+    [string]$OutputName = "example_celebrity_wan22",
+    [string]$LogDir = ""  # Log directory (loaded from config if not provided)
 )
+
+# Load training paths helper
+. "$PSScriptRoot\load-training-paths.ps1"
+
+# Load config
+$ConfigPath = Join-Path $PSScriptRoot "..\..\..\..\.local\config.json"
+$Config = $null
+if (Test-Path $ConfigPath) {
+    try {
+        $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    } catch {
+        Write-Warning "Failed to load config.json: $_"
+    }
+}
+
+# Load paths from config if not provided
+$RepoRoot = Split-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) -Parent
+if ([string]::IsNullOrEmpty($DatasetConfig)) {
+    $DatasetConfig = Join-Path $RepoRoot "tools\ai\musubi-tuner\datasets\angelina-wan22.toml"
+}
+if ([string]::IsNullOrEmpty($OutputDir)) {
+    $OutputDir = Get-DatasetOutputDir -DatasetName "Angelina Jolie"
+}
+if ([string]::IsNullOrEmpty($LogDir)) {
+    $LogDir = if ($Config.paths.logs) { $Config.paths.logs } else { Join-Path $RepoRoot "logs" }
+}
 
 $ErrorActionPreference = "Continue"
 
@@ -15,17 +41,17 @@ function Write-Log {
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $LogMessage = "[$Timestamp] [$Level] $Message"
     Write-Host $LogMessage
-    $LogFile = Join-Path $LogDir "angelina-full-workflow-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+    $LogFile = Join-Path $LogDir "example-celebrity-full-workflow-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
     Add-Content -Path $LogFile -Value $LogMessage
 }
 
-Write-Log "=== Starting Complete Angelina Training Workflow ==="
+Write-Log "=== Starting Complete Example Celebrity Dataset Training Workflow ==="
 
 # Find models
 Write-Log "Searching for WAN 2.2 models..."
 $SearchPaths = @(
-    "E:\Stable Diffusion\ComfyUi Portable\ComfyUI\models\diffusion_models",
-    "E:\Stable Diffusion\ComfyUI\models\diffusion_models"
+    "E:/path/to/ComfyUI/models/diffusion_models",
+    "E:/path/to/ComfyUI/models/diffusion_models"
 )
 
 $LowModel = $null
@@ -57,8 +83,8 @@ foreach ($Path in $SearchPaths) {
 if (-not $VaeModel -or -not $T5Model) {
     Write-Log "Searching more broadly for VAE and T5 models..."
     $BroadPaths = @(
-        "E:\Stable Diffusion",
-        "E:\models"
+        "E:/path/to",
+        "E:/path/to/models"
     )
     
     foreach ($Path in $BroadPaths) {
@@ -105,7 +131,7 @@ $MixedPrecision = if ($LowModel -match "fp16") { "fp16" } else { "bf16" }
 Write-Log "Task: $Task, Precision: $MixedPrecision"
 
 # Check if cache exists
-$CacheDir = "E:\Stable Diffusion\TrainingDataSet\Angelina Jolie\cache"
+$CacheDir = Get-DatasetCacheDir -DatasetName "example-celebrity-dataset"
 $CacheExists = Test-Path $CacheDir
 
 if (-not $CacheExists) {
@@ -113,7 +139,7 @@ if (-not $CacheExists) {
     
     # Cache latents
     Write-Log "Caching latents..."
-    $CacheLatentsScript = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\scripts\wan-cache-latents.ps1"
+    $CacheLatentsScript = "C:/path/to/electric-sheep/tools/ai/musubi-tuner/scripts/wan-cache-latents.ps1"
     
     $CacheArgs = @{
         DatasetConfig = $DatasetConfig
@@ -134,7 +160,7 @@ if (-not $CacheExists) {
     
     # Cache text encoder outputs
     Write-Log "Caching text encoder outputs..."
-    $CacheTextScript = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\scripts\wan-cache-text-encoder.ps1"
+    $CacheTextScript = "C:/path/to/electric-sheep/tools/ai/musubi-tuner/scripts/wan-cache-text-encoder.ps1"
     
     & $CacheTextScript -DatasetConfig $DatasetConfig -T5Path $T5Model -BatchSize 16
     
@@ -150,7 +176,7 @@ if (-not $CacheExists) {
 
 # Start training
 Write-Log "Starting training..."
-$TrainScript = "E:\Soso\Projects\electric-sheep\tools\ai\musubi-tuner\scripts\wan-train-angelina-high-low.ps1"
+$TrainScript = "C:/path/to/electric-sheep/tools/ai/musubi-tuner/scripts/wan-train-angelina-high-low.ps1"
 
 & $TrainScript `
     -Task $Task `
