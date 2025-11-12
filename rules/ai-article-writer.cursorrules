@@ -240,6 +240,95 @@ When migrating from Python to Node.js:
    - Wait 1-5 minutes after push, then verify at GitHub Pages URL
    - Use local preview (see below) before pushing to catch issues early
 
+## Common Pitfalls and Solutions
+
+### ⚠️ Template Literal Escaping Issues
+
+**Problem**: When generating JavaScript code inside template literals, nested template literals and regex patterns can cause syntax errors.
+
+**Solutions**:
+- **Avoid nested template literals**: Use string concatenation instead of nested backticks
+  ```javascript
+  // ❌ BAD: Nested template literal
+  const buttons = document.querySelectorAll(\`[data-section="\${sectionIndex}"]\`);
+  
+  // ✅ GOOD: String concatenation
+  const buttons = document.querySelectorAll('[data-section="' + sectionIndex + '"]');
+  ```
+
+- **Avoid regex literals in template strings**: Use `RegExp` constructor or string methods
+  ```javascript
+  // ❌ BAD: Regex literal in template string breaks
+  .replace(/\n/g, '<br>')
+  
+  // ✅ GOOD: Use string methods
+  .split('\\n').join('<br>')
+  
+  // ✅ GOOD: Or use RegExp constructor with escaped strings
+  const newlineRegex = new RegExp('\\n', 'g');
+  ```
+
+- **Backticks in template strings**: Use `String.fromCharCode(96)` instead
+  ```javascript
+  // ❌ BAD: Backtick breaks template literal
+  .split('`')
+  
+  // ✅ GOOD: Use character code
+  const backtick = String.fromCharCode(96);
+  .split(backtick)
+  ```
+
+### ⚠️ Function Definition Order
+
+**Problem**: JavaScript functions must be defined before they're called, especially in generated HTML.
+
+**Solution**: Always define functions before initialization code:
+```javascript
+// ✅ GOOD: Define first, then initialize
+function setDifficulty(...) { ... }
+function setAllSections(...) { ... }
+
+// Then initialize
+articleData.forEach((section, index) => {
+    setDifficulty(index, defaultDifficulties[index]);
+});
+```
+
+### ⚠️ HTTP Server Setup
+
+**Problem**: Server must run from the correct directory, and user prefers Node.js over Python.
+
+**Solutions**:
+- **Always use Node.js**: Use `npx http-server` or `node` for HTTP servers, not Python
+- **Run from correct directory**: Server must run from `docs/` directory, not repo root
+- **Check file paths**: Verify HTML files exist before starting server
+
+**Correct pattern**:
+```bash
+cd docs && npx -y http-server -p 8080 -o article.html
+```
+
+### ⚠️ Markdown Rendering
+
+**Problem**: When marked.js isn't available, fallback rendering must work without regex issues.
+
+**Solution**: Use simple string methods for fallback:
+```javascript
+// ✅ GOOD: Simple, no regex
+let result = content.split('\\n').join('<br>');
+result = result.split('**').map((part, i) => 
+    i % 2 === 1 ? '<strong>' + part + '</strong>' : part
+).join('');
+```
+
+### ⚠️ Testing Workflow
+
+**Always test locally before pushing**:
+1. Regenerate HTML: `node tools/ai/ai-article-writer/src/article-viewer.js --markdown docs/article.md --output docs/article.html`
+2. Preview locally: `./tools/ai/ai-article-writer/scripts/preview-article.sh --regenerate`
+3. Verify functionality (buttons work, no console errors)
+4. Then commit and push
+
 ## Next Steps for AI Agents
 
 When continuing work on this tool:
@@ -248,6 +337,7 @@ When continuing work on this tool:
 3. **Enhance**: Replace template content with AI-generated content (Cursor API integration)
 4. **Extend**: Add diagram generation using Mermaid.js
 5. **Integrate**: Add MCP server operations for remote access
+6. **Remember**: Always test locally before pushing, avoid template literal pitfalls
 
 ## Related Rules
 - `development-workflow.cursorrules` - General development practices
