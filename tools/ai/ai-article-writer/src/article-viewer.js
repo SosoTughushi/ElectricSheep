@@ -180,7 +180,7 @@ function generateHTMLViewer(articleData) {
             background: white;
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         .header {
@@ -203,6 +203,7 @@ function generateHTMLViewer(articleData) {
         
         .content {
             padding: 40px;
+            position: relative;
         }
         
         .section {
@@ -403,30 +404,39 @@ function generateHTMLViewer(articleData) {
         }
         
         .global-controls {
+            position: -webkit-sticky;
             position: sticky;
-            top: 20px;
+            top: 0;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
+            padding: 20px 40px;
+            border-radius: 0;
+            margin: 0 -40px 30px -40px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 100;
+            z-index: 1000;
+            border-bottom: 2px solid #e0e0e0;
+            width: calc(100% + 80px);
+            align-self: flex-start;
         }
         
         .global-controls h3 {
             margin-bottom: 15px;
             color: #667eea;
             font-size: 1.2em;
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 0;
+            vertical-align: middle;
         }
         
         .global-buttons {
-            display: flex;
+            display: inline-flex;
             gap: 10px;
             flex-wrap: wrap;
+            vertical-align: middle;
         }
         
         .global-btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: 2px solid #667eea;
             background: white;
             color: #667eea;
@@ -434,12 +444,20 @@ function generateHTMLViewer(articleData) {
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s ease;
-            font-size: 0.9em;
+            font-size: 0.95em;
         }
         
         .global-btn:hover {
             background: #667eea;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .global-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
         }
         
         @media (max-width: 768px) {
@@ -454,6 +472,28 @@ function generateHTMLViewer(articleData) {
             .section {
                 padding: 20px;
             }
+            
+            .global-controls {
+                padding: 15px 20px;
+                margin: 0 -20px 20px -20px;
+                width: calc(100% + 40px);
+            }
+            
+            .global-controls h3 {
+                display: block;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .global-buttons {
+                display: flex;
+                width: 100%;
+            }
+            
+            .global-btn {
+                flex: 1;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -466,11 +506,11 @@ function generateHTMLViewer(articleData) {
         
         <div class="content">
             <div class="global-controls">
-                <h3>🌐 Set All Sections To:</h3>
+                <h3>🌐 Difficulty Level:</h3>
                 <div class="global-buttons">
-                    <button class="global-btn" onclick="setAllSections('simple')">Simple</button>
-                    <button class="global-btn" onclick="setAllSections('medium')">Medium</button>
-                    <button class="global-btn" onclick="setAllSections('advanced')">Advanced</button>
+                    <button class="global-btn" id="global-btn-simple" onclick="setAllSections('simple')">Simple</button>
+                    <button class="global-btn active" id="global-btn-medium" onclick="setAllSections('medium')">Medium</button>
+                    <button class="global-btn" id="global-btn-advanced" onclick="setAllSections('advanced')">Advanced</button>
                 </div>
             </div>
             
@@ -491,29 +531,6 @@ function generateHTMLViewer(articleData) {
                 return `
                 <div class="section" id="section-${index}">
                     <h2 class="section-title">${section.title}</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn ${defaultDifficulty === 'simple' ? 'active' : ''}" 
-                                onclick="setDifficulty(${index}, 'simple')"
-                                data-section="${index}" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn ${defaultDifficulty === 'medium' ? 'active' : ''}" 
-                                onclick="setDifficulty(${index}, 'medium')"
-                                data-section="${index}" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn ${defaultDifficulty === 'advanced' ? 'active' : ''}" 
-                                onclick="setDifficulty(${index}, 'advanced')"
-                                data-section="${index}" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-${index}">
                         ${renderMarkdown(defaultContent)}
                     </div>
@@ -582,19 +599,87 @@ function generateHTMLViewer(articleData) {
             });
         }
         
+        // localStorage key for saving difficulty preference
+        const STORAGE_KEY = 'ai-first-repo-guide-difficulty';
+        
         function setAllSections(difficulty) {
             articleData.forEach((_, index) => {
                 setDifficulty(index, difficulty);
             });
+            
+            // Update global button states
+            document.getElementById('global-btn-simple').classList.remove('active');
+            document.getElementById('global-btn-medium').classList.remove('active');
+            document.getElementById('global-btn-advanced').classList.remove('active');
+            document.getElementById('global-btn-' + difficulty).classList.add('active');
+            
+            // Save preference to localStorage
+            try {
+                localStorage.setItem(STORAGE_KEY, difficulty);
+            } catch (e) {
+                // localStorage might not be available (e.g., in private browsing)
+                console.warn('Could not save difficulty preference:', e);
+            }
         }
         
-        // Set default difficulty for each section (medium for first, simple for others)
-        const defaultDifficulties = articleData.map((_, index) => index === 0 ? 'medium' : 'simple');
+        // Load saved difficulty preference or use default (medium)
+        let savedDifficulty = 'medium';
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved && ['simple', 'medium', 'advanced'].includes(saved)) {
+                savedDifficulty = saved;
+            }
+        } catch (e) {
+            // localStorage might not be available
+            console.warn('Could not load difficulty preference:', e);
+        }
         
-        // Initialize all sections
+        // Initialize all sections with saved or default difficulty
         articleData.forEach((section, index) => {
-            setDifficulty(index, defaultDifficulties[index]);
+            setDifficulty(index, savedDifficulty);
         });
+        
+        // Update global button to reflect saved preference
+        document.getElementById('global-btn-simple').classList.remove('active');
+        document.getElementById('global-btn-medium').classList.remove('active');
+        document.getElementById('global-btn-advanced').classList.remove('active');
+        document.getElementById('global-btn-' + savedDifficulty).classList.add('active');
+        
+        // Ensure sticky header works correctly by making it fixed when scrolling
+        // This ensures it always follows the user as they scroll
+        const globalControls = document.querySelector('.global-controls');
+        const header = document.querySelector('.header');
+        if (globalControls && header) {
+            let headerHeight = header.offsetHeight;
+            
+            // Update header height on resize
+            window.addEventListener('resize', function() {
+                headerHeight = header.offsetHeight;
+            });
+            
+            // Make header stick when scrolling past the main header
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const container = document.querySelector('.container');
+                const containerTop = container.getBoundingClientRect().top + scrollTop;
+                const contentTop = containerTop + headerHeight;
+                
+                if (scrollTop >= contentTop) {
+                    globalControls.style.position = 'fixed';
+                    globalControls.style.top = '0';
+                    globalControls.style.left = container.getBoundingClientRect().left + 'px';
+                    globalControls.style.width = container.offsetWidth + 'px';
+                } else {
+                    globalControls.style.position = 'sticky';
+                    globalControls.style.top = '0';
+                    globalControls.style.left = '';
+                    globalControls.style.width = '';
+                }
+            });
+            
+            // Initial check
+            window.dispatchEvent(new Event('scroll'));
+        }
     </script>
 </body>
 </html>`;

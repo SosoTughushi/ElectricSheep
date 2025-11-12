@@ -27,7 +27,7 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         .header {
@@ -50,6 +50,7 @@
         
         .content {
             padding: 40px;
+            position: relative;
         }
         
         .section {
@@ -250,30 +251,39 @@
         }
         
         .global-controls {
+            position: -webkit-sticky;
             position: sticky;
-            top: 20px;
+            top: 0;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
+            padding: 20px 40px;
+            border-radius: 0;
+            margin: 0 -40px 30px -40px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 100;
+            z-index: 1000;
+            border-bottom: 2px solid #e0e0e0;
+            width: calc(100% + 80px);
+            align-self: flex-start;
         }
         
         .global-controls h3 {
             margin-bottom: 15px;
             color: #667eea;
             font-size: 1.2em;
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 0;
+            vertical-align: middle;
         }
         
         .global-buttons {
-            display: flex;
+            display: inline-flex;
             gap: 10px;
             flex-wrap: wrap;
+            vertical-align: middle;
         }
         
         .global-btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: 2px solid #667eea;
             background: white;
             color: #667eea;
@@ -281,12 +291,20 @@
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s ease;
-            font-size: 0.9em;
+            font-size: 0.95em;
         }
         
         .global-btn:hover {
             background: #667eea;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .global-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
         }
         
         @media (max-width: 768px) {
@@ -301,6 +319,28 @@
             .section {
                 padding: 20px;
             }
+            
+            .global-controls {
+                padding: 15px 20px;
+                margin: 0 -20px 20px -20px;
+                width: calc(100% + 40px);
+            }
+            
+            .global-controls h3 {
+                display: block;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .global-buttons {
+                display: flex;
+                width: 100%;
+            }
+            
+            .global-btn {
+                flex: 1;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -313,40 +353,17 @@
         
         <div class="content">
             <div class="global-controls">
-                <h3>🌐 Set All Sections To:</h3>
+                <h3>🌐 Difficulty Level:</h3>
                 <div class="global-buttons">
-                    <button class="global-btn" onclick="setAllSections('simple')">Simple</button>
-                    <button class="global-btn" onclick="setAllSections('medium')">Medium</button>
-                    <button class="global-btn" onclick="setAllSections('advanced')">Advanced</button>
+                    <button class="global-btn" id="global-btn-simple" onclick="setAllSections('simple')">Simple</button>
+                    <button class="global-btn active" id="global-btn-medium" onclick="setAllSections('medium')">Medium</button>
+                    <button class="global-btn" id="global-btn-advanced" onclick="setAllSections('advanced')">Advanced</button>
                 </div>
             </div>
             
             
                 <div class="section" id="section-0">
                     <h2 class="section-title">Introduction</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(0, 'simple')"
-                                data-section="0" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(0, 'medium')"
-                                data-section="0" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(0, 'advanced')"
-                                data-section="0" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-0">
                         <p>This guide covers setting up an AI-first repository structure optimized for AI-powered development tools like Cursor. We&#39;ll explore best practices for organizing code, documentation, and tooling to maximize AI assistant effectiveness.</p>
 
@@ -355,29 +372,6 @@
             
                 <div class="section" id="section-1">
                     <h2 class="section-title">What is an AI-First Repository?</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(1, 'simple')"
-                                data-section="1" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(1, 'medium')"
-                                data-section="1" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(1, 'advanced')"
-                                data-section="1" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-1">
                         <p>An AI-first repository employs structured organization, comprehensive documentation, and standardized patterns that enable AI assistants to effectively understand, navigate, and contribute to the codebase. Key principles include self-documenting code, consistent naming conventions, and explicit metadata.</p>
 
@@ -386,277 +380,334 @@
             
                 <div class="section" id="section-2">
                     <h2 class="section-title">Setting Up the Repository Structure</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(2, 'simple')"
-                                data-section="2" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(2, 'medium')"
-                                data-section="2" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(2, 'advanced')"
-                                data-section="2" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-2">
                         <p>Establish a clear directory hierarchy: <code>tools/</code> for executable tools organized by category, <code>docs/</code> for documentation, <code>rules/</code> for AI agent guidelines, and <code>.toolset/</code> for metadata. Each tool should include a MANIFEST.json with standardized metadata for AI discovery.</p>
+<p><strong>Recommended Structure:</strong></p>
+<pre><code>project-root/
+├── tools/
+│   ├── system/          # System-level tools
+│   ├── ai/              # AI/ML tools
+│   └── dev/             # Development tools
+├── docs/
+│   ├── guides/          # How-to guides
+│   └── architecture/    # System design docs
+├── rules/               # Cursor rules and conventions
+│   └── *.cursorrules    # Rule files
+└── .toolset/            # Metadata and registries
+    ├── registry.json    # Tool inventory
+    └── operations.json  # Operation definitions
+</code></pre>
+<p>Each tool directory should contain:</p>
+<ul>
+<li><code>MANIFEST.json</code> - Tool metadata (name, description, parameters)</li>
+<li><code>README.md</code> - Tool documentation</li>
+<li><code>scripts/</code> - Executable scripts</li>
+</ul>
+<p>This structure enables AI agents to discover and understand tools programmatically.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-3">
                     <h2 class="section-title">Working with Cursor</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(3, 'simple')"
-                                data-section="3" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(3, 'medium')"
-                                data-section="3" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(3, 'advanced')"
-                                data-section="3" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-3">
                         <p>Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor&#39;s rules system (<code>.cursorrules</code> files) to guide AI behavior and establish project-specific conventions.</p>
+<p><strong>Key Optimization Strategies:</strong></p>
+<ol>
+<li><p><strong>Structured Rules</strong>: Create <code>.cursorrules</code> files to define project conventions. Place them in:</p>
+<ul>
+<li>Project root for global rules</li>
+<li>Tool directories for tool-specific rules</li>
+</ul>
+</li>
+<li><p><strong>Self-Documenting Code</strong>: Write code that explains itself:</p>
+<ul>
+<li>Use meaningful names (<code>calculateTotal()</code> not <code>calc()</code>)</li>
+<li>Add docstrings/comments for complex logic</li>
+<li>Follow consistent formatting</li>
+</ul>
+</li>
+<li><p><strong>Pattern Consistency</strong>: Use the same patterns throughout:</p>
+<ul>
+<li>Consistent file organization</li>
+<li>Standardized naming conventions</li>
+<li>Uniform code structure</li>
+</ul>
+</li>
+<li><p><strong>Documentation</strong>: Keep docs close to code:</p>
+<ul>
+<li>README files in each tool directory</li>
+<li>Inline comments for complex sections</li>
+<li>Examples showing common usage</li>
+</ul>
+</li>
+</ol>
+<p>Cursor&#39;s AI learns from your codebase structure and patterns, so consistency helps it provide better suggestions.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-4">
                     <h2 class="section-title">Best Practices</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(4, 'simple')"
-                                data-section="4" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(4, 'medium')"
-                                data-section="4" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(4, 'advanced')"
-                                data-section="4" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-4">
                         <p>Follow these practices: (1) Use descriptive, consistent naming conventions, (2) Include MANIFEST.json files for all tools with complete metadata, (3) Maintain up-to-date README files with usage examples, (4) Document the &quot;why&quot; not just the &quot;what&quot;, (5) Use standardized script interfaces, and (6) Keep documentation close to code.</p>
+<p><strong>Detailed Practices:</strong></p>
+<p><strong>1. Naming Conventions</strong></p>
+<ul>
+<li>Use kebab-case for files: <code>my-tool.ps1</code></li>
+<li>Use descriptive names: <code>train-model.py</code> not <code>train.py</code></li>
+<li>Be consistent across the project</li>
+</ul>
+<p><strong>2. MANIFEST.json Files</strong><br>Every tool should have a MANIFEST.json with:</p>
+<ul>
+<li>Tool name and description</li>
+<li>Parameters and their types</li>
+<li>Usage examples</li>
+<li>Entry points</li>
+</ul>
+<p><strong>3. README Files</strong><br>Include:</p>
+<ul>
+<li>Purpose and capabilities</li>
+<li>Installation instructions</li>
+<li>Usage examples</li>
+<li>Troubleshooting tips</li>
+</ul>
+<p><strong>4. Documentation Philosophy</strong></p>
+<ul>
+<li>Explain &quot;why&quot; decisions were made</li>
+<li>Document assumptions and constraints</li>
+<li>Include examples for common use cases</li>
+</ul>
+<p><strong>5. Script Interfaces</strong></p>
+<ul>
+<li>Use consistent parameter formats</li>
+<li>Provide help text (<code>--help</code> flags)</li>
+<li>Return clear exit codes (0 = success, non-zero = error)</li>
+</ul>
+<p><strong>6. Documentation Location</strong></p>
+<ul>
+<li>Keep docs near the code they describe</li>
+<li>Use README.md in each directory</li>
+<li>Reference related documentation</li>
+</ul>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-5">
                     <h2 class="section-title">Advanced Architectural Patterns</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(5, 'simple')"
-                                data-section="5" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(5, 'medium')"
-                                data-section="5" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(5, 'advanced')"
-                                data-section="5" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-5">
                         <p>Advanced AI-first repositories implement sophisticated metadata systems including tool registries, operation codes, and manifest files. These systems enable programmatic discovery, standardized interfaces, and autonomous tool execution by AI agents.</p>
+<p><strong>Core Components:</strong></p>
+<p><strong>1. Tool Registry</strong> (<code>.toolset/registry.json</code>)<br>A central list of all tools in your repository. Each entry includes:</p>
+<ul>
+<li>Tool ID and name</li>
+<li>Category (system, ai, dev, misc)</li>
+<li>File path</li>
+<li>Status (active, deprecated, experimental)</li>
+<li>Version number</li>
+</ul>
+<p><strong>2. Operation Codes</strong><br>Unique identifiers for operations, like <code>tool:action</code> or <code>tool:category:action</code>. Examples:</p>
+<ul>
+<li><code>bambu-lab:launch</code> - Launch an application</li>
+<li><code>musubi-tuner:train</code> - Train a model</li>
+</ul>
+<p>These codes enable AI to execute operations without knowing exact file paths.</p>
+<p><strong>3. Manifest Files</strong> (<code>MANIFEST.json</code>)<br>Each tool includes a manifest describing:</p>
+<ul>
+<li>What the tool does</li>
+<li>What parameters it accepts</li>
+<li>How to use it (examples)</li>
+<li>Entry points (which scripts to run)</li>
+</ul>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>AI can discover tools without reading source code</li>
+<li>Standardized interfaces make automation easier</li>
+<li>Version tracking enables evolution management</li>
+<li>Operation codes remain stable across changes</li>
+</ul>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-6">
                     <h2 class="section-title">Autonomous AI Agent Workflows</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(6, 'simple')"
-                                data-section="6" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(6, 'medium')"
-                                data-section="6" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(6, 'advanced')"
-                                data-section="6" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-6">
                         <p>AI-first repositories enable autonomous agent operation through textual feedback loops. Agents edit code, execute it automatically, capture output, analyze results, and self-correct based on errors. This eliminates the need for human intervention in routine development tasks.</p>
+<p><strong>The Feedback Loop Process:</strong></p>
+<ol>
+<li><strong>Code Modification</strong>: Agent makes changes following project patterns</li>
+<li><strong>Automatic Execution</strong>: Agent runs commands directly (never asks you to run them)</li>
+<li><strong>Output Capture</strong>: All output (success messages, errors, exit codes) is captured</li>
+<li><strong>Analysis</strong>: Agent parses output to understand what happened</li>
+<li><strong>Self-Correction</strong>: Agent fixes issues based on error analysis</li>
+<li><strong>Verification</strong>: Agent re-runs to confirm fixes work</li>
+</ol>
+<p><strong>Key Principles:</strong></p>
+<ul>
+<li><strong>Never ask user to run commands</strong> - Execute directly</li>
+<li><strong>Capture all output</strong> - Store logs for analysis</li>
+<li><strong>Structured errors</strong> - Use formats like <code>ERROR_TYPE: FileNotFound</code></li>
+<li><strong>Exit codes</strong> - Use 0 for success, non-zero for failure</li>
+<li><strong>Iterative fixing</strong> - Try multiple times before asking for help</li>
+</ul>
+<p><strong>Example Flow:</strong></p>
+<pre><code>Agent writes script → Runs it → Gets error &quot;File not found&quot; 
+→ Checks if file exists → Creates missing file → Runs again 
+→ Success! → Moves to next task
+</code></pre>
+<p>This enables AI to handle routine tasks autonomously, only escalating when truly stuck.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-7">
                     <h2 class="section-title">Multi-Agent Coordination</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(7, 'simple')"
-                                data-section="7" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(7, 'medium')"
-                                data-section="7" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(7, 'advanced')"
-                                data-section="7" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-7">
                         <p>Multiple AI agents can work simultaneously on the same codebase by following standardized structures and using shared metadata files. The registry system prevents conflicts, and manifest files ensure consistent understanding across agents.</p>
+<p><strong>Coordination Mechanisms:</strong></p>
+<p><strong>1. Single Source of Truth</strong></p>
+<ul>
+<li><code>.toolset/registry.json</code> - Central tool inventory</li>
+<li><code>.toolset/operations.json</code> - Operation definitions</li>
+<li>Standardized manifest format - Consistent tool metadata</li>
+</ul>
+<p><strong>2. Conflict Prevention</strong></p>
+<ul>
+<li>Check registry before adding tools (prevent duplicates)</li>
+<li>Use unique operation codes</li>
+<li>Follow naming conventions</li>
+</ul>
+<p><strong>3. Communication Channels</strong></p>
+<ul>
+<li><strong>Manifest files</strong> - Describe tool capabilities</li>
+<li><strong>Documentation</strong> - Explain tool purpose and usage</li>
+<li><strong>Git commits</strong> - Record changes with clear messages</li>
+<li><strong>Registry status</strong> - Indicate tool state (active, deprecated)</li>
+</ul>
+<p><strong>4. Conflict Resolution</strong></p>
+<ul>
+<li><strong>Non-critical changes</strong> (docs, examples): Last writer wins</li>
+<li><strong>Critical changes</strong> (registry, operations): Must merge carefully</li>
+<li><strong>Breaking changes</strong>: Require consensus or user approval</li>
+</ul>
+<p><strong>Best Practices:</strong></p>
+<ul>
+<li>Always check registry before adding tools</li>
+<li>Read existing manifests to understand patterns</li>
+<li>Update registry atomically (all metadata at once)</li>
+<li>Document changes clearly for other agents</li>
+<li>Validate before committing</li>
+</ul>
+<p>This enables multiple agents to work in parallel without stepping on each other&#39;s work.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-8">
                     <h2 class="section-title">Advanced Metadata Systems</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(8, 'simple')"
-                                data-section="8" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(8, 'medium')"
-                                data-section="8" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(8, 'advanced')"
-                                data-section="8" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-8">
                         <p>Advanced metadata systems include tool registries, operation definitions, and manifest files that enable AI agents to discover and understand tools without reading source code. These systems separate public metadata (committable) from private configuration (user-specific).</p>
+<p><strong>Public vs Private Separation:</strong></p>
+<p><strong>Public Metadata</strong> (Committed to Git):</p>
+<ul>
+<li>Tool structure and organization</li>
+<li>Operation codes and descriptions</li>
+<li>Parameter schemas (types, names, descriptions)</li>
+<li>Tool capabilities and examples</li>
+<li>Entry points and interfaces</li>
+</ul>
+<p><strong>Private Configuration</strong> (Local Only, Gitignored):</p>
+<ul>
+<li>Installation paths (<code>C:\Program Files\...</code>)</li>
+<li>User-specific directories</li>
+<li>API keys and secrets</li>
+<li>Model file locations</li>
+<li>Personal preferences</li>
+</ul>
+<p><strong>Configuration Pattern:</strong></p>
+<ol>
+<li>Create <code>.local/config.example.json</code> (committed) with placeholder paths</li>
+<li>Users copy to <code>.local/config.json</code> (gitignored) with their actual paths</li>
+<li>Scripts load from user config, fallback to defaults if missing</li>
+</ol>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Repository can be shared safely</li>
+<li>Each user configures their own environment</li>
+<li>Sensitive data never committed</li>
+<li>AI can understand tools without user-specific paths</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-json">// config.example.json (committed)
+{
+  &quot;tools&quot;: {
+    &quot;my-tool&quot;: {
+      &quot;path&quot;: &quot;C:/path/to/tool&quot;
+    }
+  }
+}
+
+// config.json (gitignored, user-specific)
+{
+  &quot;tools&quot;: {
+    &quot;my-tool&quot;: {
+      &quot;path&quot;: &quot;D:/MyTools/my-tool&quot;
+    }
+  }
+}
+</code></pre>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-9">
                     <h2 class="section-title">Privacy-Aware Design Patterns</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(9, 'simple')"
-                                data-section="9" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(9, 'medium')"
-                                data-section="9" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(9, 'advanced')"
-                                data-section="9" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-9">
                         <p>Privacy-aware design separates public metadata (safe to commit) from private configuration (user-specific paths, API keys). This enables repository sharing while protecting sensitive information.</p>
+<p><strong>Privacy Protection Strategies:</strong></p>
+<p><strong>1. Gitignore Patterns</strong><br>Add to <code>.gitignore</code>:</p>
+<pre><code>.local/config.json    # User configuration
+.local/logs/         # Execution logs
+**/secrets/          # Secret files
+**/*.key             # Key files
+**/*.env             # Environment files
+</code></pre>
+<p><strong>2. Template-Based Configuration</strong></p>
+<ul>
+<li>Provide <code>.local/config.example.json</code> (committed) with placeholders</li>
+<li>Users copy to <code>.local/config.json</code> (gitignored) with real values</li>
+<li>Scripts load from user config with fallbacks</li>
+</ul>
+<p><strong>3. Path Abstraction</strong></p>
+<ul>
+<li>Scripts accept paths as parameters</li>
+<li>Defaults loaded from config, never hardcoded</li>
+<li>Prefer relative paths over absolute</li>
+</ul>
+<p><strong>4. Secret Management</strong></p>
+<ul>
+<li>Never hardcode secrets in scripts</li>
+<li>Load from environment variables</li>
+<li>Document required secrets without exposing values</li>
+</ul>
+<p><strong>Privacy Checklist:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> No hardcoded user paths</li>
+<li><input disabled="" type="checkbox"> No API keys or secrets</li>
+<li><input disabled="" type="checkbox"> Config files use templates</li>
+<li><input disabled="" type="checkbox"> Examples use placeholders</li>
+<li><input disabled="" type="checkbox"> Gitignore covers private files</li>
+<li><input disabled="" type="checkbox"> Documentation doesn&#39;t expose sensitive data</li>
+</ul>
+<p>This enables safe repository sharing while protecting user privacy.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-10">
                     <h2 class="section-title">Configuration</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(10, 'simple')"
-                                data-section="10" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(10, 'medium')"
-                                data-section="10" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(10, 'advanced')"
-                                data-section="10" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-10">
                         
                     </div>
@@ -664,29 +715,6 @@
             
                 <div class="section" id="section-11">
                     <h2 class="section-title">Configuration</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(11, 'simple')"
-                                data-section="11" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(11, 'medium')"
-                                data-section="11" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(11, 'advanced')"
-                                data-section="11" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-11">
                         
                     </div>
@@ -694,91 +722,98 @@
             
                 <div class="section" id="section-12">
                     <h2 class="section-title">Self-Documenting Structures</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(12, 'simple')"
-                                data-section="12" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(12, 'medium')"
-                                data-section="12" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(12, 'advanced')"
-                                data-section="12" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-12">
                         <p>Self-documenting structures use clear naming, consistent organization, and comprehensive metadata to enable understanding without reading source code. Manifests, registries, and standardized patterns make tools discoverable and understandable.</p>
+<p><strong>Documentation Hierarchy:</strong></p>
+<p><strong>Level 1: Entry Points</strong></p>
+<ul>
+<li><code>README.md</code> - Project overview</li>
+<li><code>QUICKSTART.md</code> - Quick start guide</li>
+<li><code>AGENTS.md</code> - AI agent onboarding</li>
+</ul>
+<p><strong>Level 2: Rules and Conventions</strong></p>
+<ul>
+<li><code>rules/README.md</code> - Rules directory index</li>
+<li><code>rules/*.cursorrules</code> - Cursor rule files</li>
+</ul>
+<p><strong>Level 3: Guides and Architecture</strong></p>
+<ul>
+<li><code>docs/guides/</code> - How-to guides</li>
+<li><code>docs/architecture/</code> - System design docs</li>
+</ul>
+<p><strong>Level 4: Metadata</strong></p>
+<ul>
+<li><code>MANIFEST.json</code> - Tool metadata</li>
+<li><code>.toolset/registry.json</code> - Tool registry</li>
+<li><code>.toolset/operations.json</code> - Operation definitions</li>
+</ul>
+<p><strong>Naming Conventions:</strong></p>
+<ul>
+<li>Directories: <code>tools/{category}/{tool-name}/</code></li>
+<li>Files: <code>MANIFEST.json</code>, <code>README.md</code>, <code>*.cursorrules</code></li>
+<li>Operations: <code>tool:action</code> or <code>tool:category:action</code></li>
+</ul>
+<p><strong>Documentation Proximity:</strong></p>
+<ul>
+<li>Tool docs in <code>tools/{category}/{tool-name}/README.md</code></li>
+<li>Script docs near scripts</li>
+<li>Rule docs in <code>rules/</code> directory</li>
+</ul>
+<p><strong>Self-Discovery Mechanisms:</strong></p>
+<ul>
+<li>Registry-based discovery (query <code>.toolset/registry.json</code>)</li>
+<li>Manifest-based understanding (read <code>MANIFEST.json</code>)</li>
+<li>Operation-based execution (use operation codes)</li>
+</ul>
+<p>This layered approach enables understanding at different levels of detail without reading source code.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-13">
                     <h2 class="section-title">Programmatic Interfaces</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(13, 'simple')"
-                                data-section="13" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(13, 'medium')"
-                                data-section="13" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(13, 'advanced')"
-                                data-section="13" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-13">
                         <p>Programmatic interfaces enable AI agents to discover tools, understand capabilities, and execute operations through standardized APIs. Operation codes, discovery scripts, and structured metadata enable automation.</p>
+<p><strong>Key Interfaces:</strong></p>
+<p><strong>1. Operation Codes</strong><br>Structured identifiers like <code>tool:action</code> or <code>tool:category:action</code>:</p>
+<ul>
+<li><code>bambu-lab:launch</code> - Launch application</li>
+<li><code>musubi-tuner:train</code> - Train model</li>
+<li><code>cpu-affinity:check</code> - Check settings</li>
+</ul>
+<p><strong>2. Discovery APIs</strong></p>
+<ul>
+<li>List all operations: <code>python .toolset/discover_operations.py</code></li>
+<li>Filter by category: <code>--category ai</code></li>
+<li>Get operation details: <code>--code tool:operation</code></li>
+</ul>
+<p><strong>3. Execution Methods</strong></p>
+<ul>
+<li>Direct script execution: <code>.\tools\category\tool\scripts\main.ps1</code></li>
+<li>Operation-based: <code>Invoke-Operation -Code &quot;tool:operation&quot;</code></li>
+<li>Future MCP integration for remote execution</li>
+</ul>
+<p><strong>4. Interface Patterns</strong></p>
+<ul>
+<li><strong>Non-interactive</strong>: Always use <code>--yes</code>, <code>--force</code> flags</li>
+<li><strong>Structured output</strong>: <code>STATUS: SUCCESS</code>, <code>ERRORS: 0</code></li>
+<li><strong>Exit codes</strong>: 0 = success, non-zero = failure</li>
+<li><strong>Error reporting</strong>: <code>ERROR_TYPE: ValidationFailed</code></li>
+</ul>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Standardized interfaces across all tools</li>
+<li>Programmatic discovery without filesystem traversal</li>
+<li>Automation-friendly (non-interactive execution)</li>
+<li>Parseable output for AI analysis</li>
+</ul>
+<p>This enables AI agents to autonomously discover and execute operations.</p>
 
                     </div>
                 </div>
             
                 <div class="section" id="section-14">
                     <h2 class="section-title">Conclusion</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(14, 'simple')"
-                                data-section="14" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(14, 'medium')"
-                                data-section="14" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(14, 'advanced')"
-                                data-section="14" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-14">
                         <p>An AI-first repository structure significantly enhances productivity when working with AI development tools. By following these patterns and best practices, you create a codebase that AI assistants can effectively understand and contribute to.</p>
 
@@ -787,31 +822,46 @@
             
                 <div class="section" id="section-15">
                     <h2 class="section-title">Next Steps</h2>
-                    <div class="difficulty-selector">
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(15, 'simple')"
-                                data-section="15" 
-                                data-difficulty="simple">
-                            Simple
-                            <span class="difficulty-label simple">Beginner</span>
-                        </button>
-                        <button class="difficulty-btn active" 
-                                onclick="setDifficulty(15, 'medium')"
-                                data-section="15" 
-                                data-difficulty="medium">
-                            Medium
-                            <span class="difficulty-label medium">Intermediate</span>
-                        </button>
-                        <button class="difficulty-btn " 
-                                onclick="setDifficulty(15, 'advanced')"
-                                data-section="15" 
-                                data-difficulty="advanced">
-                            Advanced
-                            <span class="difficulty-label advanced">Expert</span>
-                        </button>
-                    </div>
                     <div class="section-content" id="content-15">
                         <p>Begin by creating a basic tool structure with MANIFEST.json files. Experiment with Cursor&#39;s rules system and observe how AI behavior changes with different rule configurations.</p>
+
+                    </div>
+                </div>
+            
+                <div class="section" id="section-16">
+                    <h2 class="section-title">Further Reading</h2>
+                    <div class="section-content" id="content-16">
+                        <p>Explore these resources to deepen your understanding of AI-first development and related concepts:</p>
+<p><strong>AI Development Tools:</strong></p>
+<ul>
+<li><a href="https://cursor.sh/docs">Cursor Documentation</a> - Official Cursor IDE documentation</li>
+<li><a href="https://github.com/features/copilot">GitHub Copilot</a> - AI pair programming tool</li>
+<li><a href="https://codeium.com/">Codeium</a> - Free AI coding assistant</li>
+<li><a href="https://www.continue.dev/">Continue.dev</a> - Open-source AI coding assistant</li>
+</ul>
+<p><strong>Repository Organization:</strong></p>
+<ul>
+<li><a href="https://semver.org/">Semantic Versioning</a> - Version numbering standards</li>
+<li><a href="https://keepachangelog.com/">Keep a Changelog</a> - Changelog best practices</li>
+<li><a href="https://www.conventionalcommits.org/">Conventional Commits</a> - Commit message standards</li>
+</ul>
+<p><strong>AI-Agent Development:</strong></p>
+<ul>
+<li><a href="https://www.langchain.com/">LangChain</a> - Framework for building AI applications</li>
+<li><a href="https://github.com/Significant-Gravitas/AutoGPT">AutoGPT</a> - Autonomous AI agent framework</li>
+<li><a href="https://agentgpt.reworkd.ai/">AgentGPT</a> - Browser-based AI agent platform</li>
+</ul>
+<p><strong>Code Quality:</strong></p>
+<ul>
+<li><a href="https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">Clean Code by Robert Martin</a> - Writing maintainable code</li>
+<li><a href="https://www.amazon.com/Art-Readable-Code-Practical-Techniques/dp/0596802293">The Art of Readable Code</a> - Code readability principles</li>
+</ul>
+<p><strong>Related Repositories:</strong></p>
+<ul>
+<li>Search GitHub for &quot;AI-first&quot;, &quot;cursor-ready&quot;, or &quot;AI-agent&quot; repositories</li>
+<li>Look for projects using <code>.cursorrules</code> files</li>
+<li>Find repositories with tool registries or manifest systems</li>
+</ul>
 
                     </div>
                 </div>
@@ -841,64 +891,64 @@
   {
     "title": "Setting Up the Repository Structure",
     "content": {
-      "simple": "Start by creating folders for different parts of your project. Put tools in a 'tools' folder, documentation in a 'docs' folder, and rules in a 'rules' folder. This helps AI find things quickly.",
-      "medium": "Establish a clear directory hierarchy: `tools/` for executable tools organized by category, `docs/` for documentation, `rules/` for AI agent guidelines, and `.toolset/` for metadata. Each tool should include a MANIFEST.json with standardized metadata for AI discovery.",
+      "simple": "Start by creating folders for different parts of your project. Put tools in a 'tools' folder, documentation in a 'docs' folder, and rules in a 'rules' folder. This helps AI find things quickly.\n\nFor example, your project might look like this:\n- `tools/` - All your scripts and programs\n- `docs/` - Documentation and guides\n- `rules/` - Instructions for AI assistants\n- `README.md` - Main project description\n\nKeep folder names simple and clear. Avoid abbreviations that might confuse AI assistants.",
+      "medium": "Establish a clear directory hierarchy: `tools/` for executable tools organized by category, `docs/` for documentation, `rules/` for AI agent guidelines, and `.toolset/` for metadata. Each tool should include a MANIFEST.json with standardized metadata for AI discovery.\n\n**Recommended Structure:**\n```\nproject-root/\n├── tools/\n│   ├── system/          # System-level tools\n│   ├── ai/              # AI/ML tools\n│   └── dev/             # Development tools\n├── docs/\n│   ├── guides/          # How-to guides\n│   └── architecture/    # System design docs\n├── rules/               # Cursor rules and conventions\n│   └── *.cursorrules    # Rule files\n└── .toolset/            # Metadata and registries\n    ├── registry.json    # Tool inventory\n    └── operations.json  # Operation definitions\n```\n\nEach tool directory should contain:\n- `MANIFEST.json` - Tool metadata (name, description, parameters)\n- `README.md` - Tool documentation\n- `scripts/` - Executable scripts\n\nThis structure enables AI agents to discover and understand tools programmatically.",
       "advanced": "Implement a hierarchical directory structure following domain-driven design principles: `tools/{category}/{tool-name}/` with standardized subdirectories (`scripts/`, `src/`, `docs/`). Each tool requires a MANIFEST.json following the toolset schema, including id, description, parameters, and AI-friendly metadata. The `.toolset/` directory contains registry.json (tool inventory), operations.json (operation definitions), and configuration files. This structure enables programmatic tool discovery and execution."
     }
   },
   {
     "title": "Working with Cursor",
     "content": {
-      "simple": "Cursor is an AI-powered code editor. To use it well, write clear comments in your code and organize files logically. Cursor's AI can then better understand what you're trying to do.",
-      "medium": "Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor's rules system (`.cursorrules` files) to guide AI behavior and establish project-specific conventions.",
+      "simple": "Cursor is an AI-powered code editor. To use it well, write clear comments in your code and organize files logically. Cursor's AI can then better understand what you're trying to do.\n\nHere are some tips:\n- Use descriptive variable and function names\n- Add comments explaining why you're doing something, not just what\n- Keep related files together in folders\n- Write a clear README explaining your project\n\nCursor reads your code and helps you write more. The better organized your code is, the better Cursor can help!",
+      "medium": "Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor's rules system (`.cursorrules` files) to guide AI behavior and establish project-specific conventions.\n\n**Key Optimization Strategies:**\n\n1. **Structured Rules**: Create `.cursorrules` files to define project conventions. Place them in:\n   - Project root for global rules\n   - Tool directories for tool-specific rules\n\n2. **Self-Documenting Code**: Write code that explains itself:\n   - Use meaningful names (`calculateTotal()` not `calc()`)\n   - Add docstrings/comments for complex logic\n   - Follow consistent formatting\n\n3. **Pattern Consistency**: Use the same patterns throughout:\n   - Consistent file organization\n   - Standardized naming conventions\n   - Uniform code structure\n\n4. **Documentation**: Keep docs close to code:\n   - README files in each tool directory\n   - Inline comments for complex sections\n   - Examples showing common usage\n\nCursor's AI learns from your codebase structure and patterns, so consistency helps it provide better suggestions.",
       "advanced": "Cursor integrates language models directly into the development workflow, enabling autonomous code generation and modification. Optimize Cursor effectiveness through: (1) structured rulesets in `.cursorrules` files with clear precedence hierarchies, (2) self-documenting code patterns that expose intent to AI models, (3) standardized tool interfaces enabling AI-driven tool discovery and execution, and (4) textual feedback loops where AI can verify its own work through command execution and output analysis. Configure Cursor rules following the project's rule precedence system (system > project > domain > tool)."
     }
   },
   {
     "title": "Best Practices",
     "content": {
-      "simple": "Keep things simple and organized. Write clear names for files and folders. Add comments explaining what your code does. Make sure your README file explains how to use your project.",
-      "medium": "Follow these practices: (1) Use descriptive, consistent naming conventions, (2) Include MANIFEST.json files for all tools with complete metadata, (3) Maintain up-to-date README files with usage examples, (4) Document the \"why\" not just the \"what\", (5) Use standardized script interfaces, and (6) Keep documentation close to code.",
+      "simple": "Keep things simple and organized. Write clear names for files and folders. Add comments explaining what your code does. Make sure your README file explains how to use your project.\n\n**Best Practices:**\n- Name files clearly: `generate-report.py` is better than `gr.py`\n- Use folders to group related files\n- Write a README that explains:\n  - What your project does\n  - How to set it up\n  - How to use it\n- Add comments in your code explaining tricky parts\n- Keep your code organized and easy to read\n\nRemember: If AI can understand your code easily, it can help you better!",
+      "medium": "Follow these practices: (1) Use descriptive, consistent naming conventions, (2) Include MANIFEST.json files for all tools with complete metadata, (3) Maintain up-to-date README files with usage examples, (4) Document the \"why\" not just the \"what\", (5) Use standardized script interfaces, and (6) Keep documentation close to code.\n\n**Detailed Practices:**\n\n**1. Naming Conventions**\n- Use kebab-case for files: `my-tool.ps1`\n- Use descriptive names: `train-model.py` not `train.py`\n- Be consistent across the project\n\n**2. MANIFEST.json Files**\nEvery tool should have a MANIFEST.json with:\n- Tool name and description\n- Parameters and their types\n- Usage examples\n- Entry points\n\n**3. README Files**\nInclude:\n- Purpose and capabilities\n- Installation instructions\n- Usage examples\n- Troubleshooting tips\n\n**4. Documentation Philosophy**\n- Explain \"why\" decisions were made\n- Document assumptions and constraints\n- Include examples for common use cases\n\n**5. Script Interfaces**\n- Use consistent parameter formats\n- Provide help text (`--help` flags)\n- Return clear exit codes (0 = success, non-zero = error)\n\n**6. Documentation Location**\n- Keep docs near the code they describe\n- Use README.md in each directory\n- Reference related documentation",
       "advanced": "Implement these architectural patterns: (1) Semantic versioning for tools and operations, (2) Operation codes (`tool:operation`) for programmatic tool invocation, (3) Structured error handling with parseable output formats, (4) Non-interactive command interfaces (use `--yes` flags), (5) Textual output for AI parsing (avoid binary formats), (6) Self-verification mechanisms enabling AI to validate its own changes, and (7) Privacy-aware design separating public (committed) from private (local config) data."
     }
   },
   {
     "title": "Advanced Architectural Patterns",
     "content": {
-      "simple": "Advanced setups use special files that help AI understand your project better. These files act like a map that shows AI where everything is and how to use it.",
-      "medium": "Advanced AI-first repositories implement sophisticated metadata systems including tool registries, operation codes, and manifest files. These systems enable programmatic discovery, standardized interfaces, and autonomous tool execution by AI agents.",
+      "simple": "Advanced setups use special files that help AI understand your project better. These files act like a map that shows AI where everything is and how to use it.\n\n**Key Files:**\n- **MANIFEST.json** - Describes what each tool does and how to use it\n- **registry.json** - Lists all available tools in your project\n- **operations.json** - Lists all actions that can be performed\n\nThink of these files like a restaurant menu: they tell AI what's available and how to order it. Without them, AI has to search through all your code to figure things out. With them, AI can quickly find what it needs.",
+      "medium": "Advanced AI-first repositories implement sophisticated metadata systems including tool registries, operation codes, and manifest files. These systems enable programmatic discovery, standardized interfaces, and autonomous tool execution by AI agents.\n\n**Core Components:**\n\n**1. Tool Registry** (`.toolset/registry.json`)\nA central list of all tools in your repository. Each entry includes:\n- Tool ID and name\n- Category (system, ai, dev, misc)\n- File path\n- Status (active, deprecated, experimental)\n- Version number\n\n**2. Operation Codes**\nUnique identifiers for operations, like `tool:action` or `tool:category:action`. Examples:\n- `bambu-lab:launch` - Launch an application\n- `musubi-tuner:train` - Train a model\n\nThese codes enable AI to execute operations without knowing exact file paths.\n\n**3. Manifest Files** (`MANIFEST.json`)\nEach tool includes a manifest describing:\n- What the tool does\n- What parameters it accepts\n- How to use it (examples)\n- Entry points (which scripts to run)\n\n**Benefits:**\n- AI can discover tools without reading source code\n- Standardized interfaces make automation easier\n- Version tracking enables evolution management\n- Operation codes remain stable across changes",
       "advanced": "Advanced AI-first architectures implement several critical patterns:\n\n### Tool Registry System\n\nA centralized [`.toolset/registry.json`](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) serves as the single source of truth for tool discovery. Each tool entry includes:\n- **Tool ID**: Unique identifier following naming conventions\n- **Category**: Domain classification (system, ai, dev, misc)\n- **Path**: Filesystem location relative to repository root\n- **Status**: Active, deprecated, or experimental\n- **Version**: Semantic versioning for tool evolution tracking\n\nThis registry enables AI agents to programmatically discover available tools without filesystem traversal, reducing computational overhead and ensuring consistency.\n\n**Example**: See the [actual registry](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) for real-world tool entries.\n\n### Operation Code System\n\nOperations are identified by structured codes following the pattern `tool:action` or `tool:category:action`. Examples:\n- `bambu-lab:launch` - Launch application with auto-configuration\n- `musubi-tuner:wan:train` - Train LoRA model using Wan architecture\n- `cpu-affinity:check` - Verify CPU affinity settings\n\nThese codes enable:\n- **Programmatic invocation**: AI agents can execute operations by code name\n- **Remote execution**: Operation codes map to MCP endpoints for distributed execution\n- **Version-independent references**: Codes remain stable across tool version changes\n- **Discovery queries**: Filter operations by category, tool, or action type\n\n### Manifest Schema\n\nEach tool includes a `MANIFEST.json` following a standardized schema:\n\n```json\n{\n  \"id\": \"tool-name\",\n  \"name\": \"Human-Readable Name\",\n  \"description\": \"Tool purpose and capabilities\",\n  \"category\": \"system|ai|dev|misc\",\n  \"version\": \"semantic-version\",\n  \"entry_points\": {\n    \"primary\": \"scripts/main.ps1\",\n    \"alternate\": \"scripts/alt.ps1\"\n  },\n  \"parameters\": [\n    {\n      \"name\": \"paramName\",\n      \"type\": \"string|int|bool\",\n      \"description\": \"Parameter purpose\",\n      \"required\": true,\n      \"default\": null\n    }\n  ],\n  \"operations\": [\n    {\n      \"code\": \"tool:operation\",\n      \"description\": \"Operation purpose\",\n      \"entry_point\": \"scripts/operation.ps1\"\n    }\n  ],\n  \"examples\": [\n    {\n      \"description\": \"Example use case\",\n      \"command\": \".\\scripts\\main.ps1 -Param value\"\n    }\n  ]\n}\n```\n\nThis schema enables AI agents to:\n- Understand tool capabilities without reading source code\n- Generate correct invocation commands\n- Validate parameter usage\n- Discover available operations\n\n**Real Examples**:\n- [Bambu Lab MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/system/bambu-lab/MANIFEST.json) - Complete system tool example\n- [Musubi Tuner MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/ai/musubi-tuner/MANIFEST.json) - AI tool example\n- [Remote MCP MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/system/remote-mcp/MANIFEST.json) - Complex tool with multiple operations\n\n### Hierarchical Rule System\n\nRules follow a precedence hierarchy enabling conflict resolution:\n\n1. **System Rules** (highest precedence): Core operational constraints, policy cards\n2. **Project Rules**: Repository-wide conventions ([`development-workflow.cursorrules`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/development-workflow.cursorrules))\n3. **Domain Rules**: Category-specific patterns ([`mcp-tool-integration.cursorrules`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/mcp-tool-integration.cursorrules))\n4. **Tool Rules**: Tool-specific guidelines (in tool directories)\n\nWhen conflicts occur, higher precedence rules override lower precedence. This enables:\n- **Consistent behavior**: All agents follow same core principles\n- **Domain flexibility**: Category-specific optimizations\n- **Tool customization**: Per-tool exceptions when needed\n- **Conflict resolution**: Clear precedence prevents ambiguity\n\n**See Also**: [Rules Directory README](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/README.md) for complete ruleset index"
     }
   },
   {
     "title": "Autonomous AI Agent Workflows",
     "content": {
-      "simple": "AI assistants can check their own work by running code and seeing if it works correctly. This helps them fix mistakes automatically without asking you for help.",
-      "medium": "AI-first repositories enable autonomous agent operation through textual feedback loops. Agents edit code, execute it automatically, capture output, analyze results, and self-correct based on errors. This eliminates the need for human intervention in routine development tasks.",
+      "simple": "AI assistants can check their own work by running code and seeing if it works correctly. This helps them fix mistakes automatically without asking you for help.\n\n**How It Works:**\n1. AI writes or changes code\n2. AI runs the code automatically\n3. AI checks if it worked (did it produce the right output?)\n4. If there's an error, AI fixes it and tries again\n5. This repeats until it works or AI needs your help\n\nThis means AI can fix many problems on its own! For example, if AI writes code with a typo, it can run the code, see the error message, fix the typo, and try again - all without asking you.",
+      "medium": "AI-first repositories enable autonomous agent operation through textual feedback loops. Agents edit code, execute it automatically, capture output, analyze results, and self-correct based on errors. This eliminates the need for human intervention in routine development tasks.\n\n**The Feedback Loop Process:**\n\n1. **Code Modification**: Agent makes changes following project patterns\n2. **Automatic Execution**: Agent runs commands directly (never asks you to run them)\n3. **Output Capture**: All output (success messages, errors, exit codes) is captured\n4. **Analysis**: Agent parses output to understand what happened\n5. **Self-Correction**: Agent fixes issues based on error analysis\n6. **Verification**: Agent re-runs to confirm fixes work\n\n**Key Principles:**\n- **Never ask user to run commands** - Execute directly\n- **Capture all output** - Store logs for analysis\n- **Structured errors** - Use formats like `ERROR_TYPE: FileNotFound`\n- **Exit codes** - Use 0 for success, non-zero for failure\n- **Iterative fixing** - Try multiple times before asking for help\n\n**Example Flow:**\n```\nAgent writes script → Runs it → Gets error \"File not found\" \n→ Checks if file exists → Creates missing file → Runs again \n→ Success! → Moves to next task\n```\n\nThis enables AI to handle routine tasks autonomously, only escalating when truly stuck.",
       "advanced": "Autonomous AI agent workflows implement the **textual feedback loop** pattern:\n\n```\nEdit Code → Execute → Capture Output → Parse → Analyze → Self-Correct → Verify → Repeat\n```\n\n### Textual Feedback Loop Architecture\n\n**Phase 1: Code Modification**\n- Agent modifies code based on requirements\n- Changes follow established patterns and conventions\n- Documentation updated simultaneously (same iteration)\n\n**Phase 2: Automatic Execution**\n- Agent executes commands directly using `run_terminal_cmd`\n- Never asks user to run commands manually\n- Uses non-interactive flags (`--yes`, `-y`) for automation\n- Redirects output to `logs/` directory for analysis\n\n**Phase 3: Output Capture**\n- All stdout, stderr, and exit codes captured\n- Output stored in timestamped log files\n- Structured error messages enable parsing:\n  ```\n  ERROR_TYPE: FileNotFound\n  ERROR_FILE: /path/to/file.txt\n  ERROR_SUGGESTION: Check if file exists\n  ```\n\n**Phase 4: Output Analysis**\n- Parse exit codes (0 = success, non-zero = failure)\n- Extract structured error information\n- Compare expected vs actual behavior\n- Identify root causes from error patterns\n\n**Phase 5: Self-Correction**\n- Agent fixes errors based on analysis\n- Updates code, manifests, and documentation\n- Re-executes to verify fixes\n- Iterates until success or escalation threshold\n\n**Phase 6: Verification**\n- Final execution confirms success\n- Output matches expected patterns\n- Documentation reflects actual behavior\n- Changes committed atomically\n\n### Self-Verification Mechanisms\n\nAgents verify their own work through:\n\n**1. Exit Code Validation**\n```powershell\nif ($LASTEXITCODE -ne 0) {\n    Write-Error \"ERROR_TYPE: ExecutionFailed\"\n    Write-Error \"EXIT_CODE: $LASTEXITCODE\"\n    exit 1\n}\nexit 0\n```\n\n**2. Structured Output Parsing**\n```powershell\nWrite-Output \"STATUS: SUCCESS\"\nWrite-Output \"FILES_PROCESSED: 42\"\nWrite-Output \"ERRORS: 0\"\n```\n\n**3. Expected Behavior Matching**\n- Compare output against expected patterns\n- Validate file creation/modification\n- Verify operation completion signals\n\n**4. Dependency Verification**\n- Check prerequisite tools exist\n- Validate configuration files present\n- Verify environment setup\n\n### Error Recovery Patterns\n\n**Pattern 1: Parameter Validation Errors**\n```\nError detected → Check MANIFEST.json → Update parameter definition → Re-execute\n```\n\n**Pattern 2: File Path Issues**\n```\nError detected → Analyze path format → Add quotes/escape characters → Re-execute\n```\n\n**Pattern 3: Missing Dependencies**\n```\nError detected → Check registry → Install/configure dependency → Re-execute\n```\n\n**Pattern 4: Configuration Errors**\n```\nError detected → Check .local/config.json → Update configuration → Re-execute\n```\n\n### Autonomous Operation Principles\n\n1. **Never ask user to run commands** - Execute directly\n2. **Capture all output** - Enable analysis and debugging\n3. **Self-correct on errors** - Fix based on output analysis\n4. **Document as you go** - Update docs in same iteration\n5. **Verify before completion** - Confirm success through execution\n6. **Escalate only when stuck** - After multiple correction attempts"
     }
   },
   {
     "title": "Multi-Agent Coordination",
     "content": {
-      "simple": "When multiple AI assistants work on the same project, they use shared files to coordinate. These files act like a shared notebook where everyone can see what others are doing.",
-      "medium": "Multiple AI agents can work simultaneously on the same codebase by following standardized structures and using shared metadata files. The registry system prevents conflicts, and manifest files ensure consistent understanding across agents.",
+      "simple": "When multiple AI assistants work on the same project, they use shared files to coordinate. These files act like a shared notebook where everyone can see what others are doing.\n\n**How They Coordinate:**\n- **Registry file** - Lists all tools, so agents know what exists\n- **Manifest files** - Describe each tool, so agents understand how to use them\n- **Git** - Tracks changes so agents can see what others modified\n\nThink of it like a shared whiteboard: everyone writes what they're working on, so others can see and avoid conflicts. If two agents try to add the same tool, the registry file helps prevent duplicates.",
+      "medium": "Multiple AI agents can work simultaneously on the same codebase by following standardized structures and using shared metadata files. The registry system prevents conflicts, and manifest files ensure consistent understanding across agents.\n\n**Coordination Mechanisms:**\n\n**1. Single Source of Truth**\n- `.toolset/registry.json` - Central tool inventory\n- `.toolset/operations.json` - Operation definitions\n- Standardized manifest format - Consistent tool metadata\n\n**2. Conflict Prevention**\n- Check registry before adding tools (prevent duplicates)\n- Use unique operation codes\n- Follow naming conventions\n\n**3. Communication Channels**\n- **Manifest files** - Describe tool capabilities\n- **Documentation** - Explain tool purpose and usage\n- **Git commits** - Record changes with clear messages\n- **Registry status** - Indicate tool state (active, deprecated)\n\n**4. Conflict Resolution**\n- **Non-critical changes** (docs, examples): Last writer wins\n- **Critical changes** (registry, operations): Must merge carefully\n- **Breaking changes**: Require consensus or user approval\n\n**Best Practices:**\n- Always check registry before adding tools\n- Read existing manifests to understand patterns\n- Update registry atomically (all metadata at once)\n- Document changes clearly for other agents\n- Validate before committing\n\nThis enables multiple agents to work in parallel without stepping on each other's work.",
       "advanced": "Multi-agent coordination in AI-first repositories requires sophisticated conflict prevention and resolution mechanisms:\n\n### Conflict Prevention Strategies\n\n**1. Single Source of Truth**\n- `.toolset/registry.json` - Centralized tool inventory\n- `.toolset/operations.json` - Operation definitions\n- Standardized manifest format - Consistent tool metadata\n\n**2. Standardized Patterns**\n- Predictable directory structures: `tools/{category}/{tool-name}/`\n- Consistent manifest schemas prevent misunderstandings\n- Operation code conventions enable discovery\n\n**3. Atomic Operations**\n- Tools registered atomically (all-or-nothing)\n- Manifest updates include all required fields\n- Documentation updated with code changes\n\n### Conflict Detection Mechanisms\n\n**Type 1: Registry Conflicts**\n```powershell\n# Before adding tool, check for ID conflicts\n$registry = Get-Content .toolset/registry.json | ConvertFrom-Json\n$existingIds = $registry.tools | ForEach-Object { $_.id }\nif ($newToolId -in $existingIds) {\n    Write-Error \"CONFLICT: Tool ID '$newToolId' already exists\"\n    exit 1\n}\n```\n\n**Type 2: Operation Code Conflicts**\n```powershell\n# Check for duplicate operation codes\n$operations = Get-Content .toolset/operations.json | ConvertFrom-Json\n$existingCodes = $operations.operations | ForEach-Object { $_.code }\nif ($newCode -in $existingCodes) {\n    Write-Error \"CONFLICT: Operation code '$newCode' already exists\"\n    exit 1\n}\n```\n\n**Type 3: File Modification Conflicts**\n```powershell\n# Check git status before modifying\n$status = git status --porcelain $filePath\nif ($status) {\n    Write-Warning \"CONFLICT_RISK: File has uncommitted changes\"\n    # Analyze compatibility or wait\n}\n```\n\n### Conflict Resolution Strategies\n\n**Strategy 1: Last Writer Wins (Non-Critical)**\n- Applies to: Documentation, manifests (non-conflicting changes)\n- Action: Most recent change takes precedence\n- Use when: Changes are additive or non-conflicting\n\n**Strategy 2: Merge Required (Critical)**\n- Applies to: Registry, operations, core configuration\n- Action: Must merge changes, not overwrite\n- Use when: Changes affect multiple tools/operations\n\n**Strategy 3: Consensus Required (Breaking)**\n- Applies to: Breaking changes, major modifications\n- Action: All agents must agree or escalate to user\n- Use when: Changes affect core functionality\n\n### Communication Patterns\n\nAgents communicate through:\n\n**1. Manifest Files**\n- Tool metadata conveys capabilities\n- Parameter definitions enable correct usage\n- Examples demonstrate proper invocation\n\n**2. Documentation**\n- README files explain tool purpose\n- Troubleshooting sections document known issues\n- Change logs track evolution\n\n**3. Git History**\n- Commit messages describe changes\n- Branch names indicate work in progress\n- Tags mark stable versions\n\n**4. Registry Entries**\n- Status fields indicate tool state\n- Version numbers track evolution\n- Categories enable discovery\n\n### Coordination Best Practices\n\n1. **Check registry first** - Before adding tools\n2. **Read existing manifests** - Understand patterns\n3. **Update registry atomically** - Include all metadata\n4. **Document changes** - Leave notes for other agents\n5. **Validate before committing** - Ensure compatibility\n6. **Use git properly** - Handle merge conflicts correctly"
     }
   },
   {
     "title": "Advanced Metadata Systems",
     "content": {
-      "simple": "Metadata files help AI understand your project structure. They're like labels on boxes that tell you what's inside without opening them.",
-      "medium": "Advanced metadata systems include tool registries, operation definitions, and manifest files that enable AI agents to discover and understand tools without reading source code. These systems separate public metadata (committable) from private configuration (user-specific).",
+      "simple": "Metadata files help AI understand your project structure. They're like labels on boxes that tell you what's inside without opening them.\n\n**Two Types of Information:**\n\n**Public (Safe to Share):**\n- What tools exist\n- What each tool does\n- How to use tools (examples)\n- What parameters tools need\n\n**Private (Keep Secret):**\n- Where tools are installed on your computer\n- Your API keys and passwords\n- Personal file paths\n- Your specific settings\n\nKeep private information in a separate config file that doesn't get shared. This way, you can share your project without exposing personal information!",
+      "medium": "Advanced metadata systems include tool registries, operation definitions, and manifest files that enable AI agents to discover and understand tools without reading source code. These systems separate public metadata (committable) from private configuration (user-specific).\n\n**Public vs Private Separation:**\n\n**Public Metadata** (Committed to Git):\n- Tool structure and organization\n- Operation codes and descriptions\n- Parameter schemas (types, names, descriptions)\n- Tool capabilities and examples\n- Entry points and interfaces\n\n**Private Configuration** (Local Only, Gitignored):\n- Installation paths (`C:\\Program Files\\...`)\n- User-specific directories\n- API keys and secrets\n- Model file locations\n- Personal preferences\n\n**Configuration Pattern:**\n1. Create `.local/config.example.json` (committed) with placeholder paths\n2. Users copy to `.local/config.json` (gitignored) with their actual paths\n3. Scripts load from user config, fallback to defaults if missing\n\n**Benefits:**\n- Repository can be shared safely\n- Each user configures their own environment\n- Sensitive data never committed\n- AI can understand tools without user-specific paths\n\n**Example:**\n```json\n// config.example.json (committed)\n{\n  \"tools\": {\n    \"my-tool\": {\n      \"path\": \"C:/path/to/tool\"\n    }\n  }\n}\n\n// config.json (gitignored, user-specific)\n{\n  \"tools\": {\n    \"my-tool\": {\n      \"path\": \"D:/MyTools/my-tool\"\n    }\n  }\n}\n```",
       "advanced": "Advanced metadata systems in AI-first repositories implement several sophisticated patterns:\n\n### Public vs Private Metadata Separation\n\n**Public Metadata (Committed to Git)**\n- Tool structure and organization\n- Operation codes and descriptions\n- Parameter schemas and types\n- Tool capabilities and examples\n- Entry points and interfaces\n\n**Private Metadata (Local Config Only)**\n- Installation paths (`C:\\Program Files\\...`)\n- Model file locations\n- Dataset directories\n- API keys and secrets\n- User-specific preferences\n\nThis separation enables:\n- **Public sharing**: Repository can be shared without exposing sensitive data\n- **AI discovery**: Agents can understand tools without user-specific paths\n- **Privacy protection**: Sensitive information never committed\n- **Configuration flexibility**: Each user configures their own environment\n\n### Configuration System Architecture\n\n**Template File (Public)**\n`.local/config.example.json`:\n```json\n{\n  \"tools\": {\n    \"musubi-tuner\": {\n      \"venv_path\": \"C:/path/to/venv\",\n      \"models_path\": \"C:/path/to/models\"\n    }\n  }\n}\n```\n\n**User Config (Private, Gitignored)**\n`.local/config.json`:\n```json\n{\n  \"tools\": {\n    \"musubi-tuner\": {\n      \"venv_path\": \"D:/MyProjects/venv\",\n      \"models_path\": \"D:/MyModels\"\n    }\n  }\n}\n```\n\n**Config Loader Pattern**\n```powershell\n# Load config with fallback to defaults\n$configPath = \".local/config.json\"\nif (Test-Path $configPath) {\n    $config = Get-Content $configPath | ConvertFrom-Json\n} else {\n    # Use defaults or prompt for setup\n    Write-Warning \"Config not found, using defaults\"\n}\n```\n\n### Operation Discovery System\n\n**Operations Registry** (`.toolset/operations.json`):\n```json\n{\n  \"operations\": [\n    {\n      \"code\": \"tool:operation\",\n      \"name\": \"Human-Readable Name\",\n      \"description\": \"Operation purpose\",\n      \"category\": \"system|ai|dev|misc\",\n      \"tool_id\": \"tool-name\",\n      \"entry_point\": \"scripts/operation.ps1\",\n      \"parameters\": [\n        {\n          \"name\": \"param\",\n          \"type\": \"string\",\n          \"required\": true\n        }\n      ]\n    }\n  ]\n}\n```\n\n**Discovery Script** (`.toolset/discover_operations.py`):\n- Query operations by category\n- Filter by tool ID\n- Get detailed operation information\n- Enable programmatic discovery\n\n**Usage Patterns**:\n```powershell\n# List all operations\npython .toolset/discover_operations.py\n\n# Filter by category\npython .toolset/discover_operations.py --category ai\n\n# Get operation details\npython .toolset/discover_operations.py --code musubi-tuner:wan:train\n```\n\n### Manifest-Driven Development\n\nManifests enable:\n- **AI code generation**: Generate invocation commands from manifest\n- **Parameter validation**: Check parameter usage against schema\n- **Documentation generation**: Auto-generate docs from metadata\n- **Tool discovery**: Find tools by capability, not just name\n- **Version management**: Track tool evolution through versions\n\n### Metadata Evolution Patterns\n\n**Versioning Strategy**\n- Semantic versioning: `major.minor.patch`\n- Breaking changes increment major version\n- New features increment minor version\n- Bug fixes increment patch version\n\n**Backward Compatibility**\n- Maintain operation codes across versions\n- Deprecate rather than remove features\n- Document migration paths\n- Support multiple versions during transition\n\n**Metadata Validation**\n- Schema validation for manifests\n- Registry consistency checks\n- Operation code uniqueness verification\n- Parameter type validation"
     }
   },
   {
     "title": "Privacy-Aware Design Patterns",
     "content": {
-      "simple": "Some information should stay private (like passwords or file paths on your computer). AI-first repositories keep this information separate from the code that gets shared.",
-      "medium": "Privacy-aware design separates public metadata (safe to commit) from private configuration (user-specific paths, API keys). This enables repository sharing while protecting sensitive information.",
+      "simple": "Some information should stay private (like passwords or file paths on your computer). AI-first repositories keep this information separate from the code that gets shared.\n\n**What to Keep Private:**\n- Passwords and API keys\n- File paths on your computer (like `C:\\Users\\YourName\\...`)\n- Personal settings\n- Secret keys\n\n**What's Safe to Share:**\n- Code structure\n- How tools work\n- Examples (using placeholder paths)\n- Documentation\n\n**How to Protect Privacy:**\n- Put private info in `.local/config.json` (not shared)\n- Use `.gitignore` to prevent sharing private files\n- Use example files with placeholder values\n- Never hardcode personal paths in code\n\nRemember: If you wouldn't want strangers to see it, don't commit it!",
+      "medium": "Privacy-aware design separates public metadata (safe to commit) from private configuration (user-specific paths, API keys). This enables repository sharing while protecting sensitive information.\n\n**Privacy Protection Strategies:**\n\n**1. Gitignore Patterns**\nAdd to `.gitignore`:\n```\n.local/config.json    # User configuration\n.local/logs/         # Execution logs\n**/secrets/          # Secret files\n**/*.key             # Key files\n**/*.env             # Environment files\n```\n\n**2. Template-Based Configuration**\n- Provide `.local/config.example.json` (committed) with placeholders\n- Users copy to `.local/config.json` (gitignored) with real values\n- Scripts load from user config with fallbacks\n\n**3. Path Abstraction**\n- Scripts accept paths as parameters\n- Defaults loaded from config, never hardcoded\n- Prefer relative paths over absolute\n\n**4. Secret Management**\n- Never hardcode secrets in scripts\n- Load from environment variables\n- Document required secrets without exposing values\n\n**Privacy Checklist:**\n- [ ] No hardcoded user paths\n- [ ] No API keys or secrets\n- [ ] Config files use templates\n- [ ] Examples use placeholders\n- [ ] Gitignore covers private files\n- [ ] Documentation doesn't expose sensitive data\n\nThis enables safe repository sharing while protecting user privacy.",
       "advanced": "Privacy-aware design in AI-first repositories implements strict separation between public and private data:  ### Data Classification Framework  **Public Data (Committable)** - ✅ Tool structure and organization - ✅ Operation codes and descriptions - ✅ Parameter schemas (types, names, descriptions) - ✅ Tool capabilities and examples - ✅ Entry points and interfaces - ✅ Documentation and guides - ✅ Rulesets and conventions  **Private Data (Never Committed)** - ❌ Installation paths (`C:\\Program Files\\...`) - ❌ User-specific directories - ❌ Model file locations - ❌ Dataset paths - ❌ API keys and secrets - ❌ Authentication tokens - ❌ Personal preferences  ### Privacy Protection Mechanisms  **1. Gitignore Patterns** ``` .local/config.json          # User configuration .local/logs/               # Execution logs **/secrets/                # Secret files **/*.key                   # Key files **/*.env                   # Environment files ```  **2. Template-Based Configuration** - Provide `.local/config.example.json` (committed) - Users copy to `.local/config.json` (gitignored) - Scripts load from user config with fallbacks  **3. Path Abstraction** - Scripts accept paths as parameters - Defaults loaded from config, not hardcoded - Relative paths preferred over absolute  **4. Secret Management** - Never hardcode secrets in scripts - Load from environment variables - Use secure credential stores - Document required secrets without exposing values  ### Privacy Compliance Patterns  **Pattern 1: Config Loading** ```powershell # Load from config, never hardcode $config = Load-Config $toolPath = $config.tools.tool_name.path if (-not $toolPath) {     Write-Error \"ERROR_TYPE: ConfigMissing\"     Write-Error \"ERROR_SUGGESTION: Set path in .local/config.json\"     exit 1 } ```  **Pattern 2: Parameter Validation** ```powershell # Accept paths as parameters, not hardcoded param(     [string]$ToolPath = $null )  if (-not $ToolPath) {     $ToolPath = $config.tools.tool_name.path } ```  **Pattern 3: Example Generation** ```powershell # Examples use placeholders, not real paths # Example: .\\script.ps1 -Path \"C:\\path\\to\\tool\" # Never: .\\script.ps1 -Path \"C:\\Users\\John\\Documents\\...\" ```  ### Privacy-Aware Documentation  **Good Documentation**: ```markdown"
     }
   },
@@ -921,16 +971,16 @@
   {
     "title": "Self-Documenting Structures",
     "content": {
-      "simple": "Good projects explain themselves. Files are named clearly, folders are organized logically, and documentation is easy to find. This helps both humans and AI understand the project.",
-      "medium": "Self-documenting structures use clear naming, consistent organization, and comprehensive metadata to enable understanding without reading source code. Manifests, registries, and standardized patterns make tools discoverable and understandable.",
+      "simple": "Good projects explain themselves. Files are named clearly, folders are organized logically, and documentation is easy to find. This helps both humans and AI understand the project.\n\n**Self-Documenting Tips:**\n- **Clear names**: `train-model.py` is better than `train.py`\n- **Organized folders**: Group related files together\n- **README files**: Put one in each major folder explaining what's there\n- **Consistent structure**: Use the same organization everywhere\n\n**Example Structure:**\n```\nmy-project/\n├── README.md          # Main project description\n├── tools/\n│   ├── README.md      # What tools are here\n│   └── my-tool/\n│       ├── README.md  # How to use this tool\n│       └── script.py\n└── docs/              # More detailed documentation\n```\n\nWhen everything has a clear name and place, both you and AI can find things quickly!",
+      "medium": "Self-documenting structures use clear naming, consistent organization, and comprehensive metadata to enable understanding without reading source code. Manifests, registries, and standardized patterns make tools discoverable and understandable.\n\n**Documentation Hierarchy:**\n\n**Level 1: Entry Points**\n- `README.md` - Project overview\n- `QUICKSTART.md` - Quick start guide\n- `AGENTS.md` - AI agent onboarding\n\n**Level 2: Rules and Conventions**\n- `rules/README.md` - Rules directory index\n- `rules/*.cursorrules` - Cursor rule files\n\n**Level 3: Guides and Architecture**\n- `docs/guides/` - How-to guides\n- `docs/architecture/` - System design docs\n\n**Level 4: Metadata**\n- `MANIFEST.json` - Tool metadata\n- `.toolset/registry.json` - Tool registry\n- `.toolset/operations.json` - Operation definitions\n\n**Naming Conventions:**\n- Directories: `tools/{category}/{tool-name}/`\n- Files: `MANIFEST.json`, `README.md`, `*.cursorrules`\n- Operations: `tool:action` or `tool:category:action`\n\n**Documentation Proximity:**\n- Tool docs in `tools/{category}/{tool-name}/README.md`\n- Script docs near scripts\n- Rule docs in `rules/` directory\n\n**Self-Discovery Mechanisms:**\n- Registry-based discovery (query `.toolset/registry.json`)\n- Manifest-based understanding (read `MANIFEST.json`)\n- Operation-based execution (use operation codes)\n\nThis layered approach enables understanding at different levels of detail without reading source code.",
       "advanced": "Self-documenting structures in AI-first repositories implement several architectural patterns:\n\n### Hierarchical Documentation System\n\n**Level 1: Entry Points**\n- [`AGENTS.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/AGENTS.md) - AI agent onboarding (primary entry)\n- [`README.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/README.md) - Human-facing documentation\n- [`QUICKSTART.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/QUICKSTART.md) - Quick start guide\n\n**Level 2: Rules and Conventions**\n- [`rules/README.md`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/README.md) - Rules directory index\n- [`rules/development-workflow.cursorrules`](https://github.com/SosoTughushi/ElectricSheep/blob/master/rules/development-workflow.cursorrules) - Core workflow rules\n- Domain-specific rulesets for specialized patterns\n\n**Level 3: Guides and Architecture**\n- `docs/guides/` - Detailed workflow guides\n- `docs/architecture/` - System architecture documentation\n- Tool-specific README files\n\n**Level 4: Metadata**\n- `MANIFEST.json` - Tool metadata (see [Bambu Lab example](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/system/bambu-lab/MANIFEST.json))\n- [`.toolset/registry.json`](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) - Tool registry\n- [`.toolset/operations.json`](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/operations.json) - Operation definitions\n\n### Naming Conventions\n\n**Directories**\n- `tools/{category}/{tool-name}/` - Predictable tool locations\n- `scripts/` - Executable scripts\n- `src/` - Source code\n- `docs/` - Documentation\n\n**Files**\n- `MANIFEST.json` - Tool metadata (standardized name)\n- `README.md` - Tool documentation\n- `*.cursorrules` - Cursor rule files\n- `*.example.json` - Configuration templates\n\n**Operations**\n- `tool:action` - Simple operations\n- `tool:category:action` - Categorized operations\n- Consistent naming enables discovery\n\n### Documentation Proximity Principle\n\n**Co-location**\n- Tool documentation in `tools/{category}/{tool-name}/README.md`\n- Script documentation near scripts\n- Rule documentation in `rules/` directory\n- Architecture docs in `docs/architecture/`\n\n**Single Source of Truth**\n- Tool capabilities in `MANIFEST.json`\n- Tool inventory in `.toolset/registry.json`\n- Operation definitions in `.toolset/operations.json`\n- Avoid duplication, reference instead\n\n### Self-Discovery Mechanisms\n\n**1. Registry-Based Discovery**\n```powershell\n# Discover tools programmatically\n$registry = Get-Content .toolset/registry.json | ConvertFrom-Json\n$tools = $registry.tools | Where-Object { $_.category -eq \"ai\" }\n```\n\nSee the [actual registry](https://github.com/SosoTughushi/ElectricSheep/blob/master/.toolset/registry.json) for implementation.\n\n**2. Manifest-Based Understanding**\n```powershell\n# Understand tool without reading source\n$manifest = Get-Content tools/ai/tool/MANIFEST.json | ConvertFrom-Json\n$capabilities = $manifest.description\n$parameters = $manifest.parameters\n```\n\nExample: [Musubi Tuner MANIFEST.json](https://github.com/SosoTughushi/ElectricSheep/blob/master/tools/ai/musubi-tuner/MANIFEST.json)\n\n**3. Operation-Based Execution**\n```powershell\n# Execute by operation code\npython .toolset/discover_operations.py --code tool:operation\n# Get entry point and parameters\n```\n\nSee [operations discovery guide](https://github.com/SosoTughushi/ElectricSheep/blob/master/docs/guides/operations-discovery.md) for details.\n\n### Documentation Patterns\n\n**Pattern 1: Progressive Disclosure**\n- Entry points provide overview\n- Rules provide detailed conventions\n- Guides provide comprehensive workflows\n- Manifests provide technical details\n\n**Pattern 2: Example-Driven**\n- Every tool includes usage examples\n- Examples demonstrate common patterns\n- Examples show error handling\n- Examples cover edge cases\n\n**Pattern 3: Troubleshooting Sections**\n- Document known issues\n- Provide solutions\n- Explain workarounds\n- Include error message patterns\n\n### Self-Documentation Best Practices\n\n1. **Name clearly** - Names convey purpose\n2. **Organize logically** - Structure reflects relationships\n3. **Document comprehensively** - Cover all aspects\n4. **Update together** - Code and docs in same iteration\n5. **Use metadata** - Manifests enable discovery\n6. **Provide examples** - Show, don't just tell"
     }
   },
   {
     "title": "Programmatic Interfaces",
     "content": {
-      "simple": "AI assistants can use special commands to find and use tools automatically. These commands work like a menu that shows what's available.",
-      "medium": "Programmatic interfaces enable AI agents to discover tools, understand capabilities, and execute operations through standardized APIs. Operation codes, discovery scripts, and structured metadata enable automation.",
+      "simple": "AI assistants can use special commands to find and use tools automatically. These commands work like a menu that shows what's available.\n\n**How It Works:**\n- AI can ask \"What tools are available?\" and get a list\n- AI can ask \"How do I use tool X?\" and get instructions\n- AI can run tools using simple codes like `tool:action`\n\n**Example:**\nInstead of remembering `.\\tools\\system\\my-tool\\scripts\\run.ps1 -Param value`, AI can use `my-tool:run` and the system figures out the rest!\n\nThis makes it much easier for AI to help you - it doesn't need to remember long file paths or complicated commands.",
+      "medium": "Programmatic interfaces enable AI agents to discover tools, understand capabilities, and execute operations through standardized APIs. Operation codes, discovery scripts, and structured metadata enable automation.\n\n**Key Interfaces:**\n\n**1. Operation Codes**\nStructured identifiers like `tool:action` or `tool:category:action`:\n- `bambu-lab:launch` - Launch application\n- `musubi-tuner:train` - Train model\n- `cpu-affinity:check` - Check settings\n\n**2. Discovery APIs**\n- List all operations: `python .toolset/discover_operations.py`\n- Filter by category: `--category ai`\n- Get operation details: `--code tool:operation`\n\n**3. Execution Methods**\n- Direct script execution: `.\\tools\\category\\tool\\scripts\\main.ps1`\n- Operation-based: `Invoke-Operation -Code \"tool:operation\"`\n- Future MCP integration for remote execution\n\n**4. Interface Patterns**\n- **Non-interactive**: Always use `--yes`, `--force` flags\n- **Structured output**: `STATUS: SUCCESS`, `ERRORS: 0`\n- **Exit codes**: 0 = success, non-zero = failure\n- **Error reporting**: `ERROR_TYPE: ValidationFailed`\n\n**Benefits:**\n- Standardized interfaces across all tools\n- Programmatic discovery without filesystem traversal\n- Automation-friendly (non-interactive execution)\n- Parseable output for AI analysis\n\nThis enables AI agents to autonomously discover and execute operations.",
       "advanced": "Programmatic interfaces in AI-first repositories enable autonomous agent operation through standardized APIs:\n\n### Operation Code System\n\n**Code Structure**\n- Format: `tool:action` or `tool:category:action`\n- Examples: `bambu-lab:launch`, `musubi-tuner:wan:train`\n- Enables: Version-independent references, remote execution, discovery queries\n\n**Code Resolution**\n```powershell\n# Resolve operation code to execution command\n$operation = Get-Operation -Code \"tool:operation\"\n$command = \"$($operation.entry_point) $($operation.parameters)\"\nExecute-Command $command\n```\n\n### Discovery APIs\n\n**1. Operations Discovery**\n```powershell\n# List all operations\npython .toolset/discover_operations.py\n\n# Filter by category\npython .toolset/discover_operations.py --category ai\n\n# Get operation details\npython .toolset/discover_operations.py --code tool:operation\n```\n\n**2. Registry Queries**\n```powershell\n# Query tool registry\n$registry = Get-Content .toolset/registry.json | ConvertFrom-Json\n$tools = $registry.tools | Where-Object { $_.status -eq \"active\" }\n```\n\n**3. Manifest Parsing**\n```powershell\n# Parse tool manifest\n$manifest = Get-Content tools/category/tool/MANIFEST.json | ConvertFrom-Json\n$capabilities = $manifest.description\n$operations = $manifest.operations\n```\n\n### Execution Interfaces\n\n**1. Direct Script Execution**\n```powershell\n# Execute tool script directly\n.\\tools\\category\\tool\\scripts\\main.ps1 -Param value\n```\n\n**2. Operation-Based Execution**\n```powershell\n# Execute by operation code\nInvoke-Operation -Code \"tool:operation\" -Parameters @{Param=\"value\"}\n```\n\n**3. MCP Integration (Future)**\n```json\n{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"tool:operation\",\n    \"arguments\": {\n      \"param\": \"value\"\n    }\n  }\n}\n```\n\n### Interface Patterns\n\n**Pattern 1: Non-Interactive Execution**\n```powershell\n# Always use non-interactive flags\n.\\script.ps1 --yes --force --no-prompt\n```\n\n**Pattern 2: Structured Output**\n```powershell\n# Output in parseable format\nWrite-Output \"STATUS: SUCCESS\"\nWrite-Output \"RESULT: $result\"\nWrite-Output \"ERRORS: 0\"\n```\n\n**Pattern 3: Exit Code Semantics**\n```powershell\n# Use exit codes consistently\nif ($error) { exit 1 } else { exit 0 }\n```\n\n**Pattern 4: Error Reporting**\n```powershell\n# Structured error messages\nWrite-Error \"ERROR_TYPE: ValidationFailed\"\nWrite-Error \"ERROR_FIELD: parameter\"\nWrite-Error \"ERROR_MESSAGE: Invalid value\"\n```\n\n### Remote Execution Architecture\n\n**MCP Server Integration**\n- Tools exposed as MCP resources\n- Operation codes map to MCP endpoints\n- Standardized request/response format\n- Authentication and authorization\n\n**Remote Discovery**\n- Query operations via MCP protocol\n- Discover tools without local access\n- Execute operations remotely\n- Monitor execution status\n\n### Interface Best Practices\n\n1. **Standardize interfaces** - Consistent patterns across tools\n2. **Enable discovery** - Programmatic tool finding\n3. **Support automation** - Non-interactive execution\n4. **Provide structure** - Parseable output formats\n5. **Handle errors** - Structured error reporting\n6. **Document interfaces** - Clear API documentation"
     }
   },
@@ -948,6 +998,14 @@
       "simple": "Try setting up a small project using these ideas. Start with clear folder names and a good README file.",
       "medium": "Begin by creating a basic tool structure with MANIFEST.json files. Experiment with Cursor's rules system and observe how AI behavior changes with different rule configurations.",
       "advanced": "Implement a complete toolset following the patterns described. Create operation codes, integrate with MCP servers, and establish automated verification workflows. Consider contributing to open-source AI-first repository templates."
+    }
+  },
+  {
+    "title": "Further Reading",
+    "content": {
+      "simple": "Want to learn more? Here are some helpful resources about AI-assisted development and organizing code for AI:\n\n- **[Cursor Documentation](https://cursor.sh/docs)** - Learn how to use Cursor effectively\n- **[GitHub Copilot](https://github.com/features/copilot)** - Another AI coding assistant with similar concepts\n- **[Clean Code Book](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)** - A book about writing code that's easy to understand\n- **[GitHub Search](https://github.com/search?q=ai-first+cursor-ready&type=repositories)** - Look for \"AI-first\" or \"cursor-ready\" templates on GitHub\n\nSearch for \"AI coding assistant best practices\" or \"organizing code for AI\" to find more resources!",
+      "medium": "Explore these resources to deepen your understanding of AI-first development and related concepts:\n\n**AI Development Tools:**\n- [Cursor Documentation](https://cursor.sh/docs) - Official Cursor IDE documentation\n- [GitHub Copilot](https://github.com/features/copilot) - AI pair programming tool\n- [Codeium](https://codeium.com/) - Free AI coding assistant\n- [Continue.dev](https://www.continue.dev/) - Open-source AI coding assistant\n\n**Repository Organization:**\n- [Semantic Versioning](https://semver.org/) - Version numbering standards\n- [Keep a Changelog](https://keepachangelog.com/) - Changelog best practices\n- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message standards\n\n**AI-Agent Development:**\n- [LangChain](https://www.langchain.com/) - Framework for building AI applications\n- [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) - Autonomous AI agent framework\n- [AgentGPT](https://agentgpt.reworkd.ai/) - Browser-based AI agent platform\n\n**Code Quality:**\n- [Clean Code by Robert Martin](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882) - Writing maintainable code\n- [The Art of Readable Code](https://www.amazon.com/Art-Readable-Code-Practical-Techniques/dp/0596802293) - Code readability principles\n\n**Related Repositories:**\n- Search GitHub for \"AI-first\", \"cursor-ready\", or \"AI-agent\" repositories\n- Look for projects using `.cursorrules` files\n- Find repositories with tool registries or manifest systems",
+      "advanced": "Deep dive into these resources exploring AI-first development, autonomous agents, and related architectural patterns:\n\n**AI Development Tools & Frameworks:**\n- [Cursor Documentation](https://cursor.sh/docs) - Official Cursor IDE documentation and best practices\n- [GitHub Copilot](https://github.com/features/copilot) - Microsoft's AI pair programming tool\n- [Continue.dev](https://www.continue.dev/) - Open-source AI coding assistant with extensibility\n- [Codeium](https://codeium.com/) - Free AI coding assistant with multiple model support\n- [Tabnine](https://www.tabnine.com/) - AI code completion tool\n\n**Autonomous AI Agents:**\n- [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) - Autonomous AI agent framework with goal-oriented execution\n- [AgentGPT](https://agentgpt.reworkd.ai/) - Browser-based autonomous AI agent platform\n- [LangChain](https://www.langchain.com/) - Framework for building LLM-powered applications\n- [LangGraph](https://github.com/langchain-ai/langgraph) - Stateful agent orchestration framework\n- [CrewAI](https://github.com/joaomdmoura/crewAI) - Multi-agent framework for collaborative AI agents\n- [AutoGen](https://github.com/microsoft/autogen) - Microsoft's multi-agent conversation framework\n\n**Repository Organization & Standards:**\n- [Semantic Versioning](https://semver.org/) - Version numbering specification\n- [Keep a Changelog](https://keepachangelog.com/) - Changelog format standards\n- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message convention\n- [Semantic Release](https://semantic-release.gitbook.io/) - Automated version management\n\n**Code Architecture & Patterns:**\n- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) - Robert Martin's architectural principles\n- [Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html) - Eric Evans' DDD concepts\n- [The Twelve-Factor App](https://12factor.net/) - Methodology for building SaaS applications\n- [API Design Patterns](https://cloud.google.com/apis/design) - Google's API design guide\n\n**AI-Agent Research & Papers:**\n- [ReAct: Synergizing Reasoning and Acting](https://arxiv.org/abs/2210.03629) - Reasoning + Acting pattern\n- [AutoGPT Paper](https://github.com/Significant-Gravitas/AutoGPT/tree/master/benchmark) - Autonomous agent research\n- [Tool Learning with Foundation Models](https://arxiv.org/abs/2304.08354) - Tool use in LLMs\n\n**MCP & Protocol Standards:**\n- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) - Protocol for AI-tool integration\n- [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling) - Function calling patterns\n- [Anthropic Tools](https://docs.anthropic.com/claude/docs/tools-use) - Claude's tool use system\n\n**Related Repositories & Projects:**\n- [Awesome AI Coding Tools](https://github.com/sindresorhus/awesome#ai-coding-tools) - Curated list of AI coding tools\n- Search GitHub for: `topic:ai-first`, `topic:cursor-rules`, `topic:ai-agent`\n- Look for repositories using `.cursorrules`, tool registries, or manifest systems\n- Explore projects implementing autonomous agent workflows\n\n**Community & Discussions:**\n- [Cursor Discord](https://discord.gg/cursor) - Cursor community discussions\n- [r/Cursor](https://www.reddit.com/r/cursor/) - Reddit community\n- [LangChain Discord](https://discord.gg/langchain) - LangChain community\n- [AI Engineering Discord](https://discord.gg/ai-engineering) - AI engineering discussions\n\n**Books:**\n- [Clean Code](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882) - Robert C. Martin\n- [The Art of Readable Code](https://www.amazon.com/Art-Readable-Code-Practical-Techniques/dp/0596802293) - Dustin Boswell\n- [Designing Data-Intensive Applications](https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321) - Martin Kleppmann\n\nThese resources provide deeper insights into AI-first development, autonomous agent architectures, and related patterns that complement the concepts discussed in this guide."
     }
   }
 ];
@@ -1007,19 +1065,87 @@
             });
         }
         
+        // localStorage key for saving difficulty preference
+        const STORAGE_KEY = 'ai-first-repo-guide-difficulty';
+        
         function setAllSections(difficulty) {
             articleData.forEach((_, index) => {
                 setDifficulty(index, difficulty);
             });
+            
+            // Update global button states
+            document.getElementById('global-btn-simple').classList.remove('active');
+            document.getElementById('global-btn-medium').classList.remove('active');
+            document.getElementById('global-btn-advanced').classList.remove('active');
+            document.getElementById('global-btn-' + difficulty).classList.add('active');
+            
+            // Save preference to localStorage
+            try {
+                localStorage.setItem(STORAGE_KEY, difficulty);
+            } catch (e) {
+                // localStorage might not be available (e.g., in private browsing)
+                console.warn('Could not save difficulty preference:', e);
+            }
         }
         
-        // Set default difficulty for each section (medium for first, simple for others)
-        const defaultDifficulties = articleData.map((_, index) => index === 0 ? 'medium' : 'simple');
+        // Load saved difficulty preference or use default (medium)
+        let savedDifficulty = 'medium';
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved && ['simple', 'medium', 'advanced'].includes(saved)) {
+                savedDifficulty = saved;
+            }
+        } catch (e) {
+            // localStorage might not be available
+            console.warn('Could not load difficulty preference:', e);
+        }
         
-        // Initialize all sections
+        // Initialize all sections with saved or default difficulty
         articleData.forEach((section, index) => {
-            setDifficulty(index, defaultDifficulties[index]);
+            setDifficulty(index, savedDifficulty);
         });
+        
+        // Update global button to reflect saved preference
+        document.getElementById('global-btn-simple').classList.remove('active');
+        document.getElementById('global-btn-medium').classList.remove('active');
+        document.getElementById('global-btn-advanced').classList.remove('active');
+        document.getElementById('global-btn-' + savedDifficulty).classList.add('active');
+        
+        // Ensure sticky header works correctly by making it fixed when scrolling
+        // This ensures it always follows the user as they scroll
+        const globalControls = document.querySelector('.global-controls');
+        const header = document.querySelector('.header');
+        if (globalControls && header) {
+            let headerHeight = header.offsetHeight;
+            
+            // Update header height on resize
+            window.addEventListener('resize', function() {
+                headerHeight = header.offsetHeight;
+            });
+            
+            // Make header stick when scrolling past the main header
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const container = document.querySelector('.container');
+                const containerTop = container.getBoundingClientRect().top + scrollTop;
+                const contentTop = containerTop + headerHeight;
+                
+                if (scrollTop >= contentTop) {
+                    globalControls.style.position = 'fixed';
+                    globalControls.style.top = '0';
+                    globalControls.style.left = container.getBoundingClientRect().left + 'px';
+                    globalControls.style.width = container.offsetWidth + 'px';
+                } else {
+                    globalControls.style.position = 'sticky';
+                    globalControls.style.top = '0';
+                    globalControls.style.left = '';
+                    globalControls.style.width = '';
+                }
+            });
+            
+            // Initial check
+            window.dispatchEvent(new Event('scroll'));
+        }
     </script>
 </body>
 </html>

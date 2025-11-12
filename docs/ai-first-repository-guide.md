@@ -51,10 +51,42 @@ generated: 2025-11-12 11:49:30
 <!-- simple:start -->
 **Simple:** Start by creating folders for different parts of your project. Put tools in a 'tools' folder, documentation in a 'docs' folder, and rules in a 'rules' folder. This helps AI find things quickly.
 
+For example, your project might look like this:
+- `tools/` - All your scripts and programs
+- `docs/` - Documentation and guides
+- `rules/` - Instructions for AI assistants
+- `README.md` - Main project description
+
+Keep folder names simple and clear. Avoid abbreviations that might confuse AI assistants.
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Establish a clear directory hierarchy: `tools/` for executable tools organized by category, `docs/` for documentation, `rules/` for AI agent guidelines, and `.toolset/` for metadata. Each tool should include a MANIFEST.json with standardized metadata for AI discovery.
+
+**Recommended Structure:**
+```
+project-root/
+├── tools/
+│   ├── system/          # System-level tools
+│   ├── ai/              # AI/ML tools
+│   └── dev/             # Development tools
+├── docs/
+│   ├── guides/          # How-to guides
+│   └── architecture/    # System design docs
+├── rules/               # Cursor rules and conventions
+│   └── *.cursorrules    # Rule files
+└── .toolset/            # Metadata and registries
+    ├── registry.json    # Tool inventory
+    └── operations.json  # Operation definitions
+```
+
+Each tool directory should contain:
+- `MANIFEST.json` - Tool metadata (name, description, parameters)
+- `README.md` - Tool documentation
+- `scripts/` - Executable scripts
+
+This structure enables AI agents to discover and understand tools programmatically.
 
 <!-- medium:end -->
 
@@ -70,10 +102,41 @@ generated: 2025-11-12 11:49:30
 <!-- simple:start -->
 **Simple:** Cursor is an AI-powered code editor. To use it well, write clear comments in your code and organize files logically. Cursor's AI can then better understand what you're trying to do.
 
+Here are some tips:
+- Use descriptive variable and function names
+- Add comments explaining why you're doing something, not just what
+- Keep related files together in folders
+- Write a clear README explaining your project
+
+Cursor reads your code and helps you write more. The better organized your code is, the better Cursor can help!
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor's rules system (`.cursorrules` files) to guide AI behavior and establish project-specific conventions.
+
+**Key Optimization Strategies:**
+
+1. **Structured Rules**: Create `.cursorrules` files to define project conventions. Place them in:
+   - Project root for global rules
+   - Tool directories for tool-specific rules
+
+2. **Self-Documenting Code**: Write code that explains itself:
+   - Use meaningful names (`calculateTotal()` not `calc()`)
+   - Add docstrings/comments for complex logic
+   - Follow consistent formatting
+
+3. **Pattern Consistency**: Use the same patterns throughout:
+   - Consistent file organization
+   - Standardized naming conventions
+   - Uniform code structure
+
+4. **Documentation**: Keep docs close to code:
+   - README files in each tool directory
+   - Inline comments for complex sections
+   - Examples showing common usage
+
+Cursor's AI learns from your codebase structure and patterns, so consistency helps it provide better suggestions.
 
 <!-- medium:end -->
 
@@ -89,10 +152,58 @@ generated: 2025-11-12 11:49:30
 <!-- simple:start -->
 **Simple:** Keep things simple and organized. Write clear names for files and folders. Add comments explaining what your code does. Make sure your README file explains how to use your project.
 
+**Best Practices:**
+- Name files clearly: `generate-report.py` is better than `gr.py`
+- Use folders to group related files
+- Write a README that explains:
+  - What your project does
+  - How to set it up
+  - How to use it
+- Add comments in your code explaining tricky parts
+- Keep your code organized and easy to read
+
+Remember: If AI can understand your code easily, it can help you better!
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Follow these practices: (1) Use descriptive, consistent naming conventions, (2) Include MANIFEST.json files for all tools with complete metadata, (3) Maintain up-to-date README files with usage examples, (4) Document the "why" not just the "what", (5) Use standardized script interfaces, and (6) Keep documentation close to code.
+
+**Detailed Practices:**
+
+**1. Naming Conventions**
+- Use kebab-case for files: `my-tool.ps1`
+- Use descriptive names: `train-model.py` not `train.py`
+- Be consistent across the project
+
+**2. MANIFEST.json Files**
+Every tool should have a MANIFEST.json with:
+- Tool name and description
+- Parameters and their types
+- Usage examples
+- Entry points
+
+**3. README Files**
+Include:
+- Purpose and capabilities
+- Installation instructions
+- Usage examples
+- Troubleshooting tips
+
+**4. Documentation Philosophy**
+- Explain "why" decisions were made
+- Document assumptions and constraints
+- Include examples for common use cases
+
+**5. Script Interfaces**
+- Use consistent parameter formats
+- Provide help text (`--help` flags)
+- Return clear exit codes (0 = success, non-zero = error)
+
+**6. Documentation Location**
+- Keep docs near the code they describe
+- Use README.md in each directory
+- Reference related documentation
 
 <!-- medium:end -->
 
@@ -108,10 +219,47 @@ generated: 2025-11-12 11:49:30
 <!-- simple:start -->
 **Simple:** Advanced setups use special files that help AI understand your project better. These files act like a map that shows AI where everything is and how to use it.
 
+**Key Files:**
+- **MANIFEST.json** - Describes what each tool does and how to use it
+- **registry.json** - Lists all available tools in your project
+- **operations.json** - Lists all actions that can be performed
+
+Think of these files like a restaurant menu: they tell AI what's available and how to order it. Without them, AI has to search through all your code to figure things out. With them, AI can quickly find what it needs.
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Advanced AI-first repositories implement sophisticated metadata systems including tool registries, operation codes, and manifest files. These systems enable programmatic discovery, standardized interfaces, and autonomous tool execution by AI agents.
+
+**Core Components:**
+
+**1. Tool Registry** (`.toolset/registry.json`)
+A central list of all tools in your repository. Each entry includes:
+- Tool ID and name
+- Category (system, ai, dev, misc)
+- File path
+- Status (active, deprecated, experimental)
+- Version number
+
+**2. Operation Codes**
+Unique identifiers for operations, like `tool:action` or `tool:category:action`. Examples:
+- `bambu-lab:launch` - Launch an application
+- `musubi-tuner:train` - Train a model
+
+These codes enable AI to execute operations without knowing exact file paths.
+
+**3. Manifest Files** (`MANIFEST.json`)
+Each tool includes a manifest describing:
+- What the tool does
+- What parameters it accepts
+- How to use it (examples)
+- Entry points (which scripts to run)
+
+**Benefits:**
+- AI can discover tools without reading source code
+- Standardized interfaces make automation easier
+- Version tracking enables evolution management
+- Operation codes remain stable across changes
 
 <!-- medium:end -->
 
@@ -221,10 +369,44 @@ When conflicts occur, higher precedence rules override lower precedence. This en
 <!-- simple:start -->
 **Simple:** AI assistants can check their own work by running code and seeing if it works correctly. This helps them fix mistakes automatically without asking you for help.
 
+**How It Works:**
+1. AI writes or changes code
+2. AI runs the code automatically
+3. AI checks if it worked (did it produce the right output?)
+4. If there's an error, AI fixes it and tries again
+5. This repeats until it works or AI needs your help
+
+This means AI can fix many problems on its own! For example, if AI writes code with a typo, it can run the code, see the error message, fix the typo, and try again - all without asking you.
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** AI-first repositories enable autonomous agent operation through textual feedback loops. Agents edit code, execute it automatically, capture output, analyze results, and self-correct based on errors. This eliminates the need for human intervention in routine development tasks.
+
+**The Feedback Loop Process:**
+
+1. **Code Modification**: Agent makes changes following project patterns
+2. **Automatic Execution**: Agent runs commands directly (never asks you to run them)
+3. **Output Capture**: All output (success messages, errors, exit codes) is captured
+4. **Analysis**: Agent parses output to understand what happened
+5. **Self-Correction**: Agent fixes issues based on error analysis
+6. **Verification**: Agent re-runs to confirm fixes work
+
+**Key Principles:**
+- **Never ask user to run commands** - Execute directly
+- **Capture all output** - Store logs for analysis
+- **Structured errors** - Use formats like `ERROR_TYPE: FileNotFound`
+- **Exit codes** - Use 0 for success, non-zero for failure
+- **Iterative fixing** - Try multiple times before asking for help
+
+**Example Flow:**
+```
+Agent writes script → Runs it → Gets error "File not found" 
+→ Checks if file exists → Creates missing file → Runs again 
+→ Success! → Moves to next task
+```
+
+This enables AI to handle routine tasks autonomously, only escalating when truly stuck.
 
 <!-- medium:end -->
 
@@ -347,10 +529,49 @@ Error detected → Check .local/config.json → Update configuration → Re-exec
 <!-- simple:start -->
 **Simple:** When multiple AI assistants work on the same project, they use shared files to coordinate. These files act like a shared notebook where everyone can see what others are doing.
 
+**How They Coordinate:**
+- **Registry file** - Lists all tools, so agents know what exists
+- **Manifest files** - Describe each tool, so agents understand how to use them
+- **Git** - Tracks changes so agents can see what others modified
+
+Think of it like a shared whiteboard: everyone writes what they're working on, so others can see and avoid conflicts. If two agents try to add the same tool, the registry file helps prevent duplicates.
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Multiple AI agents can work simultaneously on the same codebase by following standardized structures and using shared metadata files. The registry system prevents conflicts, and manifest files ensure consistent understanding across agents.
+
+**Coordination Mechanisms:**
+
+**1. Single Source of Truth**
+- `.toolset/registry.json` - Central tool inventory
+- `.toolset/operations.json` - Operation definitions
+- Standardized manifest format - Consistent tool metadata
+
+**2. Conflict Prevention**
+- Check registry before adding tools (prevent duplicates)
+- Use unique operation codes
+- Follow naming conventions
+
+**3. Communication Channels**
+- **Manifest files** - Describe tool capabilities
+- **Documentation** - Explain tool purpose and usage
+- **Git commits** - Record changes with clear messages
+- **Registry status** - Indicate tool state (active, deprecated)
+
+**4. Conflict Resolution**
+- **Non-critical changes** (docs, examples): Last writer wins
+- **Critical changes** (registry, operations): Must merge carefully
+- **Breaking changes**: Require consensus or user approval
+
+**Best Practices:**
+- Always check registry before adding tools
+- Read existing manifests to understand patterns
+- Update registry atomically (all metadata at once)
+- Document changes clearly for other agents
+- Validate before committing
+
+This enables multiple agents to work in parallel without stepping on each other's work.
 
 <!-- medium:end -->
 
@@ -467,10 +688,74 @@ Agents communicate through:
 <!-- simple:start -->
 **Simple:** Metadata files help AI understand your project structure. They're like labels on boxes that tell you what's inside without opening them.
 
+**Two Types of Information:**
+
+**Public (Safe to Share):**
+- What tools exist
+- What each tool does
+- How to use tools (examples)
+- What parameters tools need
+
+**Private (Keep Secret):**
+- Where tools are installed on your computer
+- Your API keys and passwords
+- Personal file paths
+- Your specific settings
+
+Keep private information in a separate config file that doesn't get shared. This way, you can share your project without exposing personal information!
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Advanced metadata systems include tool registries, operation definitions, and manifest files that enable AI agents to discover and understand tools without reading source code. These systems separate public metadata (committable) from private configuration (user-specific).
+
+**Public vs Private Separation:**
+
+**Public Metadata** (Committed to Git):
+- Tool structure and organization
+- Operation codes and descriptions
+- Parameter schemas (types, names, descriptions)
+- Tool capabilities and examples
+- Entry points and interfaces
+
+**Private Configuration** (Local Only, Gitignored):
+- Installation paths (`C:\Program Files\...`)
+- User-specific directories
+- API keys and secrets
+- Model file locations
+- Personal preferences
+
+**Configuration Pattern:**
+1. Create `.local/config.example.json` (committed) with placeholder paths
+2. Users copy to `.local/config.json` (gitignored) with their actual paths
+3. Scripts load from user config, fallback to defaults if missing
+
+**Benefits:**
+- Repository can be shared safely
+- Each user configures their own environment
+- Sensitive data never committed
+- AI can understand tools without user-specific paths
+
+**Example:**
+```json
+// config.example.json (committed)
+{
+  "tools": {
+    "my-tool": {
+      "path": "C:/path/to/tool"
+    }
+  }
+}
+
+// config.json (gitignored, user-specific)
+{
+  "tools": {
+    "my-tool": {
+      "path": "D:/MyTools/my-tool"
+    }
+  }
+}
+```
 
 <!-- medium:end -->
 
@@ -620,10 +905,67 @@ Manifests enable:
 <!-- simple:start -->
 **Simple:** Some information should stay private (like passwords or file paths on your computer). AI-first repositories keep this information separate from the code that gets shared.
 
+**What to Keep Private:**
+- Passwords and API keys
+- File paths on your computer (like `C:\Users\YourName\...`)
+- Personal settings
+- Secret keys
+
+**What's Safe to Share:**
+- Code structure
+- How tools work
+- Examples (using placeholder paths)
+- Documentation
+
+**How to Protect Privacy:**
+- Put private info in `.local/config.json` (not shared)
+- Use `.gitignore` to prevent sharing private files
+- Use example files with placeholder values
+- Never hardcode personal paths in code
+
+Remember: If you wouldn't want strangers to see it, don't commit it!
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Privacy-aware design separates public metadata (safe to commit) from private configuration (user-specific paths, API keys). This enables repository sharing while protecting sensitive information.
+
+**Privacy Protection Strategies:**
+
+**1. Gitignore Patterns**
+Add to `.gitignore`:
+```
+.local/config.json    # User configuration
+.local/logs/         # Execution logs
+**/secrets/          # Secret files
+**/*.key             # Key files
+**/*.env             # Environment files
+```
+
+**2. Template-Based Configuration**
+- Provide `.local/config.example.json` (committed) with placeholders
+- Users copy to `.local/config.json` (gitignored) with real values
+- Scripts load from user config with fallbacks
+
+**3. Path Abstraction**
+- Scripts accept paths as parameters
+- Defaults loaded from config, never hardcoded
+- Prefer relative paths over absolute
+
+**4. Secret Management**
+- Never hardcode secrets in scripts
+- Load from environment variables
+- Document required secrets without exposing values
+
+**Privacy Checklist:**
+- [ ] No hardcoded user paths
+- [ ] No API keys or secrets
+- [ ] Config files use templates
+- [ ] Examples use placeholders
+- [ ] Gitignore covers private files
+- [ ] Documentation doesn't expose sensitive data
+
+This enables safe repository sharing while protecting user privacy.
 
 <!-- medium:end -->
 
@@ -755,10 +1097,67 @@ Before committing:
 <!-- simple:start -->
 **Simple:** Good projects explain themselves. Files are named clearly, folders are organized logically, and documentation is easy to find. This helps both humans and AI understand the project.
 
+**Self-Documenting Tips:**
+- **Clear names**: `train-model.py` is better than `train.py`
+- **Organized folders**: Group related files together
+- **README files**: Put one in each major folder explaining what's there
+- **Consistent structure**: Use the same organization everywhere
+
+**Example Structure:**
+```
+my-project/
+├── README.md          # Main project description
+├── tools/
+│   ├── README.md      # What tools are here
+│   └── my-tool/
+│       ├── README.md  # How to use this tool
+│       └── script.py
+└── docs/              # More detailed documentation
+```
+
+When everything has a clear name and place, both you and AI can find things quickly!
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Self-documenting structures use clear naming, consistent organization, and comprehensive metadata to enable understanding without reading source code. Manifests, registries, and standardized patterns make tools discoverable and understandable.
+
+**Documentation Hierarchy:**
+
+**Level 1: Entry Points**
+- `README.md` - Project overview
+- `QUICKSTART.md` - Quick start guide
+- `AGENTS.md` - AI agent onboarding
+
+**Level 2: Rules and Conventions**
+- `rules/README.md` - Rules directory index
+- `rules/*.cursorrules` - Cursor rule files
+
+**Level 3: Guides and Architecture**
+- `docs/guides/` - How-to guides
+- `docs/architecture/` - System design docs
+
+**Level 4: Metadata**
+- `MANIFEST.json` - Tool metadata
+- `.toolset/registry.json` - Tool registry
+- `.toolset/operations.json` - Operation definitions
+
+**Naming Conventions:**
+- Directories: `tools/{category}/{tool-name}/`
+- Files: `MANIFEST.json`, `README.md`, `*.cursorrules`
+- Operations: `tool:action` or `tool:category:action`
+
+**Documentation Proximity:**
+- Tool docs in `tools/{category}/{tool-name}/README.md`
+- Script docs near scripts
+- Rule docs in `rules/` directory
+
+**Self-Discovery Mechanisms:**
+- Registry-based discovery (query `.toolset/registry.json`)
+- Manifest-based understanding (read `MANIFEST.json`)
+- Operation-based execution (use operation codes)
+
+This layered approach enables understanding at different levels of detail without reading source code.
 
 <!-- medium:end -->
 
@@ -888,10 +1287,52 @@ See [operations discovery guide](https://github.com/SosoTughushi/ElectricSheep/b
 <!-- simple:start -->
 **Simple:** AI assistants can use special commands to find and use tools automatically. These commands work like a menu that shows what's available.
 
+**How It Works:**
+- AI can ask "What tools are available?" and get a list
+- AI can ask "How do I use tool X?" and get instructions
+- AI can run tools using simple codes like `tool:action`
+
+**Example:**
+Instead of remembering `.\tools\system\my-tool\scripts\run.ps1 -Param value`, AI can use `my-tool:run` and the system figures out the rest!
+
+This makes it much easier for AI to help you - it doesn't need to remember long file paths or complicated commands.
+
 <!-- simple:end -->
 
 <!-- medium:start -->
 **Medium:** Programmatic interfaces enable AI agents to discover tools, understand capabilities, and execute operations through standardized APIs. Operation codes, discovery scripts, and structured metadata enable automation.
+
+**Key Interfaces:**
+
+**1. Operation Codes**
+Structured identifiers like `tool:action` or `tool:category:action`:
+- `bambu-lab:launch` - Launch application
+- `musubi-tuner:train` - Train model
+- `cpu-affinity:check` - Check settings
+
+**2. Discovery APIs**
+- List all operations: `python .toolset/discover_operations.py`
+- Filter by category: `--category ai`
+- Get operation details: `--code tool:operation`
+
+**3. Execution Methods**
+- Direct script execution: `.\tools\category\tool\scripts\main.ps1`
+- Operation-based: `Invoke-Operation -Code "tool:operation"`
+- Future MCP integration for remote execution
+
+**4. Interface Patterns**
+- **Non-interactive**: Always use `--yes`, `--force` flags
+- **Structured output**: `STATUS: SUCCESS`, `ERRORS: 0`
+- **Exit codes**: 0 = success, non-zero = failure
+- **Error reporting**: `ERROR_TYPE: ValidationFailed`
+
+**Benefits:**
+- Standardized interfaces across all tools
+- Programmatic discovery without filesystem traversal
+- Automation-friendly (non-interactive execution)
+- Parseable output for AI analysis
+
+This enables AI agents to autonomously discover and execute operations.
 
 <!-- medium:end -->
 
@@ -1058,5 +1499,112 @@ Begin by creating a basic tool structure with MANIFEST.json files. Experiment wi
 
 <!-- advanced:start -->
 Implement a complete toolset following the patterns described. Create operation codes, integrate with MCP servers, and establish automated verification workflows. Consider contributing to open-source AI-first repository templates.
+
+<!-- advanced:end -->
+
+---
+
+## Further Reading
+
+<!-- simple:start -->
+**Simple:** Want to learn more? Here are some helpful resources about AI-assisted development and organizing code for AI:
+
+- **[Cursor Documentation](https://cursor.sh/docs)** - Learn how to use Cursor effectively
+- **[GitHub Copilot](https://github.com/features/copilot)** - Another AI coding assistant with similar concepts
+- **[Clean Code Book](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)** - A book about writing code that's easy to understand
+- **[GitHub Search](https://github.com/search?q=ai-first+cursor-ready&type=repositories)** - Look for "AI-first" or "cursor-ready" templates on GitHub
+
+Search for "AI coding assistant best practices" or "organizing code for AI" to find more resources!
+
+<!-- simple:end -->
+
+<!-- medium:start -->
+**Medium:** Explore these resources to deepen your understanding of AI-first development and related concepts:
+
+**AI Development Tools:**
+- [Cursor Documentation](https://cursor.sh/docs) - Official Cursor IDE documentation
+- [GitHub Copilot](https://github.com/features/copilot) - AI pair programming tool
+- [Codeium](https://codeium.com/) - Free AI coding assistant
+- [Continue.dev](https://www.continue.dev/) - Open-source AI coding assistant
+
+**Repository Organization:**
+- [Semantic Versioning](https://semver.org/) - Version numbering standards
+- [Keep a Changelog](https://keepachangelog.com/) - Changelog best practices
+- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message standards
+
+**AI-Agent Development:**
+- [LangChain](https://www.langchain.com/) - Framework for building AI applications
+- [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) - Autonomous AI agent framework
+- [AgentGPT](https://agentgpt.reworkd.ai/) - Browser-based AI agent platform
+
+**Code Quality:**
+- [Clean Code by Robert Martin](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882) - Writing maintainable code
+- [The Art of Readable Code](https://www.amazon.com/Art-Readable-Code-Practical-Techniques/dp/0596802293) - Code readability principles
+
+**Related Repositories:**
+- Search GitHub for "AI-first", "cursor-ready", or "AI-agent" repositories
+- Look for projects using `.cursorrules` files
+- Find repositories with tool registries or manifest systems
+
+<!-- medium:end -->
+
+<!-- advanced:start -->
+**Advanced:** Deep dive into these resources exploring AI-first development, autonomous agents, and related architectural patterns:
+
+**AI Development Tools & Frameworks:**
+- [Cursor Documentation](https://cursor.sh/docs) - Official Cursor IDE documentation and best practices
+- [GitHub Copilot](https://github.com/features/copilot) - Microsoft's AI pair programming tool
+- [Continue.dev](https://www.continue.dev/) - Open-source AI coding assistant with extensibility
+- [Codeium](https://codeium.com/) - Free AI coding assistant with multiple model support
+- [Tabnine](https://www.tabnine.com/) - AI code completion tool
+
+**Autonomous AI Agents:**
+- [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) - Autonomous AI agent framework with goal-oriented execution
+- [AgentGPT](https://agentgpt.reworkd.ai/) - Browser-based autonomous AI agent platform
+- [LangChain](https://www.langchain.com/) - Framework for building LLM-powered applications
+- [LangGraph](https://github.com/langchain-ai/langgraph) - Stateful agent orchestration framework
+- [CrewAI](https://github.com/joaomdmoura/crewAI) - Multi-agent framework for collaborative AI agents
+- [AutoGen](https://github.com/microsoft/autogen) - Microsoft's multi-agent conversation framework
+
+**Repository Organization & Standards:**
+- [Semantic Versioning](https://semver.org/) - Version numbering specification
+- [Keep a Changelog](https://keepachangelog.com/) - Changelog format standards
+- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message convention
+- [Semantic Release](https://semantic-release.gitbook.io/) - Automated version management
+
+**Code Architecture & Patterns:**
+- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) - Robert Martin's architectural principles
+- [Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html) - Eric Evans' DDD concepts
+- [The Twelve-Factor App](https://12factor.net/) - Methodology for building SaaS applications
+- [API Design Patterns](https://cloud.google.com/apis/design) - Google's API design guide
+
+**AI-Agent Research & Papers:**
+- [ReAct: Synergizing Reasoning and Acting](https://arxiv.org/abs/2210.03629) - Reasoning + Acting pattern
+- [AutoGPT Paper](https://github.com/Significant-Gravitas/AutoGPT/tree/master/benchmark) - Autonomous agent research
+- [Tool Learning with Foundation Models](https://arxiv.org/abs/2304.08354) - Tool use in LLMs
+
+**MCP & Protocol Standards:**
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) - Protocol for AI-tool integration
+- [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling) - Function calling patterns
+- [Anthropic Tools](https://docs.anthropic.com/claude/docs/tools-use) - Claude's tool use system
+
+**Related Repositories & Projects:**
+- [Awesome AI Coding Tools](https://github.com/sindresorhus/awesome#ai-coding-tools) - Curated list of AI coding tools
+- Search GitHub for: `topic:ai-first`, `topic:cursor-rules`, `topic:ai-agent`
+- Look for repositories using `.cursorrules`, tool registries, or manifest systems
+- Explore projects implementing autonomous agent workflows
+
+**Community & Discussions:**
+- [Cursor Discord](https://discord.gg/cursor) - Cursor community discussions
+- [r/Cursor](https://www.reddit.com/r/cursor/) - Reddit community
+- [LangChain Discord](https://discord.gg/langchain) - LangChain community
+- [AI Engineering Discord](https://discord.gg/ai-engineering) - AI engineering discussions
+
+**Books:**
+- [Clean Code](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882) - Robert C. Martin
+- [The Art of Readable Code](https://www.amazon.com/Art-Readable-Code-Practical-Techniques/dp/0596802293) - Dustin Boswell
+- [Designing Data-Intensive Applications](https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321) - Martin Kleppmann
+
+These resources provide deeper insights into AI-first development, autonomous agent architectures, and related patterns that complement the concepts discussed in this guide.
 
 <!-- advanced:end -->
