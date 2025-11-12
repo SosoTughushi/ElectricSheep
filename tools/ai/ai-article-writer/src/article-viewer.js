@@ -535,14 +535,6 @@ function generateHTMLViewer(articleData) {
             });
         }
         
-        // Set default difficulty for each section (medium for first, simple for others)
-        const defaultDifficulties = articleData.map((_, index) => index === 0 ? 'medium' : 'simple');
-        
-        // Initialize all sections
-        articleData.forEach((section, index) => {
-            setDifficulty(index, defaultDifficulties[index]);
-        });
-        
         // Pre-render markdown for all sections and difficulties
         const renderedContent = {};
         articleData.forEach((section, sectionIndex) => {
@@ -555,17 +547,15 @@ function generateHTMLViewer(articleData) {
                         if (typeof marked !== 'undefined') {
                             renderedContent[sectionIndex][diff] = marked.parse(content);
                         } else {
-                            // Fallback: basic markdown rendering
+                            // Fallback: basic markdown rendering (simplified, no regex)
                             const backtick = String.fromCharCode(96);
-                            const codeRegex = new RegExp(backtick + '([^' + backtick + ']+)' + backtick, 'g');
-                            renderedContent[sectionIndex][diff] = content
-                                .replace(/\n/g, '<br>')
-                                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                                .replace(codeRegex, '<code>$1</code>')
-                                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+                            let result = content.split('\\n').join('<br>');
+                            result = result.split('**').map((part, i) => i % 2 === 1 ? '<strong>' + part + '</strong>' : part).join('');
+                            result = result.split(backtick).map((part, i) => i % 2 === 1 ? '<code>' + part + '</code>' : part).join('');
+                            renderedContent[sectionIndex][diff] = result;
                         }
                     } catch (e) {
-                        renderedContent[sectionIndex][diff] = content.replace(/\n/g, '<br>');
+                        renderedContent[sectionIndex][diff] = content.split('\\n').join('<br>');
                     }
                 } else {
                     renderedContent[sectionIndex][diff] = '<p class="empty">Content not available for this difficulty level.</p>';
@@ -573,9 +563,10 @@ function generateHTMLViewer(articleData) {
             });
         });
         
+        // Define functions in global scope (must be before initialization)
         function setDifficulty(sectionIndex, difficulty) {
             const contentDiv = document.getElementById('content-' + sectionIndex);
-            const buttons = document.querySelectorAll(\`[data-section="\${sectionIndex}"]\`);
+            const buttons = document.querySelectorAll('[data-section="' + sectionIndex + '"]');
             
             // Update content from pre-rendered markdown
             contentDiv.innerHTML = renderedContent[sectionIndex][difficulty] || 
@@ -596,6 +587,14 @@ function generateHTMLViewer(articleData) {
                 setDifficulty(index, difficulty);
             });
         }
+        
+        // Set default difficulty for each section (medium for first, simple for others)
+        const defaultDifficulties = articleData.map((_, index) => index === 0 ? 'medium' : 'simple');
+        
+        // Initialize all sections
+        articleData.forEach((section, index) => {
+            setDifficulty(index, defaultDifficulties[index]);
+        });
     </script>
 </body>
 </html>`;
