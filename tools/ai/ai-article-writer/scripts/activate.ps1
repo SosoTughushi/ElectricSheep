@@ -1,37 +1,38 @@
-# Activate AI Article Writer Virtual Environment
-# This script activates the virtual environment for AI Article Writer tools
+# Verify AI Article Writer Environment
+# Checks Node.js installation and dependencies (Node.js doesn't use virtual environments)
 
 # Get script directory
 $ScriptRoot = Split-Path -Parent $PSScriptRoot
 $ToolRoot = Split-Path -Parent $ScriptRoot
 
-# Default virtual environment path (relative to tool root)
-$VenvPath = Join-Path $ToolRoot ".venv"
+Write-Host "=== AI Article Writer Environment Check ===" -ForegroundColor Cyan
 
-# Try to load configuration from .local/config.json
-$RepoRoot = Split-Path -Parent (Split-Path -Parent $ScriptRoot)
-$ConfigScript = Join-Path $RepoRoot ".toolset\load_config.ps1"
-
-if (Test-Path $ConfigScript) {
-    . $ConfigScript
-    $config = Get-LocalConfig
-    
-    if ($config -and $config.paths -and $config.paths."ai-article-writer") {
-        $VenvPath = $config.paths."ai-article-writer".venv_path
-        Write-Host "Using configured venv path: $VenvPath" -ForegroundColor Cyan
-    }
-}
-
-$ActivateScript = Join-Path $VenvPath "Scripts\Activate.ps1"
-
-if (Test-Path $ActivateScript) {
-    Write-Host "Activating AI Article Writer virtual environment..." -ForegroundColor Cyan
-    & $ActivateScript
-    Write-Host "Virtual environment activated!" -ForegroundColor Green
-    Write-Host "Python location: $(Get-Command python | Select-Object -ExpandProperty Source)" -ForegroundColor Yellow
-} else {
-    Write-Host "Error: Virtual environment not found at $ActivateScript" -ForegroundColor Red
-    Write-Host "Please run setup-environment.ps1 first to create the virtual environment" -ForegroundColor Yellow
+# Check Node.js
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    Write-Host "Error: Node.js is not installed. Please install Node.js 18+ from https://nodejs.org/" -ForegroundColor Red
     exit 1
 }
 
+$nodeVersion = node --version
+Write-Host "Node.js: $nodeVersion" -ForegroundColor Green
+
+# Check npm
+if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+    Write-Host "Error: npm is not installed. npm should come with Node.js." -ForegroundColor Red
+    exit 1
+}
+
+$npmVersion = npm --version
+Write-Host "npm: $npmVersion" -ForegroundColor Green
+
+# Check dependencies
+$NodeModules = Join-Path $ToolRoot "node_modules"
+if (Test-Path $NodeModules) {
+    Write-Host "Dependencies: Installed" -ForegroundColor Green
+} else {
+    Write-Host "Warning: Dependencies not installed. Run 'npm install' or setup-environment.ps1" -ForegroundColor Yellow
+}
+
+Write-Host "`nEnvironment ready!" -ForegroundColor Green
+Write-Host "Note: Node.js doesn't use virtual environments like Python." -ForegroundColor Cyan
+Write-Host "Dependencies are installed locally in node_modules/ directory." -ForegroundColor Cyan

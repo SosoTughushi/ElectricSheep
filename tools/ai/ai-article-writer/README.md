@@ -14,41 +14,40 @@ The AI Article Writer coordinates multiple specialized tools to create complete 
 
 ### 1. Setup Environment
 
-First-time setup creates a Python virtual environment and installs dependencies:
+First-time setup installs Node.js dependencies:
+
+```powershell
+cd tools\ai\ai-article-writer
+npm install
+```
+
+Or use the setup script:
 
 ```powershell
 .\tools\ai\ai-article-writer\scripts\setup-environment.ps1
 ```
 
-### 2. Activate Environment
-
-Before using the tool, activate the virtual environment:
-
-```powershell
-.\tools\ai\ai-article-writer\scripts\activate.ps1
-```
-
-### 3. Generate Article
+### 2. Generate Article
 
 Generate a complete article:
 
 ```powershell
-.\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic "Python Virtual Environments"
+.\tools\ai\ai-article-writer\scripts\generate-article.ps1 -Topic "Setting Up AI-First Repository"
 ```
 
 ## Requirements
 
-- Python 3.10 or later
+- Node.js 18.0 or later
+- npm (comes with Node.js)
 - PowerShell (Windows) or Bash (Linux/Mac)
-- Virtual environment (created by setup script)
 
 ## Dependencies
 
-See `requirements.txt` for Python dependencies. Main packages include:
+See `package.json` for Node.js dependencies. Main packages include:
 - `markdown` - Markdown processing
-- `pyyaml` - YAML configuration parsing
-- `jinja2` - Template rendering
-- `mermaid` - Diagram generation support
+- `yaml` - YAML configuration parsing
+- `ejs` - Template rendering
+- Additional packages as needed for diagram generation
 
 ## Usage
 
@@ -77,27 +76,20 @@ This tool coordinates with:
 
 ## Environment Setup
 
-The virtual environment is located at:
-- **Path**: `tools/ai/ai-article-writer/.venv`
-- **Activation**: `.\scripts\activate.ps1`
-- **Python**: `.\scripts\activate.ps1` then use `python` command
+Node.js dependencies are installed locally:
+- **Package file**: `tools/ai/ai-article-writer/package.json`
+- **Dependencies**: `tools/ai/ai-article-writer/node_modules/`
+- **Installation**: `npm install` (run from tool directory)
 
 ## Troubleshooting
 
-### Virtual Environment Not Found
+### Node.js Not Found
 
-If you see "Virtual environment not found", run the setup script:
-
-```powershell
-.\scripts\setup-environment.ps1
-```
-
-### Python Not Found
-
-Ensure Python 3.10+ is installed and in your PATH:
+Ensure Node.js 18+ is installed and in your PATH:
 
 ```powershell
-python --version
+node --version
+npm --version
 ```
 
 ### Dependencies Missing
@@ -105,8 +97,16 @@ python --version
 Reinstall dependencies:
 
 ```powershell
-.\scripts\activate.ps1
-pip install -r requirements.txt
+cd tools\ai\ai-article-writer
+npm install
+```
+
+### Module Not Found Errors
+
+If you see module errors, ensure dependencies are installed:
+
+```powershell
+npm install
 ```
 
 ## Documentation

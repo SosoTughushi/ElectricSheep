@@ -1,0 +1,27 @@
+{
+  "name": "ai-complexity-adapter",
+  "version": "0.1.0",
+  "description": "Modular tool for adjusting paragraph complexity (3 levels) for hover UI",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "complexity",
+    "adaptation",
+    "content"
+  ],
+  "author": "Soso",
+  "license": "ISC",
+  "dependencies": {
+    "markdown": "^0.5.0"
+  },
+  "devDependencies": {}
+}
+

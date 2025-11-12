@@ -1,0 +1,28 @@
+{
+  "name": "ai-article-composer",
+  "version": "0.1.0",
+  "description": "Orchestrator tool that combines text sections, diagrams, and complexity settings into final article",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "article",
+    "composition",
+    "markdown"
+  ],
+  "author": "Soso",
+  "license": "ISC",
+  "dependencies": {
+    "markdown": "^0.5.0",
+    "ejs": "^3.1.9"
+  },
+  "devDependencies": {}
+}
+

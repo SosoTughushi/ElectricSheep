@@ -51,6 +51,7 @@ What is your task?
 ├─ Making decisions → decision-making.cursorrules
 ├─ Privacy concerns → privacy-compliance.cursorrules
 ├─ Working with operations → toolset-operations.cursorrules
+├─ Article-writing tools → ai-article-writer.cursorrules
 └─ Domain-specific → Read relevant domain rule
 ```
 
@@ -66,6 +67,7 @@ What is your task?
 | **Privacy/data** | `privacy-compliance.cursorrules` | `development-workflow.cursorrules` |
 | **Using operations** | `toolset-operations.cursorrules` | `execution-preference.cursorrules` |
 | **Bambu Lab issues** | `bambu-lab-fix.cursorrules` | `error-handling.cursorrules` |
+| **Article-writing tools** | `ai-article-writer.cursorrules` | `development-workflow.cursorrules` |
 | **System info** | `system-info.cursorrules` | `execution-preference.cursorrules` |
 
 ## Rule Categories
@@ -86,6 +88,7 @@ What is your task?
 
 ### Domain-Specific Rules
 - **`bambu-lab-fix.cursorrules`** - Bambu Lab crash fix solutions and implementation
+- **`ai-article-writer.cursorrules`** - Article-writing tools (JavaScript/Node.js stack)
 
 ### Policy Cards (Runtime Governance)
 - **`policy-cards/operational-policy.md`** - Operational constraints
@@ -116,6 +119,7 @@ Rules follow a hierarchical precedence system. When conflicts occur, higher prec
    - `mcp-tool-integration.cursorrules` (tool integration)
    - `toolset-operations.cursorrules` (operations)
    - `bambu-lab-fix.cursorrules` (Bambu Lab domain)
+   - `ai-article-writer.cursorrules` (article-writing tools)
    - **Applies to**: Specific domains or categories
 
 4. **Tool Rules** (Tool-Specific)

@@ -1,0 +1,179 @@
+---
+priority: domain
+applies_to: article-writing tools (ai-article-writer, ai-article-composer, ai-complexity-adapter, ai-text-generator, ai-diagram-generator)
+conflicts_with: none
+examples: see Examples section below
+---
+
+# AI Article Writer Rules
+
+**IMPORTANT**: These rules apply to all article-writing tools in the `tools/ai/` directory.
+
+## Technology Stack
+
+### Core Stack
+- **Runtime**: Node.js (v18+ recommended)
+- **Language**: JavaScript (ES6+)
+- **UI**: HTML/CSS for any web interfaces
+- **Package Manager**: npm (or yarn/pnpm if specified)
+- **Scripts**: PowerShell for Windows, Bash for Linux/Mac
+
+### Why JavaScript/Node.js?
+- Better integration with web-based AI tools and APIs
+- Easier HTML/CSS manipulation for article formatting
+- Rich ecosystem for markdown processing
+- Better suited for async operations (API calls, file I/O)
+- User preference for this particular task
+
+## Tool Structure
+
+### Standard Directory Layout
+```
+tools/ai/{tool-name}/
+├── MANIFEST.json          # Tool metadata (must specify Node.js runtime)
+├── README.md              # Tool documentation
+├── package.json           # Node.js dependencies (NOT requirements.txt)
+├── scripts/               # PowerShell/Bash scripts
+│   └── {tool-name}.ps1    # Main entry point
+└── src/                   # JavaScript source code (optional)
+    └── index.js           # Main implementation
+```
+
+### Package.json Requirements
+- **Must include**: `name`, `version`, `description`, `main`, `scripts`
+- **Must specify**: Node.js version requirement (`engines.node`)
+- **Dependencies**: Use npm packages, not Python packages
+- **Scripts**: Define npm scripts for common operations
+
+### Manifest Updates
+When updating `MANIFEST.json`:
+- **Runtime**: Change from `["python"]` to `["node", "npm"]`
+- **External dependencies**: List npm packages, not Python packages
+- **Entry points**: PowerShell scripts that call Node.js scripts
+- **Location**: Remove `venv_path` and `requirements`, add `package_json` path
+
+## Development Patterns
+
+### Script Structure
+PowerShell scripts should:
+1. Check for Node.js installation
+2. Check for npm dependencies (run `npm install` if needed)
+3. Call Node.js scripts with proper arguments
+4. Handle errors gracefully
+
+Example pattern:
+```powershell
+# Check Node.js
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    Write-Error "Node.js is required but not installed."
+    exit 1
+}
+
+# Install dependencies if needed
+if (-not (Test-Path "node_modules")) {
+    Write-Host "Installing dependencies..." -ForegroundColor Cyan
+    npm install
+}
+
+# Run Node.js script
+node src/index.js @args
+```
+
+### JavaScript Code Style
+- Use ES6+ features (async/await, arrow functions, destructuring)
+- Use `const`/`let` instead of `var`
+- Follow Node.js conventions (CommonJS or ES modules)
+- Handle errors with try/catch
+- Use async/await for file operations
+
+### File Operations
+- Use `fs/promises` for async file operations
+- Use `path` module for cross-platform paths
+- Use `process.argv` or argument parsing libraries for CLI args
+
+## Integration Points
+
+### With Other Tools
+- Article Writer coordinates: text-generator, diagram-generator, complexity-adapter, composer
+- All tools use Node.js runtime
+- Communication via JSON files or CLI arguments
+- Shared utilities can be in a common `lib/` directory
+
+### With Cursor AI
+- Tools should produce clear, parseable output
+- Error messages should be structured and actionable
+- Progress indicators for long-running operations
+- Support for streaming output when possible
+
+## Complexity Levels
+
+### Three Difficulty Levels
+1. **Simple**: Beginner-friendly, minimal jargon, step-by-step
+2. **Medium**: Intermediate, assumes some knowledge, balanced detail
+3. **Advanced**: Expert-level, technical depth, assumes expertise
+
+### Implementation
+- Each paragraph/section should have three versions
+- Store in structured format (JSON or Markdown with annotations)
+- UI can toggle between levels (hover or tabs)
+- Complexity adapter tool handles conversion
+
+## Examples
+
+### Good: Node.js Implementation
+```javascript
+// src/index.js
+const fs = require('fs/promises');
+const path = require('path');
+
+async function generateArticle(topic, outputPath) {
+    // Implementation
+}
+```
+
+### Bad: Python Implementation
+```python
+# Don't use Python for article-writing tools
+import yaml
+# ...
+```
+
+### Good: Package.json
+```json
+{
+  "name": "ai-article-writer",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "markdown": "^0.5.0"
+  }
+}
+```
+
+### Bad: requirements.txt
+```
+# Don't use Python requirements.txt
+markdown==0.5.0
+```
+
+## Migration Notes
+
+When migrating from Python to Node.js:
+1. Replace `requirements.txt` with `package.json`
+2. Update `MANIFEST.json` runtime dependencies
+3. Rewrite Python scripts in JavaScript
+4. Update PowerShell scripts to call Node.js
+5. Remove `.venv` references
+6. Update documentation
+
+## Related Rules
+- `development-workflow.cursorrules` - General development practices
+- `mcp-tool-integration.cursorrules` - Tool integration patterns
+- `error-handling.cursorrules` - Error handling patterns
+

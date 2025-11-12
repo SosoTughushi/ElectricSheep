@@ -8,8 +8,8 @@
   "tags": ["ai", "article", "composition", "markdown"],
   "platforms": ["windows", "linux"],
   "dependencies": {
-    "runtime": ["python"],
-    "external": ["markdown", "jinja2"],
+    "runtime": ["node", "npm"],
+    "external": ["markdown", "ejs"],
     "related_tools": ["ai-article-writer", "ai-text-generator", "ai-diagram-generator", "ai-complexity-adapter"]
   },
   "entry_points": {

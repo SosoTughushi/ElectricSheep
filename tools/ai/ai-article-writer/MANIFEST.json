@@ -8,15 +8,16 @@
   "tags": ["ai", "article", "writing", "content-generation", "markdown"],
   "platforms": ["windows", "linux"],
   "dependencies": {
-    "runtime": ["python", "powershell"],
-    "external": ["markdown", "pyyaml", "jinja2"],
+    "runtime": ["node", "npm", "powershell"],
+    "external": ["markdown", "yaml", "ejs"],
     "related_tools": ["ai-text-generator", "ai-diagram-generator", "ai-complexity-adapter", "ai-article-composer"]
   },
   "entry_points": {
     "primary": "scripts/generate-article.ps1",
     "alternatives": [
       "scripts/setup-environment.ps1",
-      "scripts/activate.ps1"
+      "scripts/activate.ps1",
+      "npm install"
     ]
   },
   "parameters": [
@@ -52,7 +53,7 @@
     },
     {
       "description": "Setup environment (first time)",
-      "command": ".\tools\ai\ai-article-writer\scripts\setup-environment.ps1"
+      "command": "cd tools\\ai\\ai-article-writer && npm install"
     }
   ],
   "ai_friendly": {
@@ -85,9 +86,9 @@
     "setup": "scripts/setup-environment.ps1"
   },
   "location": {
-    "venv_path": "tools/ai/ai-article-writer/.venv",
     "scripts_path": "tools/ai/ai-article-writer/scripts/",
-    "requirements": "tools/ai/ai-article-writer/requirements.txt"
+    "package_json": "tools/ai/ai-article-writer/package.json",
+    "src_path": "tools/ai/ai-article-writer/src/"
   }
 }
 

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting Up an AI-First Repository and Working with Cursor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .section:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .difficulty-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .difficulty-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .difficulty-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .difficulty-label.simple {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .difficulty-label.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty-label.advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .section-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #444;
+            min-height: 100px;
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .section-content p {
+            margin-bottom: 15px;
+        }
+        
+        .section-content.empty {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .global-controls {
+            position: sticky;
+            top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .global-controls h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+        
+        .global-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .global-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .global-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Setting Up an AI-First Repository and Working with Cursor</h1>
+            <p>Interactive Article with Adjustable Difficulty Levels</p>
+        </div>
+        
+        <div class="content">
+            <div class="global-controls">
+                <h3>🌐 Set All Sections To:</h3>
+                <div class="global-buttons">
+                    <button class="global-btn" onclick="setAllSections('simple')">Simple</button>
+                    <button class="global-btn" onclick="setAllSections('medium')">Medium</button>
+                    <button class="global-btn" onclick="setAllSections('advanced')">Advanced</button>
+                </div>
+            </div>
+            
+            
+                <div class="section" id="section-0">
+                    <h2 class="section-title">Introduction</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(0, 'simple')"
+                                data-section="0" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(0, 'medium')"
+                                data-section="0" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(0, 'advanced')"
+                                data-section="0" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-0">
+                        This guide covers setting up an AI-first repository structure optimized for AI-powered development tools like Cursor. We'll explore best practices for organizing code, documentation, and tooling to maximize AI assistant effectiveness.
+                    </div>
+                </div>
+            
+                <div class="section" id="section-1">
+                    <h2 class="section-title">What is an AI-First Repository?</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(1, 'simple')"
+                                data-section="1" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(1, 'medium')"
+                                data-section="1" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(1, 'advanced')"
+                                data-section="1" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-1">
+                        An AI-first repository employs structured organization, comprehensive documentation, and standardized patterns that enable AI assistants to effectively understand, navigate, and contribute to the codebase. Key principles include self-documenting code, consistent naming conventions, and explicit metadata.
+                    </div>
+                </div>
+            
+                <div class="section" id="section-2">
+                    <h2 class="section-title">Setting Up the Repository Structure</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(2, 'simple')"
+                                data-section="2" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(2, 'medium')"
+                                data-section="2" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(2, 'advanced')"
+                                data-section="2" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-2">
+                        Establish a clear directory hierarchy: `tools/` for executable tools organized by category, `docs/` for documentation, `rules/` for AI agent guidelines, and `.toolset/` for metadata. Each tool should include a MANIFEST.json with standardized metadata for AI discovery.
+                    </div>
+                </div>
+            
+                <div class="section" id="section-3">
+                    <h2 class="section-title">Working with Cursor</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(3, 'simple')"
+                                data-section="3" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(3, 'medium')"
+                                data-section="3" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(3, 'advanced')"
+                                data-section="3" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-3">
+                        Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor's rules system (`.cursorrules` files) to guide AI behavior and establish project-specific conventions.
+                    </div>
+                </div>
+            
+                <div class="section" id="section-4">
+                    <h2 class="section-title">Best Practices</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(4, 'simple')"
+                                data-section="4" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(4, 'medium')"
+                                data-section="4" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(4, 'advanced')"
+                                data-section="4" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-4">
+                        Follow these practices: (1) Use descriptive, consistent naming conventions, (2) Include MANIFEST.json files for all tools with complete metadata, (3) Maintain up-to-date README files with usage examples, (4) Document the "why" not just the "what", (5) Use standardized script interfaces, and (6) Keep documentation close to code.
+                    </div>
+                </div>
+            
+                <div class="section" id="section-5">
+                    <h2 class="section-title">Conclusion</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(5, 'simple')"
+                                data-section="5" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(5, 'medium')"
+                                data-section="5" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(5, 'advanced')"
+                                data-section="5" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-5">
+                        An AI-first repository structure significantly enhances productivity when working with AI development tools. By following these patterns and best practices, you create a codebase that AI assistants can effectively understand and contribute to.
+                    </div>
+                </div>
+            
+                <div class="section" id="section-6">
+                    <h2 class="section-title">Next Steps</h2>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn " 
+                                onclick="setDifficulty(6, 'simple')"
+                                data-section="6" 
+                                data-difficulty="simple">
+                            Simple
+                            <span class="difficulty-label simple">Beginner</span>
+                        </button>
+                        <button class="difficulty-btn active" 
+                                onclick="setDifficulty(6, 'medium')"
+                                data-section="6" 
+                                data-difficulty="medium">
+                            Medium
+                            <span class="difficulty-label medium">Intermediate</span>
+                        </button>
+                        <button class="difficulty-btn" 
+                                onclick="setDifficulty(6, 'advanced')"
+                                data-section="6" 
+                                data-difficulty="advanced">
+                            Advanced
+                            <span class="difficulty-label advanced">Expert</span>
+                        </button>
+                    </div>
+                    <div class="section-content" id="content-6">
+                        Begin by creating a basic tool structure with MANIFEST.json files. Experiment with Cursor's rules system and observe how AI behavior changes with different rule configurations.
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+    
+    <script>
+        const articleData = [
+  {
+    "title": "Introduction",
+    "content": {
+      "simple": "Welcome! This guide will help you set up a repository that works great with AI assistants like Cursor. Think of it as organizing your code so AI can help you better.",
+      "medium": "This guide covers setting up an AI-first repository structure optimized for AI-powered development tools like Cursor. We'll explore best practices for organizing code, documentation, and tooling to maximize AI assistant effectiveness.",
+      "advanced": "An AI-first repository architecture optimizes code organization, documentation patterns, and tooling infrastructure to maximize the effectiveness of AI-powered development assistants. This guide examines architectural patterns, workflow optimizations, and integration strategies for Cursor and similar AI development environments."
+    }
+  },
+  {
+    "title": "What is an AI-First Repository?",
+    "content": {
+      "simple": "An AI-first repository is a project organized so AI assistants can easily understand and help with it. It's like having a well-organized filing cabinet where everything has a clear label.",
+      "medium": "An AI-first repository employs structured organization, comprehensive documentation, and standardized patterns that enable AI assistants to effectively understand, navigate, and contribute to the codebase. Key principles include self-documenting code, consistent naming conventions, and explicit metadata.",
+      "advanced": "AI-first repository architecture applies information architecture principles to software development, creating codebases optimized for AI comprehension and manipulation. This involves semantic organization, explicit metadata systems (like MANIFEST.json), standardized tool interfaces, and documentation patterns that enable autonomous AI agent operation. The architecture prioritizes discoverability, predictability, and textual feedback loops over human-centric optimizations."
+    }
+  },
+  {
+    "title": "Setting Up the Repository Structure",
+    "content": {
+      "simple": "Start by creating folders for different parts of your project. Put tools in a 'tools' folder, documentation in a 'docs' folder, and rules in a 'rules' folder. This helps AI find things quickly.",
+      "medium": "Establish a clear directory hierarchy: `tools/` for executable tools organized by category, `docs/` for documentation, `rules/` for AI agent guidelines, and `.toolset/` for metadata. Each tool should include a MANIFEST.json with standardized metadata for AI discovery.",
+      "advanced": "Implement a hierarchical directory structure following domain-driven design principles: `tools/{category}/{tool-name}/` with standardized subdirectories (`scripts/`, `src/`, `docs/`). Each tool requires a MANIFEST.json following the toolset schema, including id, description, parameters, and AI-friendly metadata. The `.toolset/` directory contains registry.json (tool inventory), operations.json (operation definitions), and configuration files. This structure enables programmatic tool discovery and execution."
+    }
+  },
+  {
+    "title": "Working with Cursor",
+    "content": {
+      "simple": "Cursor is an AI-powered code editor. To use it well, write clear comments in your code and organize files logically. Cursor's AI can then better understand what you're trying to do.",
+      "medium": "Cursor leverages AI models to assist with code generation, refactoring, and navigation. Optimize for Cursor by maintaining clear code structure, comprehensive documentation, and consistent patterns. Use Cursor's rules system (`.cursorrules` files) to guide AI behavior and establish project-specific conventions.",
+      "advanced": "Cursor integrates language models directly into the development workflow, enabling autonomous code generation and modification. Optimize Cursor effectiveness through: (1) structured rulesets in `.cursorrules` files with clear precedence hierarchies, (2) self-documenting code patterns that expose intent to AI models, (3) standardized tool interfaces enabling AI-driven tool discovery and execution, and (4) textual feedback loops where AI can verify its own work through command execution and output analysis. Configure Cursor rules following the project's rule precedence system (system > project > domain > tool)."
+    }
+  },
+  {
+    "title": "Best Practices",
+    "content": {
+      "simple": "Keep things simple and organized. Write clear names for files and folders. Add comments explaining what your code does. Make sure your README file explains how to use your project.",
+      "medium": "Follow these practices: (1) Use descriptive, consistent naming conventions, (2) Include MANIFEST.json files for all tools with complete metadata, (3) Maintain up-to-date README files with usage examples, (4) Document the \"why\" not just the \"what\", (5) Use standardized script interfaces, and (6) Keep documentation close to code.",
+      "advanced": "Implement these architectural patterns: (1) Semantic versioning for tools and operations, (2) Operation codes (`tool:operation`) for programmatic tool invocation, (3) Structured error handling with parseable output formats, (4) Non-interactive command interfaces (use `--yes` flags), (5) Textual output for AI parsing (avoid binary formats), (6) Self-verification mechanisms enabling AI to validate its own changes, and (7) Privacy-aware design separating public (committed) from private (local config) data."
+    }
+  },
+  {
+    "title": "Conclusion",
+    "content": {
+      "simple": "Setting up an AI-first repository helps you work better with AI assistants. Start simple, keep things organized, and you'll see the benefits quickly!",
+      "medium": "An AI-first repository structure significantly enhances productivity when working with AI development tools. By following these patterns and best practices, you create a codebase that AI assistants can effectively understand and contribute to.",
+      "advanced": "AI-first repository architecture represents a paradigm shift toward codebases optimized for AI comprehension and manipulation. The investment in structured organization, comprehensive documentation, and standardized interfaces pays dividends in AI-assisted development velocity and quality. As AI development tools evolve, these architectural patterns will become increasingly critical for maintaining competitive development workflows."
+    }
+  },
+  {
+    "title": "Next Steps",
+    "content": {
+      "simple": "Try setting up a small project using these ideas. Start with clear folder names and a good README file.",
+      "medium": "Begin by creating a basic tool structure with MANIFEST.json files. Experiment with Cursor's rules system and observe how AI behavior changes with different rule configurations.",
+      "advanced": "Implement a complete toolset following the patterns described. Create operation codes, integrate with MCP servers, and establish automated verification workflows. Consider contributing to open-source AI-first repository templates."
+    }
+  }
+];
+        
+        // Set default difficulty for each section (medium for first, simple for others)
+        const defaultDifficulties = articleData.map((_, index) => index === 0 ? 'medium' : 'simple');
+        
+        // Initialize all sections
+        articleData.forEach((section, index) => {
+            setDifficulty(index, defaultDifficulties[index]);
+        });
+        
+        function setDifficulty(sectionIndex, difficulty) {
+            const section = articleData[sectionIndex];
+            const contentDiv = document.getElementById('content-' + sectionIndex);
+            const buttons = document.querySelectorAll(`[data-section="${sectionIndex}"]`);
+            
+            // Update content
+            const content = section.content[difficulty] || 'Content not available for this difficulty level.';
+            contentDiv.innerHTML = '<p>' + content + '</p>';
+            
+            // Update button states
+            buttons.forEach(btn => {
+                if (btn.dataset.difficulty === difficulty) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+        
+        function setAllSections(difficulty) {
+            articleData.forEach((_, index) => {
+                setDifficulty(index, difficulty);
+            });
+        }
+    </script>
+</body>
+</html>

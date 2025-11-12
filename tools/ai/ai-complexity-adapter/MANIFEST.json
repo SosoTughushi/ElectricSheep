@@ -8,7 +8,7 @@
   "tags": ["ai", "complexity", "adaptation", "content"],
   "platforms": ["windows", "linux"],
   "dependencies": {
-    "runtime": ["python"],
+    "runtime": ["node", "npm"],
     "external": ["markdown"],
     "related_tools": ["ai-article-writer"]
   },
