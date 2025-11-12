@@ -216,6 +216,30 @@ When migrating from Python to Node.js:
 - Fixed submodule issues (removed invalid submodule reference)
 - Deployed at: https://sosotughushi.github.io/ElectricSheep/ai-first-repository-guide.html
 
+### GitHub Pages Deployment Workflow
+**CRITICAL**: When updating articles, always push changes so GitHub Pages can pick them up:
+
+1. **After generating/updating article markdown**:
+   - Regenerate HTML: `node tools/ai/ai-article-writer/src/article-viewer.js --markdown docs/article.md --output docs/article.html`
+   - Commit both `.md` and `.html` files together
+   - Push to `master` branch: `git push origin master`
+   - GitHub Pages will automatically rebuild (may take 1-5 minutes)
+
+2. **Files that must be committed**:
+   - `docs/*.md` - Source markdown articles
+   - `docs/*.html` - Generated HTML viewers
+   - `tools/ai/ai-article-writer/src/*.js` - Viewer generator updates
+   - `tools/ai/ai-article-writer/package.json` - Dependency updates
+
+3. **Never commit**:
+   - `node_modules/` - Dependencies (gitignored)
+   - Temporary files or logs
+
+4. **Verification**:
+   - Check GitHub Actions (if enabled) for deployment status
+   - Wait 1-5 minutes after push, then verify at GitHub Pages URL
+   - Use local preview (see below) before pushing to catch issues early
+
 ## Next Steps for AI Agents
 
 When continuing work on this tool:

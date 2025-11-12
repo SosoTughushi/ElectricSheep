@@ -73,6 +73,36 @@ cd tools/ai/ai-article-writer
 node src/article-viewer.js --markdown ../../../docs/article.md --output ../../../docs/article.html
 ```
 
+### 4. Preview Article Locally
+
+Preview the generated HTML article in your browser before pushing to GitHub Pages:
+
+**Windows (PowerShell):**
+```powershell
+.\tools\ai\ai-article-writer\scripts\preview-article.ps1
+# Or with regeneration:
+.\tools\ai\ai-article-writer\scripts\preview-article.ps1 -Regenerate
+# Or specify custom article:
+.\tools\ai\ai-article-writer\scripts\preview-article.ps1 -ArticlePath "docs/my-article.html"
+```
+
+**macOS/Linux (Bash):**
+```bash
+./tools/ai/ai-article-writer/scripts/preview-article.sh
+# Or with regeneration:
+./tools/ai/ai-article-writer/scripts/preview-article.sh --regenerate
+# Or specify custom article:
+./tools/ai/ai-article-writer/scripts/preview-article.sh docs/my-article.html
+```
+
+The preview script will:
+- Optionally regenerate HTML from markdown (`-Regenerate` / `--regenerate`)
+- Start a local HTTP server (Python or Node.js)
+- Open the article in your default browser
+- Display the local URL (default: http://localhost:8080)
+
+**Note**: Always preview locally before pushing to catch formatting issues early!
+
 ## Requirements
 
 - Node.js 18.0 or later
@@ -162,6 +192,19 @@ npm install
 See the generated article: `docs/ai-first-repository-guide.html`
 - Hosted on GitHub Pages: https://sosotughushi.github.io/ElectricSheep/ai-first-repository-guide.html
 - Source markdown: `docs/ai-first-repository-guide.md`
+
+### Deployment Workflow
+
+**IMPORTANT**: When updating articles, always push changes for GitHub Pages:
+
+1. **Edit markdown** (`docs/article.md`)
+2. **Regenerate HTML**: `node tools/ai/ai-article-writer/src/article-viewer.js --markdown docs/article.md --output docs/article.html`
+3. **Preview locally**: `.\tools\ai\ai-article-writer\scripts\preview-article.ps1 -Regenerate`
+4. **Commit both files**: `git add docs/article.md docs/article.html && git commit -m "Update article"`
+5. **Push to master**: `git push origin master`
+6. **Wait 1-5 minutes** for GitHub Pages to rebuild
+
+See `rules/ai-article-writer.cursorrules` for complete deployment guidelines.
 
 ## Documentation
 
